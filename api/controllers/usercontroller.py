@@ -1,37 +1,41 @@
 from fastapi import APIRouter
-from pydantic import BaseModel
-import logging
+from api.services.userservice import UserService, UserRegisterRequest, UserLoginRequest, VerifyAccountRequest
 
-# Initialize the router
 router = APIRouter()
+user_service = UserService()
 
-# Configure logging
-logger = logging.getLogger(__name__)
+@router.post("/register-user")
+def register_user(request: UserRegisterRequest):
+    return user_service.register_user(request)
 
-class EmailLoginRequest(BaseModel):
-    email: str
-    password: str
+@router.post("/login")
+def login_user(request: UserLoginRequest):
+    return user_service.login_user(request)
 
-class LoginResponse(BaseModel):
-    status: str
-    detail: str
+@router.get("/confirm")
+def confirm_user():
+    return user_service.confirm_user()
 
-@router.post("/api/gmail-login")
-def gmail_login(request: EmailLoginRequest):
-    # Example: login to Gmail with provided credentials
-    logger.info(f"Attempting Gmail login for email {request.email}")
-    if request.email == "test@gmail.com" and request.password == "password":
-        return LoginResponse(status="success", detail="Gmail login successful")
-    else:
-        logger.warning(f"Invalid Gmail credentials for email {request.email}")
-        return LoginResponse(status="invalid", detail="Invalid Gmail credentials")
+@router.post("/verify")
+def verify_account(request: VerifyAccountRequest):
+    return user_service.verify_account(request)
 
-@router.post("/api/outlook-login")
-def outlook_login(request: EmailLoginRequest):
-    # Example: login to Outlook with provided credentials
-    logger.info(f"Attempting Outlook login for email {request.email}")
-    if request.email == "test@outlook.com" and request.password == "password":
-        return LoginResponse(status="success", detail="Outlook login successful")
-    else:
-        logger.warning(f"Invalid Outlook credentials for email {request.email}")
-        return LoginResponse(status="invalid", detail="Invalid Outlook credentials")
+@router.put("/update-user")
+def update_user():
+    return user_service.update_user()
+
+@router.delete("/delete-user")
+def delete_user():
+    return user_service.delete_user()
+
+@router.get("/list-users")
+def list_users():
+    return user_service.list_users()
+
+@router.get("/get-user-by-id")
+def get_user_by_id():
+    return user_service.get_user_by_id()
+
+@router.get("/get-user-by-email")
+def get_user_by_email():
+    return user_service.get_user_by_email()
