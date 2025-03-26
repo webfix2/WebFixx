@@ -107,11 +107,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       if (userData) {
         setUser(userData);
       } else {
-        router.push('/invalid');
+        //router.push('/invalid');
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
-      router.push('/invalid');
+      //router.push('/invalid');
     } finally {
       //setLoading(false);
     }
@@ -172,7 +172,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       if (idFromUrl) {
           fetchUserData(idFromUrl);
       } else if (!currentPath.startsWith('/admin')) {
-          router.push('/invalid');
+          //router.push('/invalid');
       }
 
       if (user && user.ticketId) {
