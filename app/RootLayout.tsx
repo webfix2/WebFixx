@@ -49,9 +49,9 @@ export default function RootLayout({
   const shouldShowSidebar =
     pathname !== '/account' &&
     pathname !== '/invalid' &&
-    pathname !== '/root' ;
-    // pathname !== '/' &&
-    // pathname !== '/admin';
+    pathname !== '/root' &&
+    pathname !== '/' &&
+    pathname !== '/admin';
     
   const [walletBalance] = useState("0.00"); // Add this state for wallet balance
 
