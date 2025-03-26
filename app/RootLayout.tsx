@@ -49,8 +49,10 @@ export default function RootLayout({
   const shouldShowSidebar =
     pathname !== '/account' &&
     pathname !== '/invalid' &&
-    pathname !== '/admin';
-  // ...existing state and hooks...
+    pathname !== '/root' ;
+    // pathname !== '/' &&
+    // pathname !== '/admin';
+    
   const [walletBalance] = useState("0.00"); // Add this state for wallet balance
 
   const NavLinks = () => (
@@ -78,12 +80,24 @@ export default function RootLayout({
     </div>
   );
 
+  const closeSidebar = () => {
+    setIsSidebarOpen(false);
+  };
+
   return (
     <html lang="en">
       <body className={`${inter.className} bg-gray-50`}>
         <UserProvider>
           {shouldShowSidebar && (
             <>
+              {/* Overlay */}
+              {isSidebarOpen && (
+                <div
+                  className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
+                  onClick={closeSidebar}
+                />
+              )}
+
               {/* Mobile Header */}
               <header className="lg:hidden fixed top-0 left-0 right-0 z-20 bg-white shadow-sm h-16">
                 <div className="flex items-center justify-between px-4 h-full">
@@ -105,7 +119,7 @@ export default function RootLayout({
 
               {/* Sidebar */}
               <aside className={`
-                fixed top-0 left-0 z-30 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out
+                fixed top-0 left-0 z-40 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out
                 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0
               `}>
                 <div className="flex flex-col h-full">
