@@ -26,7 +26,24 @@ const nextConfig = {
     ];
   },
   images: {
-    domains: ['cdn.debounce.io'], // Add the domain(s) here
+    domains: [
+      'cdn.debounce.io',
+      'snworksceo.imgix.net',
+      'drive.google.com',
+      'lh3.googleusercontent.com', // For Google Drive images
+      'placehold.co',
+      'i.imgur.com',
+      'images.unsplash.com',
+      'storage.googleapis.com',
+      'res.cloudinary.com'
+    ],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      }
+    ],
+    unoptimized: true // This allows any external image to be used without optimization
   },
   experimental: {
     serverComponentsExternalPackages: ['puppeteer-core', '@sparticuz/chromium-min'],

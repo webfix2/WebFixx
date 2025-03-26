@@ -1,12 +1,5 @@
 /api
-  /controllers
-    - usercontroller.py
-    - apicontroller.py
-  /services
-    - userservice.py
-    - apiservice.py
-    - externalfunction.py
-  index.py
+  - index.py
 /app
   - favicon.ico
   - globals.css
