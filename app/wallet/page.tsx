@@ -9,7 +9,21 @@ import {
   faQrcode,
   faSpinner
 } from '@fortawesome/free-solid-svg-icons';
-import { ethers } from 'ethers';
+import { Alchemy, Network } from 'alchemy-sdk';
+import Moralis from 'moralis';
+
+// Initialize Alchemy
+const alchemyConfig = {
+  apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
+  network: process.env.NEXT_PUBLIC_ALCHEMY_NETWORK as Network,
+};
+const alchemy = new Alchemy(alchemyConfig);
+
+// Initialize Moralis
+Moralis.start({
+  apiKey: process.env.NEXT_PUBLIC_MORALIS_API_KEY,
+});
+
 
 interface Transaction {
   id: string;

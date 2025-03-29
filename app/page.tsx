@@ -3,6 +3,17 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+  faEnvelope, 
+  faLock, 
+  faUser, 
+  faTicket 
+} from '@fortawesome/free-solid-svg-icons';
+import { authApi } from "../utils/auth";
+import { useAppState } from "./context/AppContext";
+import type { LoginResponse } from "../utils/auth";
 
 export default function Home() {
   const [isLogin, setIsLogin] = useState(true);
@@ -15,6 +26,7 @@ export default function Home() {
   });
   const [error, setError] = useState("");
   const router = useRouter();
+  const { setAppData } = useAppState();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,15 +38,42 @@ export default function Home() {
     }
 
     try {
-      // Add your authentication logic here
-      // For registration:
-      // await register(formData)
-      // For login:
-      // await login(formData)
-      
-      router.push("/dashboard");
+      if (isLogin) {
+        // Handle login
+        const response: LoginResponse = await authApi.login({
+          email: formData.email,
+          password: formData.password,
+        });
+
+        // Store token
+        sessionStorage.setItem("loggedInAdmin", response.token);
+
+        // Update app state with the transformed response
+        setAppData({
+          user: response.user,
+          data: response.data,
+        });
+
+        // Route based on role
+        if (response.user.role === "ADMIN") {
+          router.push("/root");
+        } else {
+          router.push("/dashboard");
+        }
+      } else {
+        // Handle registration
+        const response = await authApi.register({
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+          referralCode: formData.referralCode,
+        });
+
+        setError("Registration successful! Please login.");
+        setIsLogin(true);
+      }
     } catch (err) {
-      setError("Authentication failed");
+      setError(err instanceof Error ? err.message : "Authentication failed");
     }
   };
 
@@ -46,138 +85,168 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
-            {isLogin ? "Sign in to your account" : "Create new account"}
-          </h2>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
+      {/* Simplified Header */}
+      <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md shadow-sm z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center py-4">
+            <span className="text-xl font-bold text-gray-900">WebFixx</span>
+          </div>
         </div>
+      </header>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm space-y-4">
-            {!isLogin && (
-              <div>
-                <label htmlFor="username" className="sr-only">
-                  Username
-                </label>
+      {/* Main Content */}
+      <main className={`pt-24 min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 ${!isLogin ? 'pb-12' : ''}`}>
+        <div className="max-w-md w-full">
+          {/* Form Card */}
+          <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-8">
+            {/* Title */}
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-extrabold text-gray-900">
+                {isLogin ? "Welcome back" : "Create account"}
+              </h2>
+              <p className="mt-2 text-sm text-gray-600">
+                {isLogin 
+                  ? "Sign in to access your account" 
+                  : "Join us and start your journey"}
+              </p>
+            </div>
+
+            {/* Form */}
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              {!isLogin && (
+                <div>
+                  <div className="relative">
+                    <FontAwesomeIcon 
+                      icon={faUser} 
+                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    />
+                    <input
+                      id="username"
+                      name="username"
+                      type="text"
+                      required
+                      className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Username"
+                      value={formData.username}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="relative">
+                <FontAwesomeIcon 
+                  icon={faEnvelope} 
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                />
                 <input
-                  id="username"
-                  name="username"
-                  type="text"
+                  id="email"
+                  name="email"
+                  type="email"
                   required
-                  className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                  placeholder="Username"
-                  value={formData.username}
+                  className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Email address"
+                  value={formData.email}
                   onChange={handleChange}
                 />
               </div>
-            )}
 
-            <div>
-              <label htmlFor="email" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-              />
-            </div>
-
-            {!isLogin && (
-              <>
-                <div>
-                  <label htmlFor="confirmPassword" className="sr-only">
-                    Confirm Password
-                  </label>
-                  <input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type="password"
-                    required
-                    className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                    placeholder="Confirm Password"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="referralCode" className="sr-only">
-                    Referral Code
-                  </label>
-                  <input
-                    id="referralCode"
-                    name="referralCode"
-                    type="text"
-                    className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                    placeholder="Referral Code (Optional)"
-                    value={formData.referralCode}
-                    onChange={handleChange}
-                  />
-                </div>
-              </>
-            )}
-          </div>
-
-          {error && (
-            <div className="text-red-500 text-sm text-center">{error}</div>
-          )}
-
-          <div className="space-y-4">
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              {isLogin ? "Sign in" : "Register"}
-            </button>
-
-            {isLogin && (
-              <div className="text-center">
-                <Link
-                  href="/reset-password"
-                  className="text-sm text-blue-600 hover:text-blue-500"
-                >
-                  Forgot your password?
-                </Link>
+              <div className="relative">
+                <FontAwesomeIcon 
+                  icon={faLock} 
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                />
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Password"
+                  value={formData.password}
+                  onChange={handleChange}
+                />
               </div>
-            )}
-          </div>
-        </form>
 
-        <div className="text-center">
-          <button
-            className="text-sm text-blue-600 hover:text-blue-500"
-            onClick={() => setIsLogin(!isLogin)}
-          >
-            {isLogin
-              ? "Don't have an account? Register"
-              : "Already have an account? Sign in"}
-          </button>
+              {!isLogin && (
+                <>
+                  <div className="relative">
+                    <FontAwesomeIcon 
+                      icon={faLock} 
+                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    />
+                    <input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type="password"
+                      required
+                      className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Confirm Password"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                    />
+                  </div>
+
+                  <div className="relative">
+                    <FontAwesomeIcon 
+                      icon={faTicket} 
+                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    />
+                    <input
+                      id="referralCode"
+                      name="referralCode"
+                      type="text"
+                      className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Referral Code (Optional)"
+                      value={formData.referralCode}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </>
+              )}
+
+              {error && (
+                <div className="text-center px-4 py-3 rounded-lg bg-red-50 text-red-600">
+                  {error}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                className="w-full px-6 py-3 text-white bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transform transition-all duration-200 hover:scale-[1.02]"
+              >
+                {isLogin ? "Sign in" : "Create account"}
+              </button>
+            </form>
+
+            {/* Footer Links */}
+            <div className="mt-6 space-y-4">
+              {isLogin && (
+                <div className="text-center">
+                  <Link
+                    href="/reset-password"
+                    className="text-sm text-blue-600 hover:text-blue-700 hover:underline"
+                  >
+                    Forgot your password?
+                  </Link>
+                </div>
+              )}
+
+              <div className="text-center">
+                <button
+                  className="text-sm text-blue-600 hover:text-blue-700 hover:underline"
+                  onClick={() => setIsLogin(!isLogin)}
+                >
+                  {isLogin
+                    ? "Don't have an account? Create one"
+                    : "Already have an account? Sign in"}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }

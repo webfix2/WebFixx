@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { authApi } from "utils/auth";
 
 export default function ResetPassword() {
   const [email, setEmail] = useState("");
@@ -16,11 +17,10 @@ export default function ResetPassword() {
     setSuccess(false);
 
     try {
-      // Add your password reset logic here
-      // await resetPassword(email);
+      await authApi.resetPassword({ email });
       setSuccess(true);
     } catch (err) {
-      setError("Failed to send reset email");
+      setError(err instanceof Error ? err.message : "Password reset failed");
     }
   };
 
@@ -37,22 +37,20 @@ export default function ResetPassword() {
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm space-y-4">
-            <div>
-              <label htmlFor="email" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
+          <div>
+            <label htmlFor="email" className="sr-only">
+              Email address
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+              placeholder="Email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </div>
 
           {error && (
@@ -65,24 +63,24 @@ export default function ResetPassword() {
             </div>
           )}
 
-          <div className="space-y-4">
+          <div>
             <button
               type="submit"
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               Send reset link
             </button>
-
-            <div className="text-center">
-              <Link
-                href="/"
-                className="text-sm text-blue-600 hover:text-blue-500"
-              >
-                Back to login
-              </Link>
-            </div>
           </div>
         </form>
+
+        <div className="text-center">
+          <Link
+            href="/"
+            className="text-sm text-blue-600 hover:text-blue-500"
+          >
+            Back to login
+          </Link>
+        </div>
       </div>
     </main>
   );

@@ -2,152 +2,111 @@
 
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash, faCog, faPlus } from '@fortawesome/free-solid-svg-icons';
-
-interface SMTPConfig {
-  id: string;
-  host: string;
-  port: number;
-  username: string;
-  password: string;
-  from_email: string;
-}
-
-interface Campaign {
-  id: string;
-  name: string;
-  subject: string;
-  content: string;
-  smtp_config_id: string;
-  status: 'draft' | 'scheduled' | 'running' | 'completed';
-  created_at: string;
-}
+import { 
+  faPlus,
+  faChevronRight,
+  faChevronDown 
+} from '@fortawesome/free-solid-svg-icons';
+import { useAppState } from '../context/AppContext';
+import { CampaignModal } from '../components/admin/campaign/CampaignModal';
+import { CampaignAnalytics } from '../components/admin/campaign/CampaignAnalytics';
+import type { Campaign, SMTPSetting } from '../types';
 
 export default function EmailCampaign() {
-  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [smtpConfigs, setSmtpConfigs] = useState<SMTPConfig[]>([]);
-  const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const { appData } = useAppState();
+  const [selectedCampaign, setSelectedCampaign] = useState<string | null>(null);
   const [showCampaignModal, setShowCampaignModal] = useState(false);
+
+  const campaigns = appData?.data?.sender || [];
+
+  const handleSaveCampaign = async (campaign: Partial<Campaign>) => {
+    // TODO: Implement campaign save
+    setShowCampaignModal(false);
+  };
+
+  const handleUpdateCampaignSMTP = async (campaignId: string, smtpSettings: SMTPSetting[]) => {
+    try {
+      // TODO: Implement API call to update campaign SMTP settings
+      const updatedCampaigns = campaigns.map(campaign => {
+        if (campaign.id === campaignId) {
+          return { ...campaign, smtpSettings };
+        }
+        return campaign;
+      });
+      // Update state or trigger refetch
+    } catch (error) {
+      console.error('Error updating SMTP settings:', error);
+    }
+  };
 
   return (
     <div className="p-6">
+      {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Email Campaigns</h1>
-        <div className="flex space-x-4">
-          <button
-            onClick={() => setShowSettingsModal(true)}
-            className="btn-secondary"
-          >
-            <FontAwesomeIcon icon={faCog} className="w-4 h-4 mr-2" />
-            SMTP Settings
-          </button>
-          <button
-            onClick={() => setShowCampaignModal(true)}
-            className="btn-primary"
-          >
-            <FontAwesomeIcon icon={faPlus} className="w-4 h-4 mr-2" />
-            New Campaign
-          </button>
-        </div>
+        <button
+          onClick={() => setShowCampaignModal(true)}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          <FontAwesomeIcon icon={faPlus} className="w-4 h-4 mr-2" />
+          New Campaign
+        </button>
       </div>
 
-      {/* Campaigns Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Campaign Name
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Subject
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Created
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {campaigns.map((campaign) => (
-              <tr key={campaign.id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">
-                    {campaign.name}
+      {/* Campaigns List */}
+      <div className="space-y-4">
+        {campaigns.map((campaign: Campaign) => (
+          <div key={campaign.id} className="bg-white rounded-lg shadow">
+            {/* Campaign Header - Clickable */}
+            <div 
+              className="p-4 cursor-pointer hover:bg-gray-50"
+              onClick={() => setSelectedCampaign(
+                selectedCampaign === campaign.id ? null : campaign.id
+              )}
+            >
+              <div className="flex justify-between items-center">
+                <div className="flex items-center space-x-4">
+                  <FontAwesomeIcon 
+                    icon={selectedCampaign === campaign.id ? faChevronDown : faChevronRight} 
+                    className="w-4 h-4 text-gray-400"
+                  />
+                  <div>
+                    <h3 className="font-medium">{campaign.name}</h3>
+                    <p className="text-sm text-gray-500">
+                      {campaign.analytics?.sent || 0} / {campaign.analytics?.totalRows || 0} sent
+                    </p>
                   </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-500">{campaign.subject}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    campaign.status === 'completed'
-                      ? 'bg-green-100 text-green-800'
-                      : campaign.status === 'running'
-                      ? 'bg-blue-100 text-blue-800'
-                      : campaign.status === 'scheduled'
-                      ? 'bg-yellow-100 text-yellow-800'
-                      : 'bg-gray-100 text-gray-800'
-                  }`}>
-                    {campaign.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {new Date(campaign.created_at).toLocaleDateString()}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <div className="flex space-x-2">
-                    <button className="text-blue-600 hover:text-blue-900">
-                      <FontAwesomeIcon icon={faEdit} className="w-4 h-4" />
-                    </button>
-                    <button className="text-red-600 hover:text-red-900">
-                      <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </div>
+                <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                  campaign.status === 'completed' ? 'bg-green-100 text-green-800' :
+                  campaign.status === 'running' ? 'bg-blue-100 text-blue-800' :
+                  'bg-gray-100 text-gray-800'
+                }`}>
+                  {campaign.status}
+                </span>
+              </div>
+            </div>
+
+            {/* Campaign Analytics - Expandable */}
+            {selectedCampaign === campaign.id && (
+              <div className="border-t">
+                <CampaignAnalytics 
+                  campaign={campaign}
+                  onUpdateSMTP={handleUpdateCampaignSMTP}
+                />
+              </div>
+            )}
+          </div>
+        ))}
       </div>
 
-      {/* SMTP Settings Modal */}
-      {showSettingsModal && (
-        <SMTPSettingsModal
-          smtpConfigs={smtpConfigs}
-          onClose={() => setShowSettingsModal(false)}
-          onSave={(config) => {
-            // Handle SMTP config save
-            setShowSettingsModal(false);
-          }}
-        />
-      )}
-
-      {/* New Campaign Modal */}
+      {/* Campaign Modal */}
       {showCampaignModal && (
         <CampaignModal
-          smtpConfigs={smtpConfigs}
           onClose={() => setShowCampaignModal(false)}
-          onSave={(campaign) => {
-            // Handle campaign save
-            setShowCampaignModal(false);
-          }}
+          onSave={handleSaveCampaign}
         />
       )}
     </div>
   );
-}
-
-// Add these components in separate files
-function SMTPSettingsModal({ smtpConfigs, onClose, onSave }) {
-  // Implementation for SMTP settings modal
-}
-
-function CampaignModal({ smtpConfigs, onClose, onSave }) {
-  // Implementation for campaign modal
 }
