@@ -1,27 +1,7 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from 'react';
-
-interface User {
-  id: string;
-  email: string;
-  username: string;
-  role: 'ADMIN' | 'USER';
-}
-
-interface AppState {
-  user: User;
-  data: {
-    user: any;
-    users?: any[];
-    transactions: any[];
-    projects: any[];
-    template: any[];
-    hub: any[];
-    links?: any[];
-    sender?: any[];
-  };
-}
+import { createContext, useContext, useState, useEffect } from 'react';
+import type { AppState } from '../../utils/authTypes';
 
 interface AppContextType {
   appData: AppState | null;
@@ -29,17 +9,50 @@ interface AppContextType {
   clearAppData: () => void;
 }
 
-const AppContext = createContext<AppContextType | undefined>(undefined);
+const AppContext = createContext<AppContextType | null>(null);
 
-export function AppProvider({ children }: { children: ReactNode }) {
+export function AppProvider({ children }: { children: React.ReactNode }) {
   const [appData, setAppData] = useState<AppState | null>(null);
+
+  // Initialize state from localStorage on mount
+  useEffect(() => {
+    try {
+      const storedState = localStorage.getItem('appState');
+      if (storedState) {
+        const parsedState = JSON.parse(storedState);
+        setAppData(parsedState);
+      }
+    } catch (error) {
+      console.error('Failed to parse stored app state:', error);
+      localStorage.removeItem('appState');
+    }
+  }, []);
+
+  // Update localStorage when state changes
+  useEffect(() => {
+    if (appData) {
+      localStorage.setItem('appState', JSON.stringify(appData));
+    }
+  }, [appData]);
+
+  const handleSetAppData = (data: AppState) => {
+    setAppData(data);
+  };
 
   const clearAppData = () => {
     setAppData(null);
+    localStorage.removeItem('appState');
+    // Clear auth cookies
+    document.cookie = 'loggedInAdmin=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    document.cookie = 'verifyStatus=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
   };
 
   return (
-    <AppContext.Provider value={{ appData, setAppData, clearAppData }}>
+    <AppContext.Provider value={{ 
+      appData, 
+      setAppData: handleSetAppData, 
+      clearAppData 
+    }}>
       {children}
     </AppContext.Provider>
   );

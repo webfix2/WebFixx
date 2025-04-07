@@ -1,21 +1,32 @@
-import './globals.css';
-import { Inter } from 'next/font/google';
-import RootLayout from './RootLayout';
-import { AppProvider } from './context/AppContext';
+import './globals.css'
+import { Inter } from 'next/font/google'
+import { AppProvider } from './context/AppContext'
+import { LoadingProvider } from './context/LoadingContext'
+import RootLayout from './RootLayout'
+
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
   title: 'WebFixx',
-  description: 'Specialized recruitment services for Radiate Hospitalities, connecting top talent with opportunities in the hospitality industry.',
-};
+  description: 'Your complete web solution platform',
+}
 
-const inter = Inter({ subsets: ['latin'] });
-
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <AppProvider>
-      <RootLayout inter={inter}>
-        {children}
-      </RootLayout>
-    </AppProvider>
-  );
+    <html lang="en">
+      <body className={inter.className}>
+        <LoadingProvider>
+          <AppProvider>
+            <RootLayout inter={inter}>
+              {children}
+            </RootLayout>
+          </AppProvider>
+        </LoadingProvider>
+      </body>
+    </html>
+  )
 }

@@ -65,3 +65,4 @@ export interface NewCampaign extends Omit<Campaign, 'id' | 'created_at' | 'statu
   created_at?: string;
   status?: Campaign['status'];
 }
+

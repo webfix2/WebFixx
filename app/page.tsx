@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -14,9 +14,12 @@ import {
 import { authApi } from "../utils/auth";
 import { useAppState } from "./context/AppContext";
 import type { LoginResponse } from "../utils/auth";
+import LoadingSpinner from './components/LoadingSpinner';
 
 export default function Home() {
   const [isLogin, setIsLogin] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -24,56 +27,134 @@ export default function Home() {
     username: "",
     referralCode: "",
   });
-  const [error, setError] = useState("");
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true); // Add this state
   const router = useRouter();
-  const { setAppData } = useAppState();
+  const { appData, setAppData } = useAppState();
+
+  // Modified auth check
+  useEffect(() => {
+    const checkAuth = async () => {
+      if (appData?.user && appData.isAuthenticated) {
+        if (appData.user.role === "ADMIN") {
+          router.replace("/root");
+        } else if (appData.user.verifyStatus === "FALSE" || !appData.user.verifyStatus) {
+          router.replace("/verify");
+        } else {
+          router.replace("/dashboard");
+        }
+      } else {
+        setIsCheckingAuth(false);
+      }
+    };
+
+    checkAuth();
+  }, [appData, router]);
+
+  // Show loading state while checking auth
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen">
+        <LoadingSpinner 
+          fullScreen 
+          size="large" 
+          text="Loading..." 
+        />
+      </div>
+    );
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-
-    if (!isLogin && formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
+    setIsSubmitting(true);
 
     try {
       if (isLogin) {
-        // Handle login
-        const response: LoginResponse = await authApi.login({
+        const response = await authApi.login({
           email: formData.email,
           password: formData.password,
+          deviceInfo: {
+            userAgent: navigator.userAgent,
+            platform: navigator.platform,
+            language: navigator.language
+          }
         });
 
-        // Store token
-        sessionStorage.setItem("loggedInAdmin", response.token);
+        if (response.success && response.token) {
+          // Store token in cookies
+          document.cookie = `loggedInAdmin=${response.token}; path=/; max-age=2592000`;
+          document.cookie = `verifyStatus=${response.user.verifyStatus}; path=/; max-age=2592000`;
 
-        // Update app state with the transformed response
-        setAppData({
-          user: response.user,
-          data: response.data,
-        });
+          // Update app state (will automatically persist to localStorage)
+          setAppData({
+            user: response.user,
+            data: response.data,
+            isAuthenticated: true
+          });
 
-        // Route based on role
-        if (response.user.role === "ADMIN") {
-          router.push("/root");
-        } else {
-          router.push("/dashboard");
+          // Handle routing
+          if (response.user.verifyStatus === 'FALSE' || !response.user.verifyStatus) {
+            router.push('/verify');
+          } else if (response.user.role === 'ADMIN') {
+            router.push('/root');
+          } else {
+            router.push('/dashboard');
+          }
         }
       } else {
-        // Handle registration
-        const response = await authApi.register({
+        console.log('Starting registration with:', formData);
+
+        // Validate passwords match
+        if (formData.password !== formData.confirmPassword) {
+          setError("Passwords do not match");
+          setIsSubmitting(false);
+          return;
+        }
+
+        const registerResponse = await authApi.register({
           username: formData.username,
           email: formData.email,
           password: formData.password,
           referralCode: formData.referralCode,
         });
 
-        setError("Registration successful! Please login.");
-        setIsLogin(true);
+        console.log('Register response:', registerResponse);
+
+        if (registerResponse.success) {
+          console.log('Registration successful, attempting login');
+          const loginResponse: LoginResponse = await authApi.login({
+            email: formData.email,
+            password: formData.password,
+            deviceInfo: {
+              userAgent: navigator.userAgent,
+              platform: navigator.platform,
+              language: navigator.language
+            }
+          });
+
+          console.log('Auto-login response:', loginResponse);
+
+          // Store token in document.cookie
+          document.cookie = `loggedInAdmin=${loginResponse.token}; path=/; max-age=2592000`;
+
+          sessionStorage.setItem("loggedInAdmin", loginResponse.token);
+          setAppData({
+            user: loginResponse.user,
+            data: loginResponse.data,
+            isAuthenticated: true
+          });
+
+          router.push("/dashboard");
+        } else {
+          setError(registerResponse.error || registerResponse.message || 'Registration failed');
+          console.error('Registration failed:', registerResponse);
+        }
       }
     } catch (err) {
+      console.error('Auth error:', err);
       setError(err instanceof Error ? err.message : "Authentication failed");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -214,9 +295,17 @@ export default function Home() {
 
               <button
                 type="submit"
-                className="w-full px-6 py-3 text-white bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transform transition-all duration-200 hover:scale-[1.02]"
+                disabled={isSubmitting}
+                className="w-full px-6 py-3 text-white bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transform transition-all duration-200 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
               >
-                {isLogin ? "Sign in" : "Create account"}
+                {isSubmitting ? (
+                  <div className="flex items-center space-x-3">
+                    <LoadingSpinner size="small" />
+                    <span>{isLogin ? "Signing in..." : "Creating account..."}</span>
+                  </div>
+                ) : (
+                  isLogin ? "Sign in" : "Create account"
+                )}
               </button>
             </form>
 
@@ -247,6 +336,15 @@ export default function Home() {
           </div>
         </div>
       </main>
+
+      {/* Global loading overlay */}
+      {isSubmitting && (
+        <LoadingSpinner 
+          overlay
+          size="large"
+          text={isLogin ? "Signing in to your account..." : "Creating your account..."}
+        />
+      )}
     </div>
   );
 }

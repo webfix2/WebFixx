@@ -1,6 +1,8 @@
 import type { SecuredApiRequest, SecuredApiResponse } from './authTypes';
+import type { CryptoAddress, WalletState, WalletTransaction } from '../app/types/wallet';
 
-const API_BASE_URL = 'https://webfixx-backend.vercel.app/api';
+const API_BASE_URL = 'https://web-fixx-hoo.vercel.app/api';
+// const API_BASE_URL = 'https://webfixx-backend.vercel.app/api';
 
 export interface RegisterData {
   username: string;
@@ -9,94 +11,298 @@ export interface RegisterData {
   referralCode?: string;
 }
 
+export interface DeviceInfo {
+  userAgent: string;
+  platform: string;
+  language: string;
+}
+
 export interface LoginData {
   email: string;
   password: string;
+  deviceInfo: DeviceInfo;
+}
+
+export interface TokenData {
+  token: string;
+  createdAt: string;
+  expiresAt: string;
+  deviceInfo: DeviceInfo;
+  lastUsed: string;
+}
+
+export interface UserData {
+  id: string;
+  userId: string;
+  email: string;
+  username: string;
+  role: 'ADMIN' | 'USER';
+  verifyStatus: 'TRUE' | 'FALSE' | '';
+  btcAddress: string;
+  ethAddress: string;
+  usdtAddress: string;
+  balance: string;
+  pendingBalance: string;
+  addresses?: CryptoAddress[];
+  tokens?: TokenData[];
+}
+
+export interface AppData {
+  user: any;
+  users?: any[];
+  transactions: WalletTransaction[];
+  projects: any[];
+  template: any[];
+  hub: any[];
+  links?: any[];
+  sender?: any[];
 }
 
 export interface LoginResponse {
+  success: boolean;
   token: string;
-  user: {
-    id: string;
+  user: UserData;
+  data: AppData;
+  needsVerification: boolean;
+  error?: string;
+}
+
+export interface RegisterResponse {
+  success: boolean;
+  message?: string;
+  error?: string;
+  data?: {
+    userId: string;
     email: string;
     username: string;
-    role: 'ADMIN' | 'USER';
   };
-  data: {
-    user: any;
-    users?: any[];
-    transactions: any[];
-    projects: any[];
-    template: any[];
-    hub: any[];
+}
+
+export interface VerificationStatus {
+  isVerified: boolean;
+  message?: string;
+  error?: string;
+}
+
+export interface TokenValidationResponse {
+  success: boolean;
+  data?: {
+    user: UserData;
+    transactions?: WalletTransaction[];
+    projects?: any[];
+    template?: any[];
+    hub?: any[];
     links?: any[];
     sender?: any[];
+    users?: any[];
   };
+  needsVerification?: boolean;
+  error?: string;
+}
+
+export interface AuthState {
+  isAuthenticated: boolean;
+  user: UserData | null;
+  token: string | null;
+  data: AppData | null;
+  error: string | null;
+  isLoading: boolean;
 }
 
 export interface ResetPasswordData {
   email: string;
 }
 
+export interface ErrorResponse {
+  error: string;
+}
+
+export interface VerifyResetCodeData {
+  email: string;
+  code: string;
+}
+
+export interface UpdatePasswordData {
+  email: string;
+  newPassword: string;
+}
+
+// Helper function to convert object to URLSearchParams
+function objectToFormData(obj: Record<string, any>): string {
+  const formData = new URLSearchParams();
+  Object.entries(obj).forEach(([key, value]) => {
+    formData.append(key, value.toString());
+  });
+  return formData.toString();
+}
+
 export const authApi = {
-  login: async (data: LoginData) => {
-    const response = await fetch(`${API_BASE_URL}/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
+  
+  register: async (data: RegisterData): Promise<RegisterResponse> => {
+    console.log('Sending registration request:', data);
 
-    if (!response.ok) {
-      throw new Error('Login failed');
-    }
-
-    return response.json();
-  },
-
-  register: async (data: RegisterData) => {
     const response = await fetch(`${API_BASE_URL}/register`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: JSON.stringify(data),
+      body: objectToFormData({ 
+        action: 'register',
+        ...data 
+      }),
     });
 
-    if (!response.ok) {
-      throw new Error('Registration failed');
+    const responseData = await response.json();
+    console.log('Registration response:', responseData);
+
+    if (!response.ok || responseData.error) {
+      throw new Error(responseData.error || 'Registration failed');
     }
 
-    return response.json();
+    if (!responseData.success) {
+      throw new Error(responseData.message || 'Registration failed');
+    }
+
+    return responseData;
+  },
+
+  login: async (data: LoginData): Promise<LoginResponse> => {
+    const response = await fetch(`${API_BASE_URL}/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: objectToFormData({ 
+        action: 'login',
+        ...data 
+      }),
+    });
+
+    const responseData = await response.json();
+
+    if (!response.ok || responseData.error) {
+      throw new Error(responseData.error || 'Login failed');
+    }
+
+    if (!responseData.token || !responseData.user) {
+      throw new Error('Invalid response format');
+    }
+
+    return {
+      success: responseData.success,
+      token: responseData.token,
+      user: {
+        id: responseData.user.id,
+        userId: responseData.user.userId,
+        email: responseData.user.email,
+        username: responseData.user.username,
+        role: responseData.user.role,
+        verifyStatus: responseData.user.verifyStatus,
+        ethAddress: responseData.user.ethAddress || '',
+        usdtAddress: responseData.user.usdtAddress || '',
+        balance: responseData.user.balance || '0.00',
+        pendingBalance: responseData.user.pendingBalance || '0.00',
+        addresses: responseData.user.addresses || [],
+        tokens: responseData.user.tokens || []
+      },
+      data: {
+        user: responseData.data?.user || null,
+        users: responseData.data?.users || [],
+        transactions: responseData.data?.transactions || [],
+        projects: responseData.data?.projects || [],
+        template: responseData.data?.template || [],
+        hub: responseData.data?.hub || [],
+        links: responseData.data?.links || [],
+        sender: responseData.data?.sender || []
+      },
+      needsVerification: responseData.needsVerification || false,
+      error: responseData.error || undefined
+    };
   },
 
   resetPassword: async (data: ResetPasswordData) => {
     const response = await fetch(`${API_BASE_URL}/reset-password`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: JSON.stringify(data),
+      body: objectToFormData({
+        action: 'resetPassword',
+        ...data
+      }),
     });
 
     if (!response.ok) {
-      throw new Error('Password reset failed');
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Password reset failed');
     }
 
     return response.json();
   },
 
-  logout: () => {
-    localStorage.removeItem('authToken');
-    // Add any other cleanup needed
+  verifyResetCode: async (data: VerifyResetCodeData) => {
+    const response = await fetch(`${API_BASE_URL}/verify-reset`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: objectToFormData({
+        action: 'verifyResetCode',
+        ...data
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Code verification failed');
+    }
+
+    return response.json();
+  },
+
+  updatePassword: async (data: UpdatePasswordData) => {
+    const response = await fetch(`${API_BASE_URL}/update-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: objectToFormData({
+        action: 'updatePassword',
+        ...data
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Password update failed');
+    }
+
+    return response.json();
+  },
+
+  logout: async (token: string) => {
+    try {
+      const response = await securedApi.callBackendFunction({
+        functionName: 'logout',
+        token
+      });
+
+      // Clear cookies
+      document.cookie = 'loggedInAdmin=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      document.cookie = 'verifyStatus=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+
+      return response;
+    } catch (error) {
+      console.error('Logout failed:', error);
+      throw error;
+    }
   }
 };
 
 export const securedApi = {
   callBackendFunction: async (data: SecuredApiRequest): Promise<SecuredApiResponse> => {
-    const token = localStorage.getItem('authToken');
-
+    const token = document.cookie.match('(^|;)\\s*loggedInAdmin\\s*=\\s*([^;]+)')?.pop();
+    
     if (!token) {
       throw new Error('Authentication required');
     }
@@ -105,10 +311,13 @@ export const securedApi = {
       const response = await fetch(`${API_BASE_URL}/backend-function`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: JSON.stringify(data)
+        body: objectToFormData({
+          action: 'backendFunction',
+          token, // Add token to params
+          ...data
+        }),
       });
 
       if (!response.ok) {

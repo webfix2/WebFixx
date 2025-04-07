@@ -1,96 +1,148 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faWallet, 
-  faExchangeAlt, 
+  faMoneyBillWave,
   faHistory,
-  faQrcode,
-  faSpinner
+  faSpinner,
+  faCoffee
 } from '@fortawesome/free-solid-svg-icons';
-import { Alchemy, Network } from 'alchemy-sdk';
-import Moralis from 'moralis';
-
-// Initialize Alchemy
-const alchemyConfig = {
-  apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
-  network: process.env.NEXT_PUBLIC_ALCHEMY_NETWORK as Network,
-};
-const alchemy = new Alchemy(alchemyConfig);
-
-// Initialize Moralis
-Moralis.start({
-  apiKey: process.env.NEXT_PUBLIC_MORALIS_API_KEY,
-});
-
-
-interface Transaction {
-  id: string;
-  type: 'send' | 'receive';
-  amount: string;
-  address: string;
-  timestamp: number;
-  status: 'pending' | 'completed' | 'failed';
-}
+import { useAppState } from '../context/AppContext';
+import type { WalletTransaction } from '../types/wallet';
+import LoadingSpinner from '../components/LoadingSpinner';
+import FundWalletModal from '../components/admin/wallet/FundWalletModal';
+import { securedApi } from '../../utils/auth';
 
 export default function Wallet() {
-  const [balance, setBalance] = useState<string>('0.00');
-  const [address, setAddress] = useState<string>('');
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [showSend, setShowSend] = useState(false);
+  const { appData } = useAppState();
+  const [showFundModal, setShowFundModal] = useState(false);
+  const [drinkAmount, setDrinkAmount] = useState('5');
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  useEffect(() => {
-    initializeWallet();
-  }, []);
+  // Add console logging to inspect user data
+  console.log('User Data:', {
+    user: appData?.user,
+    balance: appData?.user?.balance,
+    pendingBalance: appData?.user?.pendingBalance,
+    fullAppData: appData // Log full appData to see entire structure
+  });
 
-  const initializeWallet = async () => {
+  if (!appData?.user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <LoadingSpinner size="large" />
+      </div>
+    );
+  }
+
+  const transactions = appData.data.transactions || [];
+  const addresses = appData.user.addresses || [];
+
+  const handleBuyDrink = async () => {
     try {
-      // Initialize Alchemy/Moralis SDK here
-      // const provider = new ethers.providers.AlchemyProvider();
-      // Fetch wallet data
-      setLoading(false);
+      setIsProcessing(true);
+      const amount = parseFloat(drinkAmount);
+      
+      if (amount < 5) {
+        throw new Error('Minimum amount is $5');
+      }
+
+      const response = await securedApi.callBackendFunction({
+        functionName: 'processInternalPayment',
+        amount: drinkAmount,
+        purpose: 'buy_drink',
+        userId: appData?.user?.userId
+      });
+
+      if (response.success) {
+        appData.user.balance = response.data.newBalance;
+        setDrinkAmount('5'); // Reset to minimum
+      }
     } catch (error) {
-      console.error('Error initializing wallet:', error);
-      setLoading(false);
+      console.error('Failed to process drink payment:', error);
+    } finally {
+      setIsProcessing(false);
     }
   };
 
   return (
     <div className="p-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        {/* Balance Card */}
-        <div className="bg-white rounded-lg shadow-md p-6 col-span-2">
+      {/* Balance Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-8">
+        {/* Available Balance Card */}
+        <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">Your Balance</h2>
+            <h2 className="text-xl font-bold text-gray-900">Available Balance</h2>
             <FontAwesomeIcon icon={faWallet} className="w-6 h-6 text-blue-500" />
           </div>
-          {loading ? (
-            <FontAwesomeIcon icon={faSpinner} className="w-6 h-6 animate-spin" />
-          ) : (
-            <div className="text-3xl font-bold text-gray-900">${balance}</div>
+          <div className="text-3xl font-bold text-gray-900">
+            ${appData?.user?.balance || '0.00'}
+          </div>
+          {parseFloat(appData?.user?.pendingBalance || '0') > 0 && (
+            <div className="text-sm text-gray-500 mt-1">
+              Pending: ${appData?.user?.pendingBalance}
+            </div>
           )}
-          <div className="mt-4 flex space-x-4">
+          <div className="mt-6">
             <button
-              onClick={() => setShowSend(true)}
-              className="btn-primary flex items-center"
+              onClick={() => setShowFundModal(true)}
+              className="w-full btn-primary flex items-center justify-center"
             >
-              <FontAwesomeIcon icon={faExchangeAlt} className="w-4 h-4 mr-2" />
-              Send/Receive
-            </button>
-            <button className="btn-secondary flex items-center">
-              <FontAwesomeIcon icon={faQrcode} className="w-4 h-4 mr-2" />
-              Show QR Code
+              <FontAwesomeIcon icon={faMoneyBillWave} className="w-4 h-4 mr-2" />
+              Add Funds
             </button>
           </div>
         </div>
 
-        {/* Address Card */}
+        {/* Buy us a drink Card */}
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Wallet Address</h2>
-          <div className="break-all text-sm text-gray-600">
-            {address || 'No wallet connected'}
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-gray-900">Buy us a drink</h2>
+            <FontAwesomeIcon icon={faCoffee} className="w-6 h-6 text-amber-500" />
+          </div>
+          <div className="space-y-4">
+            <p className="text-gray-600">Support our team with a virtual drink!</p>
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="drinkAmount" className="block text-sm font-medium text-gray-700 mb-1">
+                  Amount (min. $5)
+                </label>
+                <div className="relative rounded-md shadow-sm">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <span className="text-gray-500 sm:text-sm">$</span>
+                  </div>
+                  <input
+                    type="number"
+                    id="drinkAmount"
+                    min="5"
+                    step="1"
+                    value={drinkAmount}
+                    onChange={(e) => setDrinkAmount(e.target.value)}
+                    className="focus:ring-amber-500 focus:border-amber-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md"
+                    placeholder="5"
+                  />
+                </div>
+              </div>
+              <button
+                onClick={handleBuyDrink}
+                disabled={isProcessing || parseFloat(drinkAmount) < 5}
+                className="w-full py-2 px-4 bg-amber-500 hover:bg-amber-600 disabled:bg-amber-300 text-white rounded-lg transition-colors flex items-center justify-center"
+              >
+                {isProcessing ? (
+                  <>
+                    <FontAwesomeIcon icon={faSpinner} className="w-4 h-4 mr-2 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <FontAwesomeIcon icon={faCoffee} className="w-4 h-4 mr-2" />
+                    Buy Drink
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -105,13 +157,10 @@ export default function Wallet() {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Type
+                  Reference
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Amount
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Address
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Date
@@ -122,23 +171,16 @@ export default function Wallet() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {transactions.map((tx) => (
+              {transactions.map((tx: WalletTransaction) => (
                 <tr key={tx.id}>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      tx.type === 'receive' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
-                    }`}>
-                      {tx.type === 'receive' ? 'Received' : 'Sent'}
-                    </span>
+                    <div className="text-sm text-gray-900">
+                      {tx.reference}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">
                       ${tx.amount}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500 truncate max-w-xs">
-                      {tx.address}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -162,17 +204,13 @@ export default function Wallet() {
         </div>
       </div>
 
-      {/* Send/Receive Modal */}
-      {showSend && (
-        <SendReceiveModal
-          onClose={() => setShowSend(false)}
-          onSend={(data) => {
-            // Handle send transaction
-          }}
+      {/* Fund Modal */}
+      {showFundModal && (
+        <FundWalletModal
+          onClose={() => setShowFundModal(false)}
+          addresses={addresses}
         />
       )}
     </div>
   );
 }
-
-// Add SendReceiveModal component implementation
