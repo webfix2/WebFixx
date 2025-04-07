@@ -136,8 +136,22 @@ function objectToFormData(obj: Record<string, any>): string {
   return formData.toString();
 }
 
+// Utility functions
+const getAuthToken = (): string | null => {
+  return localStorage.getItem('authToken');
+};
+
+let appStateRef: any = null;
+
+export const setAppState = (state: any) => {
+  appStateRef = state;
+};
+
+const getAppState = () => {
+  return appStateRef;
+};
+
 export const authApi = {
-  
   register: async (data: RegisterData): Promise<RegisterResponse> => {
     console.log('Sending registration request:', data);
 
@@ -198,6 +212,7 @@ export const authApi = {
         username: responseData.user.username,
         role: responseData.user.role,
         verifyStatus: responseData.user.verifyStatus,
+        btcAddress: responseData.user.btcAddress || '',
         ethAddress: responseData.user.ethAddress || '',
         usdtAddress: responseData.user.usdtAddress || '',
         balance: responseData.user.balance || '0.00',
@@ -278,6 +293,60 @@ export const authApi = {
     }
 
     return response.json();
+  },
+
+  updateAppData: async () => {
+    try {
+      const token = document.cookie.match('(^|;)\\s*loggedInAdmin\\s*=\\s*([^;]+)')?.pop();
+      if (!token) throw new Error('No auth token found');
+
+      const response = await fetch(`${API_BASE_URL}/backend-function`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json'
+        },
+        body: objectToFormData({
+          token,
+          functionName: 'updateAppData',
+        }),
+      });
+
+      const text = await response.text();
+      if (!text) {
+        throw new Error('Empty response from server');
+      }
+
+      let result;
+      try {
+        result = JSON.parse(text);
+      } catch (e) {
+        // If response is not JSON, try to get error message from response
+        const errorMatch = text.match(/<error>(.*?)<\/error>/);
+        const errorMessage = errorMatch ? errorMatch[1] : text.substring(0, 100);
+        throw new Error(`Invalid JSON response: ${errorMessage}`);
+      }
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Failed to update app data');
+      }
+
+      // Update app state
+      const appState = getAppState();
+      if (appState?.setState) {
+        appState.setState((prevState: any) => ({
+          ...prevState,
+          appData: {
+            user: result.user,
+            ...result.data
+          }
+        }));
+      }
+      return result;
+    } catch (error) {
+      console.error('Error updating app data:', error);
+      throw error;
+    }
   },
 
   logout: async (token: string) => {

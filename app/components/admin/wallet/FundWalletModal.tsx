@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faArrowLeft, 
   faTimes, 
   faCopy, 
-  faWallet 
+  faWallet,
+  faArrowUpRightFromSquare 
 } from '@fortawesome/free-solid-svg-icons';
 import { 
   faBtc, 
@@ -15,11 +16,15 @@ import { QRCodeSVG } from 'qrcode.react';
 import { securedApi } from "../../../../utils/auth";
 import { useAppState } from "../../../../app/context/AppContext";
 import { convertToPaymentResponse } from '../../../types/wallet';
+import LoadingSpinner from '../../LoadingSpinner';
 import type { 
   PaymentMethod, 
   PaymentDetails, 
-  PaymentApiResponse 
+  PaymentApiResponse,
+  WalletTransaction 
 } from '../../../types/wallet';
+import { authApi } from '../../../../utils/auth';
+import { timerStorage } from '../../../../utils/timer';
 
 const iconMap: Record<string, IconDefinition> = {
   arrowLeft: faArrowLeft,
@@ -36,6 +41,13 @@ interface FundWalletModalProps {
 
 type Step = 'amount' | 'method' | 'payment';
 
+type TimeRemaining = {
+  minutes: number;
+  seconds: number;
+};
+
+type PaymentStatus = 'pending' | 'completed' | 'expired';
+
 export default function FundWalletModal({ onClose }: FundWalletModalProps) {
   const { appData } = useAppState();
   const [currentStep, setCurrentStep] = useState<Step>('amount');
@@ -44,18 +56,214 @@ export default function FundWalletModal({ onClose }: FundWalletModalProps) {
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(null);
   const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(null);
   const [copied, setCopied] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState<TimeRemaining>({ minutes: 30, seconds: 0 });
+  const [countdownInterval, setCountdownInterval] = useState<NodeJS.Timeout | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>('pending');
+  const [showPaymentPrompt, setShowPaymentPrompt] = useState(false);
+  const statusCheckIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const orderIdRef = useRef<string | null>(null);
 
-  useEffect(() => {
-    if (!appData?.user) {
-      onClose();
+  // Function to check payment status from app state
+  const checkPaymentStatus = useCallback(async () => {
+    if (!orderIdRef.current) return;
+
+    try {
+      // Update app data to get latest transactions
+      const result = await authApi.updateAppData();
+      
+      if (!result?.data?.transactions) {
+        console.log('No transactions found in response:', result);
+        return;
+      }
+
+      // Find matching transaction by orderId
+      const matchingTransaction = result.data.transactions.find(
+        (tx: WalletTransaction) => tx.reference === orderIdRef.current
+      );
+
+      console.log('Found transaction:', matchingTransaction);
+
+      if (matchingTransaction?.status === 'completed') {
+        // Clear intervals before state updates
+        if (countdownInterval) {
+          clearInterval(countdownInterval);
+          setCountdownInterval(null);
+        }
+        if (statusCheckIntervalRef.current) {
+          clearInterval(statusCheckIntervalRef.current);
+          statusCheckIntervalRef.current = null;
+        }
+        setPaymentStatus('completed');
+        // Show success message
+        alert('Payment confirmed! Your balance has been updated.');
+        onClose();
+      }
+    } catch (error) {
+      console.error('Error checking payment status:', error);
+      // Don't throw the error - just log it and continue
     }
-  }, [appData?.user, onClose]);
-  
+  }, [countdownInterval, onClose]);
+
+  // Start status checking
+  useEffect(() => {
+    let isActive = true;
+    
+    const startStatusCheck = async () => {
+      if (currentStep === 'payment' && paymentStatus === 'pending') {
+        // Clear any existing interval
+        if (statusCheckIntervalRef.current) {
+          clearInterval(statusCheckIntervalRef.current);
+          statusCheckIntervalRef.current = null;
+        }
+
+        // Initial check
+        if (isActive) {
+          try {
+            await checkPaymentStatus();
+          } catch (error) {
+            console.error('Initial status check failed:', error);
+          }
+        }
+
+        // Set up interval for subsequent checks
+        if (isActive) {
+          statusCheckIntervalRef.current = setInterval(checkPaymentStatus, 120000); // 2 minutes
+        }
+
+        // Set timer for payment prompt (5 minutes)
+        const promptTimeout = setTimeout(() => {
+          if (isActive) {
+            setShowPaymentPrompt(true);
+          }
+        }, 300000); // 5 minutes
+
+        return () => {
+          isActive = false;
+          if (statusCheckIntervalRef.current) {
+            clearInterval(statusCheckIntervalRef.current);
+            statusCheckIntervalRef.current = null;
+          }
+          clearTimeout(promptTimeout);
+        };
+      }
+    };
+
+    startStatusCheck();
+
+    return () => {
+      isActive = false;
+      if (statusCheckIntervalRef.current) {
+        clearInterval(statusCheckIntervalRef.current);
+        statusCheckIntervalRef.current = null;
+      }
+    };
+  }, [currentStep, paymentStatus, checkPaymentStatus]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (statusCheckIntervalRef.current) {
+        clearInterval(statusCheckIntervalRef.current);
+        statusCheckIntervalRef.current = null;
+      }
+      if (countdownInterval) {
+        clearInterval(countdownInterval);
+      }
+    };
+  }, [countdownInterval]);
+
+  const startCountdown = useCallback(() => {
+    if (!paymentDetails?.orderId) return;
+
+    // Initialize or get existing timer
+    const storedTimer = timerStorage.getTimer(paymentDetails.orderId);
+    if (!storedTimer) {
+      // Start new 30-minute timer
+      timerStorage.setTimer(paymentDetails.orderId, 1800);
+    }
+
+    if (countdownInterval) {
+      clearInterval(countdownInterval);
+    }
+
+    const interval = setInterval(() => {
+      if (!paymentDetails?.orderId) return;
+
+      const remaining = timerStorage.getRemainingTime(paymentDetails.orderId);
+      if (!remaining) {
+        clearInterval(interval);
+        handleExpiry();
+        return;
+      }
+
+      setTimeRemaining(remaining);
+
+      if (remaining.minutes === 0 && remaining.seconds === 0) {
+        clearInterval(interval);
+        handleExpiry();
+      }
+    }, 1000);
+
+    setCountdownInterval(interval);
+
+    // Set initial time
+    const initialTime = timerStorage.getRemainingTime(paymentDetails.orderId);
+    if (initialTime) {
+      setTimeRemaining(initialTime);
+    }
+  }, [paymentDetails?.orderId]);
+
+  // Handle countdown expiry
+  const handleExpiry = useCallback(() => {
+    if (orderIdRef.current) {
+      timerStorage.clearTimer(orderIdRef.current);
+    }
+    setPaymentStatus('expired');
+    if (statusCheckIntervalRef.current) {
+      clearInterval(statusCheckIntervalRef.current);
+      statusCheckIntervalRef.current = null;
+    }
+    if (countdownInterval) {
+      clearInterval(countdownInterval);
+    }
+  }, [countdownInterval]);
+
+  // Start/resume countdown when returning to payment view
+  useEffect(() => {
+    if (currentStep === 'payment' && paymentStatus === 'pending' && paymentDetails?.orderId) {
+      const remaining = timerStorage.getRemainingTime(paymentDetails.orderId);
+      if (remaining) {
+        if (remaining.minutes === 0 && remaining.seconds === 0) {
+          handleExpiry();
+        } else {
+          startCountdown();
+        }
+      }
+    }
+  }, [currentStep, paymentStatus, paymentDetails?.orderId, startCountdown, handleExpiry]);
+
+  // Update orderIdRef when paymentDetails changes
+  useEffect(() => {
+    orderIdRef.current = paymentDetails?.orderId || null;
+  }, [paymentDetails?.orderId]);
+
+  const handlePaymentPromptResponse = (hasPaid: boolean) => {
+    if (hasPaid) {
+      // User claims they've paid, close modal as balance will update automatically
+      onClose();
+    } else {
+      // User hasn't paid, hide prompt and continue showing payment view
+      setShowPaymentPrompt(false);
+    }
+  };
+
   const handleProceed = async () => {
     const user = appData?.user;
     if (!user) return;
   
     console.log("Handling proceed with current step: ", currentStep);
+    setIsLoading(true);
     
     if (currentStep === 'amount' && amount && agreed) {
       try {
@@ -70,6 +278,7 @@ export default function FundWalletModal({ onClose }: FundWalletModalProps) {
   
         if (!apiResponse || !apiResponse.data) {
           console.error('API response does not contain the expected data:', apiResponse);
+          setIsLoading(false);
           return;
         }
   
@@ -79,7 +288,7 @@ export default function FundWalletModal({ onClose }: FundWalletModalProps) {
         if (response.success && response.data) {
           const paymentData: PaymentDetails = {
             orderId: response.data.orderId,
-            amount: response.data.amount,
+            amount: amount,
             currency: selectedMethod || 'BTC',
             address: '',
             timeRemaining: response.data.timeRemaining,
@@ -90,18 +299,42 @@ export default function FundWalletModal({ onClose }: FundWalletModalProps) {
             usdAmount: amount
           };
           setPaymentDetails(paymentData);
+          orderIdRef.current = paymentData.orderId;
           setCurrentStep('method');
         }
       } catch (error) {
         console.error('Failed to get exchange rates:', error);
+      } finally {
+        setIsLoading(false);
       }
-    } else if (currentStep === 'method' && selectedMethod) {
+    } else if (currentStep === 'method' && selectedMethod && paymentDetails) {
       try {
+        const user = appData?.user;
+        if (!user) {
+          console.error('User data is not available');
+          setIsLoading(false);
+          return;
+        }
+
+        const coinValue = selectedMethod === 'BTC' 
+          ? paymentDetails.btcAmount 
+          : selectedMethod === 'ETH'
+          ? paymentDetails.ethAmount
+          : paymentDetails.usdtAmount;
+
+        if (!coinValue) {
+          console.error(`No ${selectedMethod} amount available`);
+          setIsLoading(false);
+          return;
+        }
+
         const requestData = {
           functionName: 'initializePayment',
-          amount,
+          userId: user.userId,
+          amount: paymentDetails.amount,
+          coinValue: coinValue,
           currency: selectedMethod,
-          orderId: paymentDetails?.orderId,
+          orderId: paymentDetails.orderId,
         };
         console.log('Data sent to API (initializePayment):', requestData);
   
@@ -110,6 +343,7 @@ export default function FundWalletModal({ onClose }: FundWalletModalProps) {
   
         if (!apiResponse || !apiResponse.data) {
           console.error('API response does not contain the expected data:', apiResponse);
+          setIsLoading(false);
           return;
         }
   
@@ -117,35 +351,37 @@ export default function FundWalletModal({ onClose }: FundWalletModalProps) {
         console.log("Converted payment initialization response:", response);
   
         if (response.success && response.data) {
+          const userAddress = selectedMethod === 'BTC' 
+            ? user.btcAddress 
+            : selectedMethod === 'ETH'
+            ? user.ethAddress
+            : user.usdtAddress;
+
+          if (!userAddress) {
+            console.error(`No ${selectedMethod} address found for user`);
+            setIsLoading(false);
+            return;
+          }
+
           const updatedPaymentDetails: PaymentDetails = {
-            orderId: response.data.orderId,
-            amount: response.data.amount,
-            currency: selectedMethod,
-            address: selectedMethod === 'BTC'
-              ? user.btcAddress
-              : selectedMethod === 'ETH'
-              ? user.ethAddress
-              : user.usdtAddress,
-            timeRemaining: response.data.timeRemaining,
-            exchangeRate: response.data.exchangeRate,
-            btcAmount: response.data.btcAmount,
-            ethAmount: response.data.ethAmount,
-            usdtAmount: response.data.usdtAmount,
-            usdAmount: amount
+            ...paymentDetails,
+            address: userAddress,
+            timeRemaining: 1800,
+            currency: selectedMethod
           };
   
           setPaymentDetails(updatedPaymentDetails);
+          setTimeRemaining({ minutes: 30, seconds: 0 });
+          startCountdown();
           setCurrentStep('payment');
         }
       } catch (error) {
         console.error('Payment initialization failed:', error);
+      } finally {
+        setIsLoading(false);
       }
     }
   };
-
-  if (!appData?.user) {
-    return null;
-  }
 
   const copyToClipboard = async (text: string) => {
     try {
@@ -326,25 +562,83 @@ export default function FundWalletModal({ onClose }: FundWalletModalProps) {
       paymentDetails?.usdtAmount || ''
     );
 
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center">
+    const formatTime = (time: TimeRemaining) => {
+      return `${String(time.minutes).padStart(2, '0')}:${String(time.seconds).padStart(2, '0')}`;
+    };
+
+    const getCryptoAmount = () => {
+      if (!paymentDetails) return '0';
+      switch (selectedMethod) {
+        case 'BTC':
+          return paymentDetails.btcAmount;
+        case 'ETH':
+          return paymentDetails.ethAmount;
+        case 'USDT':
+          return paymentDetails.usdtAmount;
+        default:
+          return '0';
+      }
+    };
+
+    if (paymentStatus === 'expired') {
+      return (
+        <div className="space-y-6 text-center">
+          <div className="space-y-2">
+            <h3 className="text-xl font-bold text-gray-900">Order Expired</h3>
+            <p className="text-gray-500">This order has expired</p>
+          </div>
+          
+          <div className="bg-yellow-50 border border-yellow-100 p-4 rounded-lg">
+            <h4 className="font-medium text-yellow-800">Already sent funds?</h4>
+            <p className="text-sm text-yellow-700 mt-1">
+              Don't worry, funds are not lost. Contact us on support from your dashboard.
+            </p>
+          </div>
+
           <button
-            onClick={() => setCurrentStep('method')}
-            className="p-2 hover:bg-gray-100 rounded-full"
+            onClick={onClose}
+            className="inline-flex items-center px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors"
           >
-            {renderIcon('arrowLeft')}
+            View details
           </button>
-          <h3 className="text-xl font-bold text-gray-900 ml-2">Payment</h3>
         </div>
-        <div className="text-center space-y-4">
-          <div className="text-sm text-gray-500">Time remaining {paymentDetails?.timeRemaining}</div>
+      );
+    }
+
+    if (showPaymentPrompt) {
+      return (
+        <div className="space-y-6 text-center">
+          <h3 className="text-xl font-bold text-gray-900">Have you made the payment?</h3>
+          <div className="space-y-3">
+            <button
+              onClick={() => handlePaymentPromptResponse(true)}
+              className="w-full px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors"
+            >
+              Yes, I've made the payment
+            </button>
+            <button
+              onClick={() => handlePaymentPromptResponse(false)}
+              className="w-full px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors"
+            >
+              No, continue waiting
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-5">
+        <div className="text-center space-y-3">
+          <h3 className="text-xl font-bold text-gray-900">Payment</h3>
+          <div className="text-sm text-gray-500">Time remaining {formatTime(timeRemaining)}</div>
           <div>
-            <div className="text-sm text-gray-600 mb-1">Send this amount</div>
-            <div className="text-xl font-bold">
-              {selectedMethod === 'BTC' ? paymentDetails?.btcAmount :
-               selectedMethod === 'ETH' ? paymentDetails?.ethAmount :
-               paymentDetails?.usdtAmount} {selectedMethod}
+            <div className="text-sm text-gray-600">Send this amount</div>
+            <div className="text-2xl font-bold mt-1">
+              {getCryptoAmount()} {selectedMethod}
+            </div>
+            <div className="text-sm text-gray-500 mt-1">
+              (≈ ${paymentDetails?.amount} USD)
             </div>
             <div className="text-sm text-gray-500">
               {selectedMethod === 'BTC' ? '(Bitcoin Network)' :
@@ -353,16 +647,18 @@ export default function FundWalletModal({ onClose }: FundWalletModalProps) {
             </div>
           </div>
         </div>
-        <div className="flex justify-center">
+
+        <div className="flex justify-center py-2">
           <div className="p-4 bg-white rounded-lg shadow-sm">
             <QRCodeSVG
               value={paymentDetails?.address || ''}
-              size={200}
+              size={180}
               level="H"
               includeMargin={true}
             />
           </div>
         </div>
+
         <div className="bg-gray-50 p-4 rounded-lg">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             To this {selectedMethod} address
@@ -377,23 +673,33 @@ export default function FundWalletModal({ onClose }: FundWalletModalProps) {
             <button
               onClick={() => copyToClipboard(paymentDetails?.address || '')}
               className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
+              title={copied ? "Copied!" : "Copy to clipboard"}
             >
               {renderIcon('copy')}
             </button>
           </div>
         </div>
+
         <div className="flex justify-center">
           <a
             href={walletUri}
+            target=""
+            rel="noopener noreferrer"
             className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
           >
             {renderIcon('wallet')}
-            Open in Wallet
+            <span className="mx-2">Open in Wallet</span>
+            <FontAwesomeIcon 
+              icon={faArrowUpRightFromSquare} 
+              className="h-4 w-4"
+            />
           </a>
         </div>
-        <div className="bg-yellow-50 border border-yellow-100 p-4 rounded-lg text-sm">
+
+        <div className="bg-yellow-50 border border-yellow-100 p-3 rounded-lg text-sm">
           <p>{getPaymentWarning(selectedMethod!)}</p>
         </div>
+
         <div className="text-xs text-gray-500 text-center">
           order id: {paymentDetails?.orderId}
         </div>
@@ -412,16 +718,41 @@ export default function FundWalletModal({ onClose }: FundWalletModalProps) {
     }
   };
 
+  useEffect(() => {
+    if (!appData?.user) {
+      onClose();
+    }
+  }, [appData?.user, onClose]);
+
+  useEffect(() => {
+    return () => {
+      if (countdownInterval) {
+        clearInterval(countdownInterval);
+      }
+    };
+  }, [countdownInterval]);
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 relative">
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-500"
-        >
-          {renderIcon('times')}
-        </button>
-        {renderStep()}
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg w-full max-w-md relative max-h-[90vh] overflow-y-auto">
+        <div className="p-6">
+          {currentStep === 'payment' ? (
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-500"
+            >
+              {renderIcon('times')}
+            </button>
+          ) : null}
+          {isLoading ? (
+            <LoadingSpinner 
+              size="default"
+              text={currentStep === 'amount' ? 'Getting exchange rates...' : 'Initializing payment...'}
+            />
+          ) : (
+            renderStep()
+          )}
+        </div>
       </div>
     </div>
   );
