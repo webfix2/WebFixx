@@ -165,8 +165,8 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
     // Initial session restore
     restoreSession();
 
-    // Set up interval for periodic validation (30 minutes)
-    intervalId = setInterval(restoreSession, 30 * 60 * 1000);
+    // Set up interval for periodic validation (1 hour)
+    intervalId = setInterval(restoreSession, 60 * 60 * 1000);
 
     return () => {
       isMounted = false;
@@ -279,13 +279,13 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
       {visibleLinks.projectLinks && (
         <Link href="/project-links" className="nav-link" onClick={handleNavClick}>
           <FontAwesomeIcon icon={faLink} className="w-5 h-5" />
-          <span className="ml-3">Project Links</span>
+          <span className="ml-3">Links</span>
         </Link>
       )}
       {visibleLinks.redirectLinks && (
         <Link href="/redirect-links" className="nav-link" onClick={handleNavClick}>
           <FontAwesomeIcon icon={faRandom} className="w-5 h-5" />
-          <span className="ml-3">Redirect Links</span>
+          <span className="ml-3">Redirect</span>
         </Link>
       )}
       {visibleLinks.customDev && (

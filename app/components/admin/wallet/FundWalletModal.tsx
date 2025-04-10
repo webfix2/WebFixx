@@ -14,7 +14,7 @@ import {
 import { IconDefinition } from '@fortawesome/fontawesome-common-types';
 import { QRCodeSVG } from 'qrcode.react';
 import { securedApi } from "../../../../utils/auth";
-import { useAppState } from "../../../../app/context/AppContext";
+import { useAppState, } from "../../../../app/context/AppContext";
 import { convertToPaymentResponse } from '../../../types/wallet';
 import LoadingSpinner from '../../LoadingSpinner';
 import type { 
@@ -37,6 +37,7 @@ const iconMap: Record<string, IconDefinition> = {
 
 interface FundWalletModalProps {
   onClose: () => void;
+  addresses?: any[]; 
 }
 
 type Step = 'amount' | 'method' | 'payment';
@@ -48,8 +49,8 @@ type TimeRemaining = {
 
 type PaymentStatus = 'pending' | 'completed' | 'expired';
 
-export default function FundWalletModal({ onClose }: FundWalletModalProps) {
-  const { appData } = useAppState();
+export default function FundWalletModal({ onClose, addresses }: FundWalletModalProps) {
+  const { appData, setAppData } = useAppState();
   const [currentStep, setCurrentStep] = useState<Step>('amount');
   const [amount, setAmount] = useState('');
   const [agreed, setAgreed] = useState(false);
@@ -70,156 +71,100 @@ export default function FundWalletModal({ onClose }: FundWalletModalProps) {
 
     try {
       // Update app data to get latest transactions
-      const result = await authApi.updateAppData();
+      const result = await authApi.updateAppData(setAppData);
       
       if (!result?.data?.transactions) {
-        console.log('No transactions found in response:', result);
+        console.log('No transactions array in response');
         return;
       }
 
       // Find matching transaction by orderId
-      const matchingTransaction = result.data.transactions.find(
-        (tx: WalletTransaction) => tx.reference === orderIdRef.current
-      );
+      const matchingTransaction = result.data.transactions.find((tx: any[]) => {
+        const orderId = tx[9]; // orderId is at index 9
+        return orderId === orderIdRef.current;
+      });
 
-      console.log('Found transaction:', matchingTransaction);
-
-      if (matchingTransaction?.status === 'completed') {
-        // Clear intervals before state updates
-        if (countdownInterval) {
-          clearInterval(countdownInterval);
-          setCountdownInterval(null);
-        }
-        if (statusCheckIntervalRef.current) {
-          clearInterval(statusCheckIntervalRef.current);
-          statusCheckIntervalRef.current = null;
-        }
-        setPaymentStatus('completed');
-        // Show success message
-        alert('Payment confirmed! Your balance has been updated.');
-        onClose();
-      }
-    } catch (error) {
-      console.error('Error checking payment status:', error);
-      // Don't throw the error - just log it and continue
-    }
-  }, [countdownInterval, onClose]);
-
-  // Start status checking
-  useEffect(() => {
-    let isActive = true;
-    
-    const startStatusCheck = async () => {
-      if (currentStep === 'payment' && paymentStatus === 'pending') {
-        // Clear any existing interval
-        if (statusCheckIntervalRef.current) {
-          clearInterval(statusCheckIntervalRef.current);
-          statusCheckIntervalRef.current = null;
-        }
-
-        // Initial check
-        if (isActive) {
-          try {
-            await checkPaymentStatus();
-          } catch (error) {
-            console.error('Initial status check failed:', error);
-          }
-        }
-
-        // Set up interval for subsequent checks
-        if (isActive) {
-          statusCheckIntervalRef.current = setInterval(checkPaymentStatus, 120000); // 2 minutes
-        }
-
-        // Set timer for payment prompt (5 minutes)
-        const promptTimeout = setTimeout(() => {
-          if (isActive) {
-            setShowPaymentPrompt(true);
-          }
-        }, 300000); // 5 minutes
-
-        return () => {
-          isActive = false;
+      if (matchingTransaction) {
+        const status = matchingTransaction[13]; // status is at index 13
+        
+        if (status === 'completed' && paymentStatus !== 'completed') {
+          // Clear interval and update state
           if (statusCheckIntervalRef.current) {
             clearInterval(statusCheckIntervalRef.current);
             statusCheckIntervalRef.current = null;
           }
-          clearTimeout(promptTimeout);
-        };
+          setPaymentStatus('completed');
+        }
       }
-    };
+    } catch (error) {
+      console.error('Error checking payment status:', error);
+    }
+  }, [onClose, paymentStatus]);
 
-    startStatusCheck();
-
-    return () => {
-      isActive = false;
-      if (statusCheckIntervalRef.current) {
-        clearInterval(statusCheckIntervalRef.current);
-        statusCheckIntervalRef.current = null;
-      }
-    };
-  }, [currentStep, paymentStatus, checkPaymentStatus]);
-
-  // Cleanup on unmount
+  // Start status checking
   useEffect(() => {
-    return () => {
+    let mounted = true;
+    let checkInterval: NodeJS.Timeout | null = null;
+    let promptTimeoutId: NodeJS.Timeout | null = null;
+
+    const cleanup = () => {
+      mounted = false;
+      if (checkInterval) {
+        clearInterval(checkInterval);
+      }
+      if (promptTimeoutId) {
+        clearTimeout(promptTimeoutId);
+      }
       if (statusCheckIntervalRef.current) {
         clearInterval(statusCheckIntervalRef.current);
         statusCheckIntervalRef.current = null;
       }
-      if (countdownInterval) {
-        clearInterval(countdownInterval);
-      }
     };
-  }, [countdownInterval]);
 
-  const startCountdown = useCallback(() => {
-    if (!paymentDetails?.orderId) return;
+    // Only start if we need to check payment status
+    if (currentStep === 'payment' && paymentStatus === 'pending' && !statusCheckIntervalRef.current) {
+      // Initial check
+      const initialCheck = async () => {
+        if (!mounted) return;
+        try {
+          await checkPaymentStatus();
+        } catch (error) {
+          console.error('Initial payment status check failed:', error);
+        }
+      };
+      initialCheck();
 
-    // Initialize or get existing timer
-    const storedTimer = timerStorage.getTimer(paymentDetails.orderId);
-    if (!storedTimer) {
-      // Start new 30-minute timer
-      timerStorage.setTimer(paymentDetails.orderId, 1800);
-    }
+      // Set up interval for subsequent checks
+      checkInterval = setInterval(() => {
+        if (!mounted) return;
+        checkPaymentStatus().catch(error => {
+          console.error('Periodic payment status check failed:', error);
+        });
+      }, 120000); // 2 minutes
 
-    if (countdownInterval) {
-      clearInterval(countdownInterval);
-    }
+      // Store interval reference
+      statusCheckIntervalRef.current = checkInterval;
 
-    const interval = setInterval(() => {
-      if (!paymentDetails?.orderId) return;
-
-      const remaining = timerStorage.getRemainingTime(paymentDetails.orderId);
-      if (!remaining) {
-        clearInterval(interval);
-        handleExpiry();
-        return;
+      // Set up payment prompt timeout
+      if (!showPaymentPrompt) {
+        promptTimeoutId = setTimeout(() => {
+          if (mounted && paymentStatus === 'pending') {
+            setShowPaymentPrompt(true);
+          }
+        }, 300000); // 5 minutes
       }
-
-      setTimeRemaining(remaining);
-
-      if (remaining.minutes === 0 && remaining.seconds === 0) {
-        clearInterval(interval);
-        handleExpiry();
-      }
-    }, 1000);
-
-    setCountdownInterval(interval);
-
-    // Set initial time
-    const initialTime = timerStorage.getRemainingTime(paymentDetails.orderId);
-    if (initialTime) {
-      setTimeRemaining(initialTime);
     }
-  }, [paymentDetails?.orderId]);
+
+    return cleanup;
+  }, [currentStep, paymentStatus, showPaymentPrompt, checkPaymentStatus]);
 
   // Handle countdown expiry
   const handleExpiry = useCallback(() => {
     if (orderIdRef.current) {
       timerStorage.clearTimer(orderIdRef.current);
     }
-    setPaymentStatus('expired');
+    setPaymentStatus(prev => prev !== 'expired' ? 'expired' : prev);
+    
     if (statusCheckIntervalRef.current) {
       clearInterval(statusCheckIntervalRef.current);
       statusCheckIntervalRef.current = null;
@@ -227,26 +172,74 @@ export default function FundWalletModal({ onClose }: FundWalletModalProps) {
     if (countdownInterval) {
       clearInterval(countdownInterval);
     }
-  }, [countdownInterval]);
+  }, []); // No dependencies needed
+
+  const startCountdown = useCallback(() => {
+    if (!paymentDetails?.orderId) return null;
+
+    // Initialize or get existing timer
+    const storedTimer = timerStorage.getTimer(paymentDetails.orderId);
+    if (!storedTimer) {
+      timerStorage.setTimer(paymentDetails.orderId, 900); // 15 minutes
+    }
+
+    // Clear any existing interval
+    if (countdownInterval) {
+      clearInterval(countdownInterval);
+    }
+
+    // Start new interval
+    const interval = setInterval(() => {
+      const remaining = timerStorage.getRemainingTime(paymentDetails.orderId);
+      if (!remaining) {
+        clearInterval(interval);
+        handleExpiry();
+        return;
+      }
+
+      // Only update state if time has changed
+      setTimeRemaining(prev => {
+        if (prev?.minutes === remaining.minutes && prev?.seconds === remaining.seconds) {
+          return prev;
+        }
+        return remaining;
+      });
+
+      if (remaining.minutes === 0 && remaining.seconds === 0) {
+        clearInterval(interval);
+        handleExpiry();
+      }
+    }, 1000);
+
+    // Set initial time without triggering re-render if unchanged
+    const initialTime = timerStorage.getRemainingTime(paymentDetails.orderId);
+    if (initialTime) {
+      setTimeRemaining(prev => {
+        if (prev?.minutes === initialTime.minutes && prev?.seconds === initialTime.seconds) {
+          return prev;
+        }
+        return initialTime;
+      });
+    }
+
+    return interval;
+  }, [paymentDetails?.orderId, handleExpiry]);
 
   // Start/resume countdown when returning to payment view
   useEffect(() => {
     if (currentStep === 'payment' && paymentStatus === 'pending' && paymentDetails?.orderId) {
-      const remaining = timerStorage.getRemainingTime(paymentDetails.orderId);
-      if (remaining) {
-        if (remaining.minutes === 0 && remaining.seconds === 0) {
-          handleExpiry();
-        } else {
-          startCountdown();
-        }
+      const interval = startCountdown();
+      if (interval) {
+        setCountdownInterval(interval);
       }
-    }
-  }, [currentStep, paymentStatus, paymentDetails?.orderId, startCountdown, handleExpiry]);
 
-  // Update orderIdRef when paymentDetails changes
-  useEffect(() => {
-    orderIdRef.current = paymentDetails?.orderId || null;
-  }, [paymentDetails?.orderId]);
+      return () => {
+        if (interval) {
+          clearInterval(interval);
+        }
+      };
+    }
+  }, [currentStep, paymentStatus, paymentDetails?.orderId, startCountdown]);
 
   const handlePaymentPromptResponse = (hasPaid: boolean) => {
     if (hasPaid) {
@@ -340,6 +333,7 @@ export default function FundWalletModal({ onClose }: FundWalletModalProps) {
   
         const apiResponse = await securedApi.callBackendFunction(requestData);
         console.log('Payment Initialization Response:', apiResponse);
+        const appDataResult = await authApi.updateAppData(setAppData);
   
         if (!apiResponse || !apiResponse.data) {
           console.error('API response does not contain the expected data:', apiResponse);
@@ -425,9 +419,11 @@ export default function FundWalletModal({ onClose }: FundWalletModalProps) {
 
   const renderAmountStep = () => (
     <div className="space-y-6">
-      <h3 className="text-xl font-bold text-gray-900">Add funds</h3>
-      <div className="bg-yellow-50 border border-yellow-100 p-4 rounded-lg text-sm text-yellow-800">
-        We are unable to accept funds from OFAC/FATF sanctioned entities, illicit sources, and individuals from the following countries: Cuba, Iran, North Korea, Russia, Syria, Crimea Region of Ukraine
+      <div className="text-center space-y-3">
+        <h3 className="text-xl font-bold text-gray-900">Add Funds</h3>
+        <p className="text-sm text-yellow-600 bg-yellow-50 p-3 rounded-lg border border-yellow-100">
+          Please follow the payment instructions carefully when making your deposit. Incorrect payment details or network selection may result in loss of funds.
+        </p>
       </div>
       <div className="space-y-4">
         <div className="flex items-center">
@@ -479,19 +475,11 @@ export default function FundWalletModal({ onClose }: FundWalletModalProps) {
 
   const renderMethodStep = () => (
     <div className="space-y-6">
-      <div className="flex items-center">
-        <button
-          onClick={() => setCurrentStep('amount')}
-          className="p-2 hover:bg-gray-100 rounded-full"
-        >
-          {renderIcon('arrowLeft')}
-        </button>
-        <h3 className="text-xl font-bold text-gray-900 ml-2">
-          Add Funds
-        </h3>
-      </div>
-      <div className="text-2xl font-bold text-center py-4">
-        ${amount} USD
+      <div className="text-center space-y-3">
+        <h3 className="text-xl font-bold text-gray-900">Choose Payment Method</h3>
+        <p className="text-sm text-blue-600 bg-blue-50 p-3 rounded-lg border border-blue-100">
+          Please ensure you are ready to make the payment before continuing. The payment window has a time limit and the exchange rate may change if you delay.
+        </p>
       </div>
       <div className="space-y-4">
         <h4 className="font-medium">Choose Payment method</h4>
@@ -605,6 +593,26 @@ export default function FundWalletModal({ onClose }: FundWalletModalProps) {
       );
     }
 
+    if (paymentStatus === 'completed') {
+      return (
+        <div className="space-y-6 text-center">
+          <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+            <FontAwesomeIcon icon={faWallet} className="h-8 w-8 text-green-500" />
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Payment Confirmed!</h3>
+            <p className="text-sm text-gray-600">Your balance has been updated successfully.</p>
+          </div>
+          <button
+            onClick={onClose}
+            className="w-full px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      );
+    }
+
     if (showPaymentPrompt) {
       return (
         <div className="space-y-6 text-center">
@@ -647,6 +655,10 @@ export default function FundWalletModal({ onClose }: FundWalletModalProps) {
             </div>
           </div>
         </div>
+
+<div className="bg-yellow-50 border border-yellow-100 p-3 rounded-lg text-sm">
+  <p>{getPaymentWarning(selectedMethod!)}</p>
+</div>
 
         <div className="flex justify-center py-2">
           <div className="p-4 bg-white rounded-lg shadow-sm">
@@ -694,10 +706,6 @@ export default function FundWalletModal({ onClose }: FundWalletModalProps) {
               className="h-4 w-4"
             />
           </a>
-        </div>
-
-        <div className="bg-yellow-50 border border-yellow-100 p-3 rounded-lg text-sm">
-          <p>{getPaymentWarning(selectedMethod!)}</p>
         </div>
 
         <div className="text-xs text-gray-500 text-center">

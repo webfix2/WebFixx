@@ -54,7 +54,8 @@ export interface AppData {
   projects: any[];
   template: any[];
   hub: any[];
-  links?: any[];
+  redirect?: any[];
+  custom?: any[];
   sender?: any[];
 }
 
@@ -92,7 +93,8 @@ export interface TokenValidationResponse {
     projects?: any[];
     template?: any[];
     hub?: any[];
-    links?: any[];
+    redirect?: any[];
+    custom?: any[];
     sender?: any[];
     users?: any[];
   };
@@ -227,7 +229,8 @@ export const authApi = {
         projects: responseData.data?.projects || [],
         template: responseData.data?.template || [],
         hub: responseData.data?.hub || [],
-        links: responseData.data?.links || [],
+        redirect: responseData.data?.redirect || [],
+        custom: responseData.data?.custom || [],
         sender: responseData.data?.sender || []
       },
       needsVerification: responseData.needsVerification || false,
@@ -295,7 +298,7 @@ export const authApi = {
     return response.json();
   },
 
-  updateAppData: async () => {
+  updateAppData: async (setAppDataFunc?: any) => {
     try {
       const token = document.cookie.match('(^|;)\\s*loggedInAdmin\\s*=\\s*([^;]+)')?.pop();
       if (!token) throw new Error('No auth token found');
@@ -308,43 +311,62 @@ export const authApi = {
         },
         body: objectToFormData({
           token,
-          functionName: 'updateAppData',
+          functionName: 'updateAppData'
         }),
       });
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const text = await response.text();
+      console.log('Raw API response:', text); // Debug log
+
       if (!text) {
         throw new Error('Empty response from server');
       }
 
-      let result;
       try {
-        result = JSON.parse(text);
-      } catch (e) {
-        // If response is not JSON, try to get error message from response
-        const errorMatch = text.match(/<error>(.*?)<\/error>/);
-        const errorMessage = errorMatch ? errorMatch[1] : text.substring(0, 100);
-        throw new Error(`Invalid JSON response: ${errorMessage}`);
-      }
-
-      if (!response.ok || !result.success) {
-        throw new Error(result.error || 'Failed to update app data');
-      }
-
-      // Update app state
-      const appState = getAppState();
-      if (appState?.setState) {
-        appState.setState((prevState: any) => ({
-          ...prevState,
-          appData: {
+        const result = JSON.parse(text);
+        
+        // Update the app state with the new data if setAppDataFunc is provided
+        if (result && result.success && setAppDataFunc && typeof setAppDataFunc === 'function') {
+          // Create the updated app state object
+          const updatedAppState = {
             user: result.user,
-            ...result.data
+            data: result.data || {},
+            isAuthenticated: true
+          };
+          
+          // Update the app state using the provided function
+          console.log('Updating app state with:', updatedAppState);
+          setAppDataFunc(updatedAppState);
+        } else if (result && result.success) {
+          // Try to use the global app state if available
+          const appState = getAppState();
+          if (appState && appState.setAppData) {
+            // Create the updated app state object
+            const updatedAppState = {
+              user: result.user || appState.appData?.user,
+              data: result.data || appState.appData?.data || {},
+              isAuthenticated: true
+            };
+            
+            // Update the app state
+            console.log('Updating app state with global context:', updatedAppState);
+            appState.setAppData(updatedAppState);
+          } else {
+            console.log('No setAppData function provided and global app state not available');
           }
-        }));
+        }
+        
+        return result;
+      } catch (e) {
+        console.error('Failed to parse response:', text);
+        throw new Error(`Invalid JSON response: ${text.substring(0, 100)}`);
       }
-      return result;
     } catch (error) {
-      console.error('Error updating app data:', error);
+      console.error('Failed to update app data:', error);
       throw error;
     }
   },

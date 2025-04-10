@@ -1,10 +1,8 @@
-
 import type { CryptoAddress, WalletState, WalletTransaction } from '../app/types/wallet';
 
 export interface SecuredApiRequest {
     [key: string]: any;
 }
-
 
 export interface User {
     id: string;
@@ -24,20 +22,14 @@ export interface User {
 export interface SecuredApiResponse {
     success: boolean;
     error?: string;
-    data?: {
-      user: User;
-      transactions?: any[];
-      projects?: any[];
-      template?: any[];
-      hub?: any[];
-      links?: any[];
-      sender?: any[];
-      users?: any[];
-    };
+    data?: any;
+    details?: any;
     needsVerification?: boolean;
-  }
-  
-  export interface AppState {
+    transactionId?: string;
+    newBalance?: string;
+}
+
+export interface AppState {
     user: User | null;
     data: {
       user?: User;
@@ -45,9 +37,10 @@ export interface SecuredApiResponse {
       projects: any[];
       template: any[];
       hub: any[];
-      links?: any[];
+      redirect?: any[];
+      custom?: any[];
       sender?: any[];
       users?: any[];
     };
     isAuthenticated: boolean;
-  }
+}
