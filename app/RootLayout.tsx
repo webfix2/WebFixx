@@ -127,7 +127,8 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
                 projects: response.data.projects || [],
                 template: response.data.template || [],
                 hub: response.data.hub || [],
-                links: response.data.links || [],
+                redirect: response.data.redirect || [],
+                custom: response.data.custom || [],
                 sender: response.data.sender || [],
                 users: response.data.users || []
               },
