@@ -278,13 +278,13 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
         </Link>
       )}
       {visibleLinks.projectLinks && (
-        <Link href="/project-links" className="nav-link" onClick={handleNavClick}>
+        <Link href="/projects" className="nav-link" onClick={handleNavClick}>
           <FontAwesomeIcon icon={faLink} className="w-5 h-5" />
           <span className="ml-3">Links</span>
         </Link>
       )}
       {visibleLinks.redirectLinks && (
-        <Link href="/redirect-links" className="nav-link" onClick={handleNavClick}>
+        <Link href="/redirect" className="nav-link" onClick={handleNavClick}>
           <FontAwesomeIcon icon={faRandom} className="w-5 h-5" />
           <span className="ml-3">Redirect</span>
         </Link>

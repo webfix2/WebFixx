@@ -33,14 +33,54 @@ export interface AppState {
     user: User | null;
     data: {
       user?: User;
-      transactions: any[];
-      projects: any[];
-      template: any[];
-      hub: any[];
-      redirect?: any[];
-      custom?: any[];
-      sender?: any[];
-      users?: any[];
+      transactions: {
+        success: boolean;
+        headers: string[];
+        data: any[];
+        count: number;
+      };
+      projects: {
+        success: boolean;
+        headers: string[];
+        data: any[];
+        count: number;
+      };
+      template: {
+        success: boolean;
+        headers: string[];
+        data: any[];
+        count: number;
+      };
+      hub: {
+        success: boolean;
+        headers: string[];
+        data: any[];
+        count: number;
+      };
+      redirect?: {
+        success: boolean;
+        headers: string[];
+        data: any[];
+        count: number;
+      };
+      custom?: {
+        success: boolean;
+        headers: string[];
+        data: any[];
+        count: number;
+      };
+      sender?: {
+        success: boolean;
+        headers: string[];
+        data: any[];
+        count: number;
+      };
+      users?: {
+        success: boolean;
+        headers: string[];
+        data: any[];
+        count: number;
+      };
     };
     isAuthenticated: boolean;
 }

@@ -1,6 +1,11 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAppState } from '../context/AppContext';
+import { securedApi, authApi } from '../../utils/auth';
+import LoadingSpinner from '../components/LoadingSpinner';
+import TransactionResultModal from '../components/TransactionResultModal';
+import CreateLinkModal from '../components/admin/projects/CreateLinkModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faSync, 
@@ -21,12 +26,81 @@ interface ProjectLink {
 }
 
 export default function ProjectLinks() {
+  const { appData, setAppData } = useAppState();
   const [links, setLinks] = useState<ProjectLink[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [showResultModal, setShowResultModal] = useState(false);
+  const [resultModalProps, setResultModalProps] = useState({
+    type: 'success' as 'success' | 'error' | 'warning',
+    title: '',
+    message: '',
+    details: {}
+  });
 
-  const handleCreateLink = async (data: Partial<ProjectLink>) => {
-    // Implementation for creating new link
+  useEffect(() => {
+    const fetchLinks = async () => {
+      try {
+        setLoading(true);
+        const projectLinks = appData?.data?.projects?.data || [];
+        setLinks(projectLinks.map((link: any[]) => ({
+          id: link[0],
+          name: link[4],
+          originalUrl: link[1],
+          redirectUrl: link[2],
+          domain: link[3],
+          created_at: link[5],
+          status: link[6].toLowerCase() as 'active' | 'inactive'
+        })));
+      } catch (error) {
+        console.error('Error fetching project links:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLinks();
+  }, [appData]);
+
+  const handleCreateLink = async (data: any) => {
+    try {
+      const response = await securedApi.callBackendFunction({
+        functionName: 'createProjectLink',
+        linkData: data
+      });
+
+      if (response.success) {
+        // Update app data to get latest project links
+        const appDataResult = await authApi.updateAppData(setAppData);
+
+        // Show success modal
+        setResultModalProps({
+          type: 'success',
+          title: 'Link Created',
+          message: 'Your project link has been successfully created!',
+          details: response.data
+        });
+        setShowResultModal(true);
+      } else {
+        // Handle error scenarios
+        setResultModalProps({
+          type: 'error',
+          title: 'Link Creation Failed',
+          message: response.error || 'Failed to create project link',
+          details: response.details || {}
+        });
+        setShowResultModal(true);
+      }
+    } catch (error) {
+      console.error('Project link creation error:', error);
+      setResultModalProps({
+        type: 'error',
+        title: 'Unexpected Error',
+        message: 'An unexpected error occurred',
+        details: {}
+      });
+      setShowResultModal(true);
+    }
   };
 
   const handleRefreshRedirect = async (id: string) => {
@@ -36,6 +110,30 @@ export default function ProjectLinks() {
   const handleGetDomain = async (id: string) => {
     // Implementation for getting domain
   };
+
+  const handleCopy = (text: string) => {
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        // Optional: Show a toast or temporary notification
+        setResultModalProps({
+          type: 'success',
+          title: 'Copied',
+          message: 'URL copied to clipboard',
+          details: {}
+        });
+        setShowResultModal(true);
+      })
+      .catch(err => {
+        console.error('Failed to copy:', err);
+        setResultModalProps({
+          type: 'error',
+          title: 'Copy Failed',
+          message: 'Unable to copy URL',
+          details: {}
+        });
+        setShowResultModal(true);
+      });
+  }
 
   return (
     <div className="p-6">
@@ -148,6 +246,28 @@ export default function ProjectLinks() {
           onClose={() => setShowCreateModal(false)}
           onSave={handleCreateLink}
         />
+      )}
+
+      {/* Transaction Result Modal */}
+      <TransactionResultModal
+        isOpen={showResultModal}
+        onClose={() => {
+          setShowResultModal(false);
+          if (resultModalProps.type === 'success') {
+            setShowCreateModal(false);
+          }
+        }}
+        type={resultModalProps.type}
+        title={resultModalProps.title}
+        message={resultModalProps.message}
+        details={resultModalProps.details}
+      />
+
+      {/* Loading State */}
+      {loading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <LoadingSpinner size="large" />
+        </div>
       )}
     </div>
   );

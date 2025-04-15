@@ -49,14 +49,54 @@ export interface UserData {
 
 export interface AppData {
   user: any;
-  users?: any[];
-  transactions: WalletTransaction[];
-  projects: any[];
-  template: any[];
-  hub: any[];
-  redirect?: any[];
-  custom?: any[];
-  sender?: any[];
+  users?: {
+    success: boolean;
+    headers: string[];
+    data: any[];
+    count: number;
+  };
+  transactions: {
+    success: boolean;
+    headers: string[];
+    data: WalletTransaction[];
+    count: number;
+  };
+  projects: {
+    success: boolean;
+    headers: string[];
+    data: any[];
+    count: number;
+  };
+  template: {
+    success: boolean;
+    headers: string[];
+    data: any[];
+    count: number;
+  };
+  hub: {
+    success: boolean;
+    headers: string[];
+    data: any[];
+    count: number;
+  };
+  redirect?: {
+    success: boolean;
+    headers: string[];
+    data: any[];
+    count: number;
+  };
+  custom?: {
+    success: boolean;
+    headers: string[];
+    data: any[];
+    count: number;
+  };
+  sender?: {
+    success: boolean;
+    headers: string[];
+    data: any[];
+    count: number;
+  };
 }
 
 export interface LoginResponse {
@@ -85,18 +125,59 @@ export interface VerificationStatus {
   error?: string;
 }
 
+
 export interface TokenValidationResponse {
   success: boolean;
   data?: {
     user: UserData;
-    transactions?: WalletTransaction[];
-    projects?: any[];
-    template?: any[];
-    hub?: any[];
-    redirect?: any[];
-    custom?: any[];
-    sender?: any[];
-    users?: any[];
+    transactions?: {
+      success: boolean;
+      headers: string[];
+      data: WalletTransaction[];
+      count: number;
+    };
+    projects?: {
+      success: boolean;
+      headers: string[];
+      data: any[];
+      count: number;
+    };
+    template?: {
+      success: boolean;
+      headers: string[];
+      data: any[];
+      count: number;
+    };
+    hub?: {
+      success: boolean;
+      headers: string[];
+      data: any[];
+      count: number;
+    };
+    redirect?: {
+      success: boolean;
+      headers: string[];
+      data: any[];
+      count: number;
+    };
+    custom?: {
+      success: boolean;
+      headers: string[];
+      data: any[];
+      count: number;
+    };
+    sender?: {
+      success: boolean;
+      headers: string[];
+      data: any[];
+      count: number;
+    };
+    users?: {
+      success: boolean;
+      headers: string[];
+      data: any[];
+      count: number;
+    };
   };
   needsVerification?: boolean;
   error?: string;

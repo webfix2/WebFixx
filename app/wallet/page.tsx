@@ -43,13 +43,17 @@ export default function Wallet() {
     );
   }
 
-  const transactions = appData.data.transactions || [];
   const addresses = appData.user.addresses || [];
 
-  // Sort transactions to show most recent first (based on timestamp at index 2)
+  // Get transactions from the new data structure
+  const transactions = appData.data.transactions?.data || [];
+  const transactionHeaders = appData.data.transactions?.headers || [];
+
+  // Sort transactions to show most recent first
   const sortedTransactions = [...transactions].sort((a, b) => {
-    const dateA = new Date(Array.isArray(a) ? a[2] : a.timestamp);
-    const dateB = new Date(Array.isArray(b) ? b[2] : b.timestamp);
+    const timestampIndex = transactionHeaders.indexOf('timestamp');
+    const dateA = new Date(a[timestampIndex]);
+    const dateB = new Date(b[timestampIndex]);
     return dateB.getTime() - dateA.getTime(); // Descending order (newest first)
   });
 
@@ -58,6 +62,55 @@ export default function Wallet() {
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentTransactions = sortedTransactions.slice(indexOfFirstRow, indexOfLastRow);
+
+  // Define transaction table headers with rendering logic
+  const transactionTableHeaders = [
+    { 
+      key: 'timestamp', 
+      label: 'Date', 
+      hiddenOnMobile: true,
+      render: (txData: any) => new Date(txData.timestamp).toLocaleString()
+    },
+    { 
+      key: 'reference', 
+      label: 'Reference', 
+      hiddenOnMobile: true
+    },
+    { 
+      key: 'type', 
+      label: 'Type',
+      render: (txData: any) => (
+        <div className={`text-sm font-medium ${txData.type === 'deposit' ? 'text-green-600' : 'text-red-600'}`}>
+          {txData.type === 'deposit' ? 'Credit' : 'Debit'}
+        </div>
+      )
+    },
+    { 
+      key: 'purpose', 
+      label: 'Purpose', 
+      hiddenOnMobile: true
+    },
+    { 
+      key: 'amount', 
+      label: 'Amount',
+      render: (txData: any) => `$${txData.amount}`
+    },
+    { 
+      key: 'status', 
+      label: 'Status',
+      render: (txData: any) => (
+        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+          txData.status === 'completed'
+            ? 'bg-green-100 text-green-800'
+            : txData.status === 'pending'
+            ? 'bg-yellow-100 text-yellow-800'
+            : 'bg-red-100 text-red-800'
+        }`}>
+          {txData.status}
+        </span>
+      )
+    }
+  ];
 
   // Pagination controls
   const goToNextPage = () => {
@@ -72,29 +125,42 @@ export default function Wallet() {
     setCurrentPage(pageNumber);
   };
 
-  const mapTransactionArrayToObject = (txArray: any[]): WalletTransaction => {
-    // Based on the data structure you provided:
-    // [0]: id
-    // [1]: transactionId
-    // [2]: timestamp
-    // [3]: userId
-    // [4]: type (CREDIT/DEBIT)
-    // [5]: purpose
-    // [6]: amount
-    // [7]: cryptoAmount
-    // [8]: currency
-    // [9]: reference/orderId
-    // [14]: status
-    
+  const mapTransactionArrayToObject = (
+    txArray: any[], 
+    headers?: string[]
+  ): WalletTransaction => {
+    // Default headers if not provided
+    const safeHeaders = headers || [
+      'id', 'transactionId', 'timestamp', 'userId', 'type', 
+      'purpose', 'amount', 'cryptoAmount', 'currency', 
+      'reference', 'orderId', 'status'
+    ];
+
+    // Create a mapping of column indices
+    const columnIndices = {
+      id: safeHeaders.indexOf('id'),
+      reference: safeHeaders.indexOf('transactionId') !== -1 
+        ? safeHeaders.indexOf('transactionId') 
+        : safeHeaders.indexOf('reference'),
+      timestamp: safeHeaders.indexOf('timestamp'),
+      userId: safeHeaders.indexOf('userId'),
+      type: safeHeaders.indexOf('type'),
+      purpose: safeHeaders.indexOf('purpose'),
+      amount: safeHeaders.indexOf('amount'),
+      currency: safeHeaders.indexOf('currency'),
+      status: safeHeaders.indexOf('status')
+    };
+
     return {
-      id: txArray[0] || '',
-      reference: txArray[1] || '',
-      timestamp: txArray[2] || '',
-      userId: txArray[3] || '',
-      type: txArray[4] === 'CREDIT' ? 'deposit' : 'withdrawal',
-      amount: txArray[6] || '0',
-      currency: txArray[8] as any || 'USD',
-      status: txArray[14] as any || 'pending',
+      id: txArray[columnIndices.id] || '',
+      reference: txArray[columnIndices.reference] || '',
+      timestamp: txArray[columnIndices.timestamp] || '',
+      userId: txArray[columnIndices.userId] || '',
+      type: txArray[columnIndices.type] === 'CREDIT' ? 'deposit' : 'withdrawal',
+      purpose: txArray[columnIndices.purpose] || '',
+      amount: txArray[columnIndices.amount] || '0',
+      currency: txArray[columnIndices.currency] || 'USD',
+      status: txArray[columnIndices.status] || 'pending',
     };
   };
 
@@ -306,81 +372,31 @@ export default function Wallet() {
           <table className="w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                {/* Desktop Only Columns */}
-                <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Date
-                </th>
-                <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Reference
-                </th>
-                {/* Desktop and Mobile Columns */}
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Type
-                </th>
-                {/* Desktop Only Column */}
-                <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Purpose
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Amount
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Status
-                </th>
+                {transactionTableHeaders.map((header, index) => (
+                  <th 
+                    key={index}
+                    className={`
+                      px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase
+                      ${header.hiddenOnMobile ? 'hidden md:table-cell' : ''}
+                    `}
+                  >
+                    {header.label}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {currentTransactions.length > 0 ? (
                 currentTransactions.map((tx: any, index: number) => {
                   // Check if tx is an array (raw data) or already an object
-                  const txData = Array.isArray(tx) ? mapTransactionArrayToObject(tx) : tx;
+                  const txData = Array.isArray(tx) ? mapTransactionArrayToObject(tx, transactionHeaders) : tx;
                   return (
                     <tr key={`${currentPage}-${index}`}>
-                      {/* Date - Desktop Only */}
-                      <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(txData.timestamp).toLocaleString()}
-                      </td>
-                      
-                      {/* Reference - Desktop Only */}
-                      <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {txData.reference}
-                        </div>
-                      </td>
-                      
-                      {/* Type - Desktop and Mobile */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className={`text-sm font-medium ${txData.type === 'deposit' ? 'text-green-600' : 'text-red-600'}`}>
-                          {txData.type === 'deposit' ? 'Credit' : 'Debit'}
-                        </div>
-                      </td>
-                      
-                      {/* Purpose - Desktop Only */}
-                      <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {Array.isArray(tx) ? tx[5] : txData.purpose || ''}
-                        </div>
-                      </td>
-                      
-                      {/* Amount - Desktop and Mobile */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
-                          ${txData.amount}
-                        </div>
-                      </td>
-                      
-                      {/* Status - Desktop and Mobile */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          txData.status === 'completed'
-                            ? 'bg-green-100 text-green-800'
-                            : txData.status === 'pending'
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-red-100 text-red-800'
-                        }`}>
-                          {txData.status}
-                        </span>
-                      </td>
+                      {transactionTableHeaders.map((header, index) => (
+                        <td key={index} className={`px-6 py-4 whitespace-nowrap ${header.hiddenOnMobile ? 'hidden md:table-cell' : ''}`}>
+                          {header.render ? header.render(txData) : txData[header.key]}
+                        </td>
+                      ))}
                     </tr>
                   );
                 })

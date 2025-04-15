@@ -100,26 +100,70 @@ export default function RedirectLinks() {
   }
 
   // Transform raw redirect data into a more usable format
-  const transformRedirectData = (rawData: any[]) => {
-    return rawData.map(item => ({
-      id: item[0],
-      redirectId: item[1],
-      platform: item[2],
-      link: item[3],
-      linkGoogleURL: item[4],
-      timestamp: item[6],
-      userId: item[7],
-      title: item[8] || '', 
-      expiryDate: item[9],
-      paths: item[12] || '[]',
-      status: item[14] || 'PENDING',
-      clicks: item[13] || '0',
-      blocked: item[14] || '0'
+  const transformRedirectData = (rawData: any, headers?: string[]) => {
+    // If no data, return empty array
+    if (!rawData || rawData.length === 0) return [];
+
+    // Use provided headers or fallback to default indices
+    const safeHeaders = headers || [
+      'id', 'redirectId', 'linkHost', 'link', 'linkGoogleURL', '', 'createdAt', 
+      'userId', 'title', 'expiryDate', 'paymentJSON', '', 'updatedAt', 'paths', 
+      'clicks', 'blocked', '', 'totalPaid', 'paymentJSON', 'lastCheck', 'status'
+    ];
+
+    // If rawData is an object with data property, use that
+    const processedData = Array.isArray(rawData) ? rawData : rawData.data || [];
+
+    // Create a mapping of column names to their indices
+    const columnIndices = {
+      id: safeHeaders.indexOf('id'),
+      redirectId: safeHeaders.indexOf('redirectId'),
+      platform: safeHeaders.indexOf('linkHost'),
+      link: safeHeaders.indexOf('link'),
+      linkGoogleURL: safeHeaders.indexOf('linkGoogleURL'),
+      timestamp: safeHeaders.indexOf('createdAt'),
+      userId: safeHeaders.indexOf('userId'),
+      title: safeHeaders.indexOf('title'),
+      expiryDate: safeHeaders.indexOf('expiryDate'),
+      paths: safeHeaders.indexOf('paths'),
+      status: safeHeaders.indexOf('status'),
+      clicks: safeHeaders.indexOf('clicks'),
+      blocked: safeHeaders.indexOf('blocked'),
+      updatedAt: safeHeaders.indexOf('updatedAt')
+    };
+
+    // Transform data
+    return processedData.map((item: any) => ({
+      id: item[columnIndices.id] || '',
+      redirectId: item[columnIndices.redirectId] || '',
+      platform: item[columnIndices.platform] || '',
+      link: item[columnIndices.link] || '',
+      linkGoogleURL: item[columnIndices.linkGoogleURL] || '',
+      timestamp: item[columnIndices.timestamp] || '',
+      userId: item[columnIndices.userId] || '',
+      title: item[columnIndices.title] || '', 
+      expiryDate: item[columnIndices.expiryDate] || '',
+      paths: item[columnIndices.paths] || '[]',
+      status: item[columnIndices.status] || 'PENDING',
+      clicks: item[columnIndices.clicks] || '0',
+      blocked: item[columnIndices.blocked] || '0',
+      updatedAt: item[columnIndices.updatedAt] || '',
+      // Additional parsing for paths
+      parsedPaths: item[columnIndices.paths] ? JSON.parse(item[columnIndices.paths]).map((path: any) => ({
+        path: path.path,
+        redirectURL: path.redirectURL,
+        linkHealth: path.linkHealth,
+        inboxHealth: path.inboxHealth,
+        clicks: path.clicks
+      })) : []
     }));
   };
 
   // Get redirect links from app state and transform
-  const redirectLinks = transformRedirectData(appData.data?.redirect || []);
+  const redirectLinks = transformRedirectData(
+    appData.data?.redirect?.data || [], 
+    appData.data?.redirect?.headers || []
+  );
 
   // Calculate pagination
   const totalPages = Math.ceil(redirectLinks.length / rowsPerPage);
@@ -178,7 +222,7 @@ export default function RedirectLinks() {
         paths: JSON.stringify([newPathObj])
       });
 
-      console.log('Add path response:', response);
+
 
       if (response.success) {
         // Update app data
@@ -201,7 +245,7 @@ export default function RedirectLinks() {
         throw new Error(response.error || 'Failed to add redirect path');
       }
     } catch (error) {
-      console.error('Full error adding path:', error);
+
       setResultModalProps({
         type: 'error',
         title: 'Add Path Failed',
@@ -229,28 +273,21 @@ export default function RedirectLinks() {
     // Prevent propagation to avoid triggering outside click handler
     event?.stopPropagation();
 
-    console.log('Attempting to save path with:', {
-      currentRedirectId,
-      pathIndex,
-      editedRedirectURL,
-      currentPaths: JSON.stringify(currentPaths)
-    });
-
     // Detailed validation
     if (!currentRedirectId) {
-      console.error('No redirect ID available');
+
       alert('No redirect ID found. Please reopen the paths modal.');
       return;
     }
 
     if (!editedRedirectURL) {
-      console.error('No edited URL provided');
+
       alert('Please enter a redirect URL');
       return;
     }
 
     if (pathIndex < 0 || pathIndex >= currentPaths.length) {
-      console.error('Invalid path index', { pathIndex, pathsLength: currentPaths.length });
+
       alert('Invalid path selection');
       return;
     }
@@ -268,7 +305,7 @@ export default function RedirectLinks() {
         redirectURL: editedRedirectURL
       });
 
-      console.log('Backend response:', response);
+
 
       if (response.success) {
         // Update app data
@@ -290,7 +327,7 @@ export default function RedirectLinks() {
         throw new Error(response.error || 'Failed to update redirect path');
       }
     } catch (error) {
-      console.error('Full error saving path:', error);
+
       setResultModalProps({
         type: 'error',
         title: 'Update Path Failed',

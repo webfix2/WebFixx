@@ -68,13 +68,14 @@ export function convertToPaymentResponse(response: any): PaymentApiResponse {
 // WALLET PAGE TYPES
 export interface WalletTransaction {
   id: string;
+  reference: string;
+  timestamp: string;
   userId: string;
   type: 'deposit' | 'withdrawal';
+  purpose?: string;
   amount: string;
   currency: 'USD' | 'BTC' | 'ETH' | 'USDT';
   status: 'pending' | 'completed' | 'failed';
-  timestamp: string;
-  reference: string;
 }
 
 export interface WalletBalance {
