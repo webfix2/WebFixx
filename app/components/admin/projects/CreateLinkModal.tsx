@@ -15,7 +15,7 @@ import {
 
 // Types for form state
 interface LinkFormState {
-  stage: 'template' | 'contact' | 'telegram-verification' | 'pricing' | 'confirmation';
+  stage: 'template' | 'notification-setup' | 'telegram-verification' | 'confirmation';
   title: string;
   category: string;
   pageType: string;
@@ -25,6 +25,7 @@ interface LinkFormState {
   templateTelegramId?: string;
   email?: string;
   telegramVerified: boolean;
+  templatePrice?: number;
 }
 
 interface CreateLinkModalProps {
@@ -45,7 +46,8 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
     telegramId: '',
     templateTelegramId: '',
     email: '',
-    telegramVerified: false
+    telegramVerified: false,
+    templatePrice: 0
   });
 
   const [selectedTemplatePreview, setSelectedTemplatePreview] = useState<{
@@ -54,6 +56,7 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
     video?: string;
   }>({});
   const [isProcessing, setIsProcessing] = useState(false);
+  const [telegramVerificationError, setTelegramVerificationError] = useState<string | null>(null);
   const [showResultModal, setShowResultModal] = useState(false);
   const [resultModalProps, setResultModalProps] = useState({
     type: 'success' as 'success' | 'error' | 'warning',
@@ -76,8 +79,9 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
     const templateIndex = getTemplateIndex;
     setFormState(prev => ({
       ...prev,
-      template: template[templateIndex('id')],
-      templateTelegramId: template[templateIndex('telegramId')]
+      template: template[templateIndex('templateId')],
+      templateTelegramId: template[templateIndex('telegramId')],
+      templatePrice: parseFloat(template[templateIndex('price')] || '0')
     }));
 
     // Set preview media
@@ -138,10 +142,10 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
           alert('Please fill in all required fields');
           return;
         }
-        setFormState(prev => ({ ...prev, stage: 'contact' }));
+        setFormState(prev => ({ ...prev, stage: 'notification-setup' }));
         break;
-      case 'contact':
-        // Validate contact stage inputs
+      case 'notification-setup':
+        // Validate notification setup stage inputs
         if (!formState.telegramId) {
           alert('Telegram ID is required');
           return;
@@ -150,10 +154,6 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
         break;
       case 'telegram-verification':
         // Telegram verification handled separately
-        break;
-      case 'pricing':
-        // Proceed to confirmation
-        setFormState(prev => ({ ...prev, stage: 'confirmation' }));
         break;
       case 'confirmation':
         // Submit link creation
@@ -164,17 +164,14 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
 
   const prevStage = () => {
     switch (formState.stage) {
-      case 'contact':
+      case 'notification-setup':
         setFormState(prev => ({ ...prev, stage: 'template' }));
         break;
       case 'telegram-verification':
-        setFormState(prev => ({ ...prev, stage: 'contact' }));
-        break;
-      case 'pricing':
-        setFormState(prev => ({ ...prev, stage: 'telegram-verification' }));
+        setFormState(prev => ({ ...prev, stage: 'notification-setup' }));
         break;
       case 'confirmation':
-        setFormState(prev => ({ ...prev, stage: 'pricing' }));
+        setFormState(prev => ({ ...prev, stage: 'telegram-verification' }));
         break;
     }
   };
@@ -194,43 +191,25 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
   const handleTelegramVerification = async () => {
     try {
       setIsProcessing(true);
+      setTelegramVerificationError(null);
       const response = await securedApi.callBackendFunction({
-        functionName: 'verifyNotification',
+        functionName: 'verifyTelegramNotification',
         telegramId: formState.telegramId
       });
 
       if (response.success) {
         setFormState(prev => ({
           ...prev, 
-          telegramVerified: true, 
-          stage: 'pricing'
+          telegramVerified: true,
+          stage: 'confirmation'
         }));
-        setResultModalProps({
-          type: 'success',
-          title: 'Telegram Verified',
-          message: 'Your Telegram account has been successfully verified!',
-          details: response.data
-        });
-        setShowResultModal(true);
       } else {
         // Handle verification failure
-        setResultModalProps({
-          type: 'error',
-          title: 'Verification Failed',
-          message: response.error || 'Failed to verify Telegram account',
-          details: response.details || {}
-        });
-        setShowResultModal(true);
+        setTelegramVerificationError(response.error || 'Failed to verify Telegram account');
       }
     } catch (error) {
       console.error('Telegram verification error:', error);
-      setResultModalProps({
-        type: 'error',
-        title: 'Verification Error',
-        message: 'An unexpected error occurred during verification',
-        details: {}
-      });
-      setShowResultModal(true);
+      setTelegramVerificationError('An unexpected error occurred during verification');
     } finally {
       setIsProcessing(false);
     }
@@ -240,14 +219,12 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
     try {
       setIsProcessing(true);
       const response = await securedApi.callBackendFunction({
-        functionName: 'createProject',
-        projectData: {
-          title: formState.title,
-          templateId: formState.template,
-          templateVariables: formState.templateVariables,
-          telegramId: formState.templateTelegramId || formState.telegramId,
-          email: formState.email
-        }
+        functionName: 'createProjectLink',
+        title: formState.title,
+        templateId: formState.template,
+        templateVariables: formState.templateVariables,
+        telegramId: formState.templateTelegramId || formState.telegramId,
+        email: formState.email
       });
 
       if (response.success) {
@@ -420,10 +397,10 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
           </div>
         );
 
-      case 'contact':
+      case 'notification-setup':
         return (
           <div>
-            <h2 className="text-lg font-semibold mb-4">Contact Information</h2>
+            <h2 className="text-lg font-semibold mb-4">Notification Setup</h2>
             
             {/* Telegram ID */}
             <div className="mb-4">
@@ -445,7 +422,7 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
                 value={formState.email || ''}
                 onChange={(e) => setFormState(prev => ({ ...prev, email: e.target.value }))}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                placeholder="Enter email address"
+                placeholder="Enter email address (Optional)"
               />
             </div>
           </div>
@@ -454,7 +431,15 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
       case 'telegram-verification':
         return (
           <div>
-            <h2 className="text-lg font-semibold mb-4">Telegram Verification</h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-semibold">Telegram Verification</h2>
+              <button
+                onClick={() => setFormState(prev => ({ ...prev, stage: 'notification-setup' }))}
+                className="text-blue-600 hover:text-blue-800 text-sm"
+              >
+                Change Telegram ID
+              </button>
+            </div>
             
             <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4" role="alert">
               <p className="font-bold">Telegram Verification Steps:</p>
@@ -465,6 +450,12 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
                 <li>After completing these steps, click the &quot;Test Notification&quot; button below</li>
               </ol>
             </div>
+
+            {telegramVerificationError && (
+              <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
+                <p>{telegramVerificationError}</p>
+              </div>
+            )}
 
             <div className="flex justify-center">
               <button
@@ -484,20 +475,6 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
             </div>
           </div>
         );
-      case 'pricing':
-        return (
-          <div>
-            <h2 className="text-lg font-semibold mb-4">Pricing Details</h2>
-            
-            <div className="bg-gray-100 p-4 rounded-md">
-              <h3 className="font-semibold mb-2">Project Creation Cost</h3>
-              {/* Placeholder for actual pricing logic */}
-              <p><strong>Base Price:</strong> $10.00</p>
-              <p><strong>Template Complexity:</strong> $5.00</p>
-              <p><strong>Total Cost:</strong> $15.00</p>
-            </div>
-          </div>
-        );
       case 'confirmation':
         return (
           <div>
@@ -510,6 +487,7 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
               <p><strong>Category:</strong> {formState.category}</p>
               <p><strong>Page Type:</strong> {formState.pageType}</p>
               <p><strong>Template:</strong> {formState.template}</p>
+              <p><strong>Template Price:</strong> ${formState.templatePrice?.toFixed(2) || '0.00'}</p>
 
               {/* Template Variables */}
               {Object.keys(formState.templateVariables).length > 0 && (
@@ -521,7 +499,7 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
                 </div>
               )}
 
-              <h3 className="font-semibold mt-4 mb-2">Contact Information</h3>
+              <h3 className="font-semibold mt-4 mb-2">Telegram Details</h3>
               <p><strong>Telegram ID:</strong> {formState.telegramId}</p>
               {formState.email && <p><strong>Email:</strong> {formState.email}</p>}
             </div>
@@ -562,22 +540,11 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
             </button>
           )}
 
-          {formState.stage === 'telegram-verification' && formState.telegramVerified && (
-            <button 
-              onClick={() => setFormState(prev => ({ ...prev, stage: 'pricing' }))}
-              className="btn-primary ml-auto flex items-center"
-              disabled={isProcessing}
-            >
-              Continue to Pricing
-              <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
-            </button>
-          )}
-
           {formState.stage !== 'telegram-verification' && (
             <button 
               onClick={nextStage}
               className="btn-primary ml-auto flex items-center"
-              disabled={isProcessing || (formState.stage === 'contact' && !formState.telegramId)}
+              disabled={isProcessing || (formState.stage === 'notification-setup' && !formState.telegramId)}
             >
               {isProcessing ? (
                 <>
