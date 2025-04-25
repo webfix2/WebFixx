@@ -74,18 +74,30 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
       const result = await authApi.updateAppData(setAppData);
       
       if (!result?.data?.transactions) {
-        console.log('No transactions array in response');
+        // removed log
+//'No transactions array in response');
         return;
       }
 
-      // Find matching transaction by orderId
-      const matchingTransaction = result.data.transactions.find((tx: any[]) => {
-        const orderId = tx[9]; // orderId is at index 9
-        return orderId === orderIdRef.current;
-      });
+      // Find matching transaction by orderId using header names
+      let matchingTransaction = null;
+      const transactionsObj = result.data.transactions;
+      const headers = transactionsObj.headers;
+      const data = transactionsObj.data;
+      const orderIdIndex = headers.indexOf('reference');
+      const statusIndex = headers.indexOf('status');
+      if (Array.isArray(data)) {
+        matchingTransaction = data.find((tx: any[]) => {
+          const orderId = tx[orderIdIndex];
+          return orderId === orderIdRef.current;
+        });
+      } else {
+        // removed error
+//'Expected transactions.data to be an array:', data);
+      }
 
       if (matchingTransaction) {
-        const status = matchingTransaction[13]; // status is at index 13
+        const status = matchingTransaction[statusIndex];
         
         if (status === 'completed' && paymentStatus !== 'completed') {
           // Clear interval and update state
@@ -97,66 +109,46 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
         }
       }
     } catch (error) {
-      console.error('Error checking payment status:', error);
+      // removed error
+//'Error checking payment status:', error);
     }
   }, [onClose, paymentStatus]);
 
-  // Start status checking
+  // Best-practice: Single interval for payment status polling
+  const shouldCheckStatusRef = useRef(false);
   useEffect(() => {
-    let mounted = true;
-    let checkInterval: NodeJS.Timeout | null = null;
-    let promptTimeoutId: NodeJS.Timeout | null = null;
+    shouldCheckStatusRef.current = (currentStep === 'payment' && paymentStatus === 'pending');
+  }, [currentStep, paymentStatus]);
 
-    const cleanup = () => {
-      mounted = false;
-      if (checkInterval) {
-        clearInterval(checkInterval);
+  useEffect(() => {
+    // Initial check immediately if on payment & pending
+    if (currentStep === 'payment' && paymentStatus === 'pending') {
+      checkPaymentStatus();
+    }
+    const interval = setInterval(() => {
+      if (shouldCheckStatusRef.current) {
+        checkPaymentStatus();
       }
+    }, 2 * 60 * 1000); // 2 minutes
+    return () => clearInterval(interval);
+  }, []);
+
+  // Payment prompt logic (unchanged, still shows every 5 min)
+  useEffect(() => {
+    let promptTimeoutId: NodeJS.Timeout | null = null;
+    if (currentStep === 'payment' && paymentStatus === 'pending' && !showPaymentPrompt) {
+      promptTimeoutId = setTimeout(() => {
+        if (paymentStatus === 'pending') {
+          setShowPaymentPrompt(true);
+        }
+      }, 5 * 60 * 1000); // 5 minutes
+    }
+    return () => {
       if (promptTimeoutId) {
         clearTimeout(promptTimeoutId);
       }
-      if (statusCheckIntervalRef.current) {
-        clearInterval(statusCheckIntervalRef.current);
-        statusCheckIntervalRef.current = null;
-      }
     };
-
-    // Only start if we need to check payment status
-    if (currentStep === 'payment' && paymentStatus === 'pending' && !statusCheckIntervalRef.current) {
-      // Initial check
-      const initialCheck = async () => {
-        if (!mounted) return;
-        try {
-          await checkPaymentStatus();
-        } catch (error) {
-          console.error('Initial payment status check failed:', error);
-        }
-      };
-      initialCheck();
-
-      // Set up interval for subsequent checks
-      checkInterval = setInterval(() => {
-        if (!mounted) return;
-        checkPaymentStatus().catch(error => {
-          console.error('Periodic payment status check failed:', error);
-        });
-      }, 120000); // 2 minutes
-
-      // Store interval reference
-      statusCheckIntervalRef.current = checkInterval;
-
-      // Set up payment prompt timeout
-      if (!showPaymentPrompt) {
-        promptTimeoutId = setTimeout(() => {
-          if (mounted && paymentStatus === 'pending') {
-            setShowPaymentPrompt(true);
-          }
-        }, 300000); // 5 minutes
-      }
-    }
-
-    return cleanup;
-  }, [currentStep, paymentStatus, showPaymentPrompt, checkPaymentStatus]);
+  }, [currentStep, paymentStatus, showPaymentPrompt]);
 
   // Handle countdown expiry
   const handleExpiry = useCallback(() => {
@@ -248,6 +240,12 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
     } else {
       // User hasn't paid, hide prompt and continue showing payment view
       setShowPaymentPrompt(false);
+      // Optionally, restart the prompt after another 5 minutes
+      setTimeout(() => {
+        if (paymentStatus === 'pending') {
+          setShowPaymentPrompt(true);
+        }
+      }, 5 * 60 * 1000); // 5 minutes
     }
   };
 
@@ -255,7 +253,8 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
     const user = appData?.user;
     if (!user) return;
   
-    console.log("Handling proceed with current step: ", currentStep);
+    // removed log
+//"Handling proceed with current step: ", currentStep);
     setIsLoading(true);
     
     if (currentStep === 'amount' && amount && agreed) {
@@ -264,19 +263,23 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
           functionName: 'getCurrentValue',
           amount,
         };
-        console.log('Data sent to API (getCurrentValue):', requestData);
+        // removed log
+//'Data sent to API (getCurrentValue):', requestData);
   
         const apiResponse = await securedApi.callBackendFunction(requestData);
-        console.log('API Response:', apiResponse);
+        // removed log
+//'API Response:', apiResponse);
   
         if (!apiResponse || !apiResponse.data) {
-          console.error('API response does not contain the expected data:', apiResponse);
+          // removed error
+//'API response does not contain the expected data:', apiResponse);
           setIsLoading(false);
           return;
         }
   
         const response = convertToPaymentResponse(apiResponse);
-        console.log("Converted payment response:", response);
+        // removed log
+//"Converted payment response:", response);
   
         if (response.success && response.data) {
           const paymentData: PaymentDetails = {
@@ -296,7 +299,8 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
           setCurrentStep('method');
         }
       } catch (error) {
-        console.error('Failed to get exchange rates:', error);
+        // removed error
+//'Failed to get exchange rates:', error);
       } finally {
         setIsLoading(false);
       }
@@ -304,7 +308,8 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
       try {
         const user = appData?.user;
         if (!user) {
-          console.error('User data is not available');
+          // removed error
+//'User data is not available');
           setIsLoading(false);
           return;
         }
@@ -316,7 +321,8 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
           : paymentDetails.usdtAmount;
 
         if (!coinValue) {
-          console.error(`No ${selectedMethod} amount available`);
+          // removed error
+//`No ${selectedMethod} amount available`);
           setIsLoading(false);
           return;
         }
@@ -329,20 +335,24 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
           currency: selectedMethod,
           orderId: paymentDetails.orderId,
         };
-        console.log('Data sent to API (initializePayment):', requestData);
+        // removed log
+//'Data sent to API (initializePayment):', requestData);
   
         const apiResponse = await securedApi.callBackendFunction(requestData);
-        console.log('Payment Initialization Response:', apiResponse);
+        // removed log
+//'Payment Initialization Response:', apiResponse);
         const appDataResult = await authApi.updateAppData(setAppData);
   
         if (!apiResponse || !apiResponse.data) {
-          console.error('API response does not contain the expected data:', apiResponse);
+          // removed error
+//'API response does not contain the expected data:', apiResponse);
           setIsLoading(false);
           return;
         }
   
         const response = convertToPaymentResponse(apiResponse);
-        console.log("Converted payment initialization response:", response);
+        // removed log
+//"Converted payment initialization response:", response);
   
         if (response.success && response.data) {
           const userAddress = selectedMethod === 'BTC' 
@@ -352,7 +362,8 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
             : user.usdtAddress;
 
           if (!userAddress) {
-            console.error(`No ${selectedMethod} address found for user`);
+            // removed error
+//`No ${selectedMethod} address found for user`);
             setIsLoading(false);
             return;
           }
@@ -370,7 +381,8 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
           setCurrentStep('payment');
         }
       } catch (error) {
-        console.error('Payment initialization failed:', error);
+        // removed error
+//'Payment initialization failed:', error);
       } finally {
         setIsLoading(false);
       }
@@ -383,7 +395,8 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('Failed to copy:', err);
+      // removed error
+//'Failed to copy:', err);
     }
   };
 

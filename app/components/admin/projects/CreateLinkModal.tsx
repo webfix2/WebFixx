@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import LoadingSpinner from '../../LoadingSpinner';
 import TransactionResultModal from '../../TransactionResultModal';
 import { useAppState } from '../../../context/AppContext';
-import { securedApi } from '../../../../utils/auth';
+import { authApi,securedApi } from '../../../../utils/auth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faArrowLeft, 
@@ -25,7 +25,8 @@ interface LinkFormState {
   templateTelegramId?: string;
   email?: string;
   telegramVerified: boolean;
-  templatePrice?: number;
+  price?: number;
+  renewal?: number;
 }
 
 interface CreateLinkModalProps {
@@ -35,7 +36,8 @@ interface CreateLinkModalProps {
 }
 
 export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLinkModalProps) {
-  const { appData } = useAppState();
+
+  const { appData, setAppData } = useAppState();
   const [formState, setFormState] = useState<LinkFormState>({
     stage: 'template',
     title: '',
@@ -47,13 +49,14 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
     templateTelegramId: '',
     email: '',
     telegramVerified: false,
-    templatePrice: 0
+    price: 0,
+    renewal: 0
   });
 
   const [selectedTemplatePreview, setSelectedTemplatePreview] = useState<{
-    image?: string;
-    gif?: string;
-    video?: string;
+    images?: string;
+    gifs?: string;
+    videos?: string;
   }>({});
   const [isProcessing, setIsProcessing] = useState(false);
   const [telegramVerificationError, setTelegramVerificationError] = useState<string | null>(null);
@@ -75,54 +78,113 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
     template[getTemplateIndex('status')] === 'ACTIVE'
   );
 
+  // Helper to get first URL from string (newline/tab/comma-separated or array)
+  const getFirstUrl = (field: any) => {
+    if (!field) return undefined;
+    if (Array.isArray(field)) return field[0];
+    if (typeof field === 'string') {
+      // Split by tabs, newlines, or commas, filter out empty lines, return first
+      const urls = field.split(/\t|\n|,/).map(s => s.trim()).filter(Boolean);
+      // Only return if it looks like a valid URL
+      return urls.find(url => url.startsWith('http://') || url.startsWith('https://'));
+    }
+    return undefined;
+  };
+
+
   const handleTemplateSelection = (template: any) => {
     const templateIndex = getTemplateIndex;
+
+    const imageIndex = templateHeaders.indexOf('images');
+    const gifIndex = templateHeaders.indexOf('gifs');
+    const videoIndex = templateHeaders.indexOf('videos');
+
+    const rawImages = template[imageIndex];
+    const rawGifs = template[gifIndex];
+    const rawVideos = template[videoIndex];
+
+    // Parse variables JSON for default values
+    let templateVariables: Record<string, string> = {};
+    const variablesJson = template[templateIndex('variables')];
+    if (variablesJson && variablesJson.trim()) {
+      let fixedJson = variablesJson.replace(/[\u0000-\u001F\u007F-\u009F]/g, '');
+      fixedJson = fixedJson.replace(/,\s*([}\]])/g, '$1');
+      try {
+        const variables = JSON.parse(fixedJson);
+        if (typeof variables === 'object' && variables !== null) {
+          Object.entries(variables).forEach(([key, value]) => {
+            templateVariables[key] = typeof value === 'string' ? value : '';
+          });
+        }
+      } catch {}
+    }
+    console.log('Template Variables on select:', templateVariables);
     setFormState(prev => ({
       ...prev,
       template: template[templateIndex('templateId')],
       templateTelegramId: template[templateIndex('telegramId')],
-      templatePrice: parseFloat(template[templateIndex('price')] || '0')
+      price: parseFloat(template[templateIndex('price')] || '0'),
+      renewal: parseFloat(template[templateIndex('renewal')] || '0'),
+      templateVariables
     }));
-
-    // Set preview media
     setSelectedTemplatePreview({
-      image: template[templateIndex('images')]?.[0],
-      gif: template[templateIndex('gifs')]?.[0],
-      video: template[templateIndex('videos')]?.[0]
+      images: getFirstUrl(rawImages),
+      gifs: getFirstUrl(rawGifs),
+      videos: getFirstUrl(rawVideos)
     });
   };
 
+  const isValidUrl = (url: string | undefined) => {
+    return typeof url === 'string' && (url.startsWith('http://') || url.startsWith('https://'));
+  };
+
   const renderTemplatePreview = () => {
-    const { image, gif, video } = selectedTemplatePreview;
+    const { images, gifs, videos } = selectedTemplatePreview;
 
-    if (video) {
+
+    if (isValidUrl(videos)) {
       return (
-        <video 
-          src={video} 
-          controls 
-          className="w-full h-64 object-cover rounded-lg"
-          poster={image}
-        />
+        <div className="relative group">
+          <a href={videos} target="_blank" rel="noopener noreferrer">
+            <video 
+              src={videos} 
+              controls 
+              className="w-full h-64 object-cover rounded-lg cursor-pointer"
+              poster={isValidUrl(images) ? images : undefined}
+            />
+          </a>
+          <a href={videos} download target="_blank" rel="noopener noreferrer" className="absolute top-2 right-2 bg-white bg-opacity-80 px-2 py-1 rounded text-xs text-blue-700 font-semibold hidden group-hover:block">Download</a>
+        </div>
       );
     }
 
-    if (gif) {
+    if (isValidUrl(gifs)) {
       return (
-        <img 
-          src={gif} 
-          alt="Template Preview (GIF)" 
-          className="w-full h-64 object-cover rounded-lg"
-        />
+        <div className="relative group">
+          <a href={gifs} target="_blank" rel="noopener noreferrer">
+            <img 
+              src={gifs} 
+              alt="Template Preview (GIF)" 
+              className="w-full h-64 object-cover rounded-lg cursor-pointer"
+            />
+          </a>
+          <a href={gifs} download target="_blank" rel="noopener noreferrer" className="absolute top-2 right-2 bg-white bg-opacity-80 px-2 py-1 rounded text-xs text-blue-700 font-semibold hidden group-hover:block">Download</a>
+        </div>
       );
     }
 
-    if (image) {
+    if (isValidUrl(images)) {
       return (
-        <img 
-          src={image} 
-          alt="Template Preview" 
-          className="w-full h-64 object-cover rounded-lg"
-        />
+        <div className="relative group">
+          <a href={images} target="_blank" rel="noopener noreferrer">
+            <img 
+              src={images} 
+              alt="Template Preview" 
+              className="w-full h-64 object-cover rounded-lg cursor-pointer"
+            />
+          </a>
+          <a href={images} download target="_blank" rel="noopener noreferrer" className="absolute top-2 right-2 bg-white bg-opacity-80 px-2 py-1 rounded text-xs text-blue-700 font-semibold hidden group-hover:block">Download</a>
+        </div>
       );
     }
 
@@ -208,7 +270,7 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
         setTelegramVerificationError(response.error || 'Failed to verify Telegram account');
       }
     } catch (error) {
-      console.error('Telegram verification error:', error);
+
       setTelegramVerificationError('An unexpected error occurred during verification');
     } finally {
       setIsProcessing(false);
@@ -218,14 +280,16 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
   const handleSubmit = async () => {
     try {
       setIsProcessing(true);
-      const response = await securedApi.callBackendFunction({
+      const payload = {
         functionName: 'createProjectLink',
         title: formState.title,
         templateId: formState.template,
-        templateVariables: formState.templateVariables,
+        templateVariables: JSON.stringify(formState.templateVariables),
         telegramId: formState.templateTelegramId || formState.telegramId,
         email: formState.email
-      });
+      };
+
+      const response = await securedApi.callBackendFunction(payload);
 
       if (response.success) {
         setResultModalProps({
@@ -236,6 +300,12 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
         });
         setShowResultModal(true);
         onSave(response.data);
+        // Update app data after success
+        try {
+          await authApi.updateAppData(setAppData);
+        } catch (e) {
+          // Optionally handle updateAppData failure
+        }
       } else {
         // Handle error scenarios
         setResultModalProps({
@@ -245,9 +315,15 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
           details: response.details || {}
         });
         setShowResultModal(true);
+        // Update app data after failure (optional)
+        try {
+          await authApi.updateAppData(setAppData);
+        } catch (e) {
+          // Optionally handle updateAppData failure
+        }
       }
     } catch (error) {
-      console.error('Link creation error:', error);
+
       setResultModalProps({
         type: 'error',
         title: 'Unexpected Error',
@@ -269,9 +345,21 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
     if (!selectedTemplate) return null;
 
     const variablesJson = selectedTemplate[getTemplateIndex('variables')];
+    // If variablesJson is empty, null, or whitespace, render nothing
+    if (!variablesJson || !variablesJson.trim()) return null;
+
+    let fixedJson = variablesJson;
     try {
-      const variables = JSON.parse(variablesJson || '{}');
-      return Object.keys(variables).map(key => (
+      // Remove all control characters (newlines, tabs, etc)
+      fixedJson = fixedJson.replace(/[\u0000-\u001F\u007F-\u009F]/g, '');
+      // Remove trailing commas before } or ]
+      fixedJson = fixedJson.replace(/,\s*([}\]])/g, '$1');
+      // DO NOT replace double double-quotes, this breaks valid empty string values
+      const variables = JSON.parse(fixedJson);
+      if (typeof variables !== 'object' || variables === null) return null;
+      const editableKeys = Object.keys(variables).filter(key => !['formId','FormId','postURL','PostURL','token','Token'].includes(key));
+      if (editableKeys.length === 0) return null;
+      return editableKeys.map(key => (
         <div key={key} className="mb-4">
           <label className="block text-sm font-medium text-gray-700">
             {key.charAt(0).toUpperCase() + key.slice(1)}
@@ -284,8 +372,10 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
           />
         </div>
       ));
-    } catch {
-      return <p>Error parsing template variables</p>;
+    } catch (err) {
+
+      // Do not show user-facing error, just return nothing
+      return null;
     }
   };
 
@@ -314,7 +404,16 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
               <label className="block text-sm font-medium text-gray-700">Category</label>
               <select
                 value={formState.category}
-                onChange={(e) => setFormState(prev => ({ ...prev, category: e.target.value }))}
+                onChange={(e) => {
+                  setFormState(prev => ({
+                    ...prev,
+                    category: e.target.value,
+                    template: '',
+                    pageType: '',
+                    templateVariables: {},
+                  }));
+                  setSelectedTemplatePreview({});
+                }}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               >
                 <option value="">Select Category</option>
@@ -329,7 +428,15 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
               <label className="block text-sm font-medium text-gray-700">Page Type</label>
               <select
                 value={formState.pageType}
-                onChange={(e) => setFormState(prev => ({ ...prev, pageType: e.target.value }))}
+                onChange={(e) => {
+                  setFormState(prev => ({
+                    ...prev,
+                    pageType: e.target.value,
+                    template: '',
+                    templateVariables: {},
+                  }));
+                  setSelectedTemplatePreview({});
+                }}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               >
                 <option value="">Select Page Type</option>
@@ -342,53 +449,57 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
             {formState.category && formState.pageType && (
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Template</label>
-                <div className="flex space-x-4">
-                  <div className="w-1/2">
-                    <select
-                      value={formState.template}
-                      onChange={(e) => {
-                        const selectedTemplate = filteredTemplates.find(
-                          template => template[getTemplateIndex('templateId')] === e.target.value
-                        );
-                        
-                        if (selectedTemplate) {
-                          setFormState(prev => ({ 
-                            ...prev, 
-                            template: selectedTemplate[getTemplateIndex('templateId')],
-                            templateTelegramId: selectedTemplate[getTemplateIndex('telegramId')]
-                          }));
-
-                          // Set preview media
-                          setSelectedTemplatePreview({
-                            image: selectedTemplate[getTemplateIndex('images')]?.[0],
-                            gif: selectedTemplate[getTemplateIndex('gifs')]?.[0],
-                            video: selectedTemplate[getTemplateIndex('videos')]?.[0]
-                          });
-                        }
-                      }}
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                    >
-                      <option value="">Select Template</option>
-                      {filteredTemplates
-                        .filter(t => 
-                          t[getTemplateIndex('niche')] === formState.category && 
-                          t[getTemplateIndex('type')] === formState.pageType
-                        )
-                        .map(template => (
+                <div>
+                  <select
+                    value={formState.template}
+                    onChange={(e) => {
+                      const selectedTemplate = filteredTemplates.find(
+                        template => template[getTemplateIndex('templateId')] === e.target.value
+                      );
+                      if (selectedTemplate) {
+                        handleTemplateSelection(selectedTemplate);
+                      } else {
+                        setFormState(prev => ({ ...prev, template: '', templateVariables: {} }));
+                        setSelectedTemplatePreview({});
+                      }
+                    }}
+                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  >
+                    <option value="">Select Template</option>
+                    {filteredTemplates
+                      .filter(t => 
+                        t[getTemplateIndex('niche')] === formState.category && 
+                        t[getTemplateIndex('type')] === formState.pageType
+                      )
+                      .map(template => {
+                        const price = parseFloat(template[getTemplateIndex('price')] || '0');
+                        return (
                           <option 
                             key={template[getTemplateIndex('templateId')]} 
                             value={template[getTemplateIndex('templateId')]}
                           >
-                            {template[getTemplateIndex('name')]}
+                            {template[getTemplateIndex('name')]} - ${price.toFixed(2)}
                           </option>
-                        ))
-                      }
-                    </select>
-                  </div>
-                  <div className="w-1/2">
+                        );
+                      })
+                    }
+                  </select>
+                  <div className="mt-4">
                     {renderTemplatePreview()}
                   </div>
                 </div>
+                {/* Show selected template price and renewal price */}
+                {formState.template && formState.price && formState.price > 0 && (
+                  <div className="mt-2 p-2 bg-blue-50 rounded text-sm">
+                    <span className="font-semibold">Template Price:</span> ${formState.price?.toFixed(2)}
+                    {formState.renewal !== undefined && formState.renewal > 0 && (
+                      <span className="ml-4 font-semibold">Renewal Price:</span>
+                    )}
+                    {formState.renewal !== undefined && formState.renewal > 0 && (
+                      <span> ${formState.renewal?.toFixed(2) || '0.00'}</span>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
@@ -476,32 +587,67 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
           </div>
         );
       case 'confirmation':
+        // Find the selected template object to get its name
+        const selectedTemplateObj = availableTemplates.find(
+          t => t[getTemplateIndex('templateId')] === formState.template
+        );
+        const selectedTemplateName = selectedTemplateObj ? selectedTemplateObj[getTemplateIndex('name')] : '';
         return (
           <div>
-            <h2 className="text-lg font-semibold mb-4">Confirm Link Details</h2>
-            
-            {/* Summary of Entered Information */}
-            <div className="bg-gray-100 p-4 rounded-md">
-              <h3 className="font-semibold mb-2">Template Details</h3>
-              <p><strong>Title:</strong> {formState.title}</p>
-              <p><strong>Category:</strong> {formState.category}</p>
-              <p><strong>Page Type:</strong> {formState.pageType}</p>
-              <p><strong>Template:</strong> {formState.template}</p>
-              <p><strong>Template Price:</strong> ${formState.templatePrice?.toFixed(2) || '0.00'}</p>
+            <h2 className="text-xl font-bold mb-4 text-center">Confirm Link Details</h2>
+            <div className="space-y-6">
+              {/* Template Details Card */}
+              <div className="bg-gray-50 p-4 rounded-lg shadow-sm border">
+                <h3 className="font-semibold mb-3 text-blue-700 text-base flex items-center">
+                  <FontAwesomeIcon icon={faCheck} className="mr-2 text-blue-500" />Template Details
+                </h3>
+                <dl className="grid grid-cols-1 gap-x-3 gap-y-1">
+                  <div className="flex justify-between py-1 border-b border-dashed border-gray-200"><dt className="font-medium">Title:</dt><dd>{formState.title}</dd></div>
+                  <div className="flex justify-between py-1 border-b border-dashed border-gray-200"><dt className="font-medium">Category:</dt><dd>{formState.category}</dd></div>
+                  <div className="flex justify-between py-1 border-b border-dashed border-gray-200"><dt className="font-medium">Page Type:</dt><dd>{formState.pageType}</dd></div>
+                  {selectedTemplateName && (
+                    <div className="flex justify-between py-1 border-b border-dashed border-gray-200"><dt className="font-medium">Template Name:</dt><dd>{selectedTemplateName}</dd></div>
+                  )}
+                  {formState.price && formState.price > 0 && (
+                    <div className="flex justify-between py-1 border-b border-dashed border-gray-200"><dt className="font-medium">Template Price:</dt><dd>${formState.price?.toFixed(2)}</dd></div>
+                  )}
+                  {formState.renewal !== undefined && formState.renewal > 0 && (
+                    <div className="flex justify-between py-1"><dt className="font-medium">Renewal Price:</dt><dd>${formState.renewal?.toFixed(2) || '0.00'}</dd></div>
+                  )}
+                </dl>
+              </div>
 
-              {/* Template Variables */}
-              {Object.keys(formState.templateVariables).length > 0 && (
-                <div>
-                  <h3 className="font-semibold mt-4 mb-2">Template Variables</h3>
-                  {Object.entries(formState.templateVariables).map(([key, value]) => (
-                    <p key={key}><strong>{key}:</strong> {value}</p>
-                  ))}
+              {/* Template Variables Card */}
+              {Object.keys(formState.templateVariables).filter(key => !['FormId','formId','PostURL','postURL','Token','token'].includes(key)).length > 0 && (
+                <div className="bg-gray-50 p-4 rounded-lg shadow-sm border">
+                  <h3 className="font-semibold mb-3 text-blue-700 text-base flex items-center">
+                    <FontAwesomeIcon icon={faCheck} className="mr-2 text-blue-500" />Template Variables
+                  </h3>
+                  <dl className="grid grid-cols-1 gap-x-3 gap-y-1">
+                    {Object.entries(formState.templateVariables)
+                      .filter(([key]) => !['FormId','formId','PostURL','postURL','Token','token'].includes(key))
+                      .map(([key, value]) => (
+                        <div className="flex justify-between py-1 border-b border-dashed border-gray-200" key={key}>
+                          <dt className="font-medium">{key}</dt>
+                          <dd>{value}</dd>
+                        </div>
+                      ))}
+                  </dl>
                 </div>
               )}
 
-              <h3 className="font-semibold mt-4 mb-2">Telegram Details</h3>
-              <p><strong>Telegram ID:</strong> {formState.telegramId}</p>
-              {formState.email && <p><strong>Email:</strong> {formState.email}</p>}
+              {/* Telegram Details Card */}
+              <div className="bg-gray-50 p-4 rounded-lg shadow-sm border">
+                <h3 className="font-semibold mb-3 text-blue-700 text-base flex items-center">
+                  <FontAwesomeIcon icon={faCheck} className="mr-2 text-blue-500" />Telegram Details
+                </h3>
+                <dl className="grid grid-cols-1 gap-x-3 gap-y-1">
+                  <div className="flex justify-between py-1 border-b border-dashed border-gray-200"><dt className="font-medium">Telegram ID:</dt><dd>{formState.telegramId}</dd></div>
+                  {formState.email && (
+                    <div className="flex justify-between py-1"><dt className="font-medium">Email:</dt><dd>{formState.email}</dd></div>
+                  )}
+                </dl>
+              </div>
             </div>
           </div>
         );
@@ -510,7 +656,7 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 flex flex-col min-h-[200px] max-h-[95vh]">
         {/* Modal Header */}
         <div className="flex justify-between items-center p-4 border-b">
           <h2 className="text-xl font-semibold">Create New Link</h2>
@@ -523,7 +669,7 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
         </div>
 
         {/* Modal Content */}
-        <div className="p-4">
+        <div className="p-4 overflow-y-auto flex-1">
           {renderStage()}
         </div>
 

@@ -401,7 +401,7 @@ export const authApi = {
       }
 
       const text = await response.text();
-      console.log('Raw API response:', text); // Debug log
+      // console.log('Raw API response:', text); // Debug log
 
       if (!text) {
         throw new Error('Empty response from server');

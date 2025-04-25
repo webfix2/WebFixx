@@ -98,12 +98,56 @@ const TransactionResultModal: React.FC<TransactionResultModalProps> = ({
               <div className="w-full mt-4 text-left bg-white p-4 rounded-md border border-gray-200">
                 <h4 className="font-medium text-gray-700 mb-2">Details</h4>
                 <div className="space-y-1">
-                  {Object.entries(details).map(([key, value]) => (
-                    <div key={key} className="flex justify-between text-sm">
-                      <span className="text-gray-500">{key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}:</span>
-                      <span className="font-medium">{value}</span>
-                    </div>
-                  ))}
+                  {typeof details === 'string' || typeof details === 'number' ? (
+                    <div className="text-sm font-medium">{details}</div>
+                  ) : Array.isArray(details) ? (
+                    <div className="text-sm font-medium">{JSON.stringify(details)}</div>
+                  ) : typeof details === 'object' && details !== null ? (
+                    Object.entries(details).map(([key, value]) => {
+                      // Try to parse stringified JSON objects for nested details
+                      let parsedValue = value;
+                      let isJsonString = false;
+                      if (typeof value === 'string' && value.trim().startsWith('{') && value.trim().endsWith('}')) {
+                        try {
+                          parsedValue = JSON.parse(value);
+                          isJsonString = true;
+                        } catch {}
+                      }
+                      return (
+                        <div key={key} className="flex flex-col text-sm mb-1">
+                          <span className="text-gray-500 font-medium">{key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}:</span>
+                          <span className="font-medium">
+                            {isJsonString && typeof parsedValue === 'object' && parsedValue !== null ? (
+                              <div className="ml-2 border-l border-gray-200 pl-2">
+                                {Object.entries(parsedValue).map(([k, v]) => (
+                                  <div key={k} className="flex justify-between">
+                                    <span className="text-gray-500">{k.charAt(0).toUpperCase() + k.slice(1).replace(/([A-Z])/g, ' $1')}:</span>
+                                    <span>{typeof v === 'object' && v !== null ? JSON.stringify(v) : String(v)}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : Array.isArray(parsedValue) ? (
+                              parsedValue.map((v, i) => (
+                                <span key={i}>{typeof v === 'object' ? JSON.stringify(v) : String(v)}{i !== parsedValue.length - 1 ? ', ' : ''}</span>
+                              ))
+                            ) : typeof parsedValue === 'object' && parsedValue !== null ? (
+                              <div className="ml-2 border-l border-gray-200 pl-2">
+                                {Object.entries(parsedValue).map(([k, v]) => (
+                                  <div key={k} className="flex justify-between">
+                                    <span className="text-gray-500">{k.charAt(0).toUpperCase() + k.slice(1).replace(/([A-Z])/g, ' $1')}:</span>
+                                    <span>{typeof v === 'object' && v !== null ? JSON.stringify(v) : String(v)}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              String(parsedValue)
+                            )}
+                          </span>
+                        </div>
+                      );
+                    })
+                  ) : null}
+
                 </div>
               </div>
             )}
