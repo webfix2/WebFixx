@@ -94,7 +94,7 @@ export default function ProjectLinks() {
         // Project Data Transformation Function
         const transformProjectData = (rawData: any, headers?: string[]) => {
           const safeHeaders = headers || [
-            'id', 'formId', 'projectId', '', '', '', '', '', '', '', 
+            'id', 'formId', 'projectId', '', '', '', '', '', '', '', '', '', '', 
             'projectTitle', '', 'templateNiche', 'templateTitle', 'templateType', 
             'pageHealth', 'pageVisits', 'botVisits', 'expiryDate', 'response', 'systemStatus',
             'redirectId', 'redirectURL', 'redirectHealth', 'domainId', 'domainURL', 'domainHealth',
@@ -327,28 +327,6 @@ export default function ProjectLinks() {
       <td className="px-4 py-2 text-center">{project.pageHealth}</td>
       <td className="px-4 py-2 text-center">{project.pageVisits}</td>
       <td className="px-4 py-2 text-center">
-        <span className={`text-sm font-medium px-2 py-1 rounded ${
-          project.botVisits > 0
-            ? 'bg-red-100 text-red-800'
-            : project.botVisits === 0
-              ? 'bg-green-100 text-green-800'
-              : 'bg-gray-100 text-gray-800'
-        }`}>
-          {project.botVisits}
-        </span>
-      </td>
-      <td className="px-4 py-2 text-center">
-        <span className={`text-sm font-medium px-2 py-1 rounded ${
-          project.flaggedVisits && project.flaggedVisits > 0
-            ? 'bg-red-100 text-red-800'
-            : project.flaggedVisits === 0
-              ? 'bg-green-100 text-green-800'
-              : 'bg-gray-100 text-gray-800'
-        }`}>
-          {project.flaggedVisits ?? 0}
-        </span>
-      </td>
-      <td className="px-4 py-2 text-center">
         <span className={`text-sm font-medium ${
           calculateTimeRemaining(project.expiryDate) === 'Expired'
             ? 'text-red-600'
@@ -434,14 +412,55 @@ export default function ProjectLinks() {
             <th>Responses</th>
             <th>Page Health</th>
             <th>Page Visits</th>
-            <th>Bot Visits</th>
-            <th>Flagged Visits</th>
             <th>Time Left</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {currentProjects.map((project) => renderDesktopView(project))}
+          {currentProjects.map((project) => (
+            <tr key={project.id} className="hover:bg-gray-50">
+              <td className="px-4 py-2">
+                <div className="font-semibold">{project.projectTitle}</div>
+                <div className="text-xs text-gray-500">
+                  {project.templateNiche} - {project.templateType}
+                </div>
+              </td>
+              <td className="px-4 py-2 text-center">
+                <button 
+                  onClick={() => {
+                    setSelectedProject(project);
+                    setShowResponseModal(true);
+                  }}
+                  className="text-blue-600 hover:underline"
+                >
+                  {project.responseCount} Responses
+                </button>
+              </td>
+              <td className="px-4 py-2 text-center">{project.pageHealth}</td>
+              <td className="px-4 py-2 text-center">{project.pageVisits}</td>
+              <td className="px-4 py-2 text-center">
+                <span className={`text-sm font-medium ${
+                  calculateTimeRemaining(project.expiryDate) === 'Expired'
+                    ? 'text-red-600'
+                    : calculateTimeRemaining(project.expiryDate).includes('day')
+                      ? 'text-green-600'
+                      : 'text-yellow-600'
+                }`}>
+                  {calculateTimeRemaining(project.expiryDate)}
+                </span>
+              </td>
+              <td className="px-4 py-2 text-center flex items-center justify-center gap-2">
+                <ActionsHandler 
+                  project={project} 
+                  onCopy={() => {}}
+                  onRefresh={() => {}}
+                  onDelete={(id) => {
+                    setProjects(prev => prev.filter(p => p.id !== id));
+                  }}
+                />
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
       {/* Pagination Controls */}
