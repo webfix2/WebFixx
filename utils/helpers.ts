@@ -39,3 +39,73 @@ export const parseJSONWithComments = (str: string) => {
     return safeParseJSON(str);
   }
 };
+
+// User Plan Types
+export type UserPlan = 'LEGEND' | 'VETERAN' | 'OG' | 'NEWBEE' | 'FREE';
+
+export interface UserLimits {
+  plan: UserPlan;
+  description: string;
+  badge: string;
+  price: number;
+  redirectPathLimit: number;
+  smtpCheckerLimit: number;
+  senderLimit: number;
+  verifyLoginLimit: number;
+  getCookieLimit: number;
+  extractionLimit: number;
+  shootContactsLimit: number;
+  interactionLimit: number;
+}
+
+export const getUserLimits = (appData: any): UserLimits | null => {
+  try {
+    // Get the user's plan, default to FREE if not set
+    const userPlan = appData?.user?.plan || 'FREE';
+    console.log('User Plan:', userPlan);
+
+    // Get the limits data from app state
+    const limitsData = appData?.data?.limits?.data;
+    console.log('Limits Data:', limitsData);
+    if (!limitsData || !Array.isArray(limitsData)) return null;
+
+    // Get the headers and create column map
+    const headers = appData?.data?.limits?.headers;
+    if (!headers || !Array.isArray(headers)) return null;
+
+    // Find the user's plan in the limits data
+    const planIndex = headers.indexOf('plan');
+    if (planIndex === -1) return null;
+
+    const userLimitRow = limitsData.find(
+      (row: any[]) => row[planIndex]?.toString().toUpperCase() === userPlan.toUpperCase()
+    );
+
+    if (!userLimitRow) return null;
+
+    // Create a map of column names to their indices
+    const getColumnValue = (columnName: string) => {
+      const index = headers.indexOf(columnName);
+      return index !== -1 ? userLimitRow[index] : null;
+    };
+
+    // Return formatted limits object
+    return {
+      plan: getColumnValue('plan') as UserPlan,
+      description: getColumnValue('description')?.toString() || '',
+      badge: getColumnValue('badge')?.toString() || '',
+      price: Number(getColumnValue('price')) || 0,
+      redirectPathLimit: Number(getColumnValue('redirectPathLimit')) || 0,
+      smtpCheckerLimit: Number(getColumnValue('smtpCheckerLimit')) || 0,
+      senderLimit: Number(getColumnValue('senderLimit')) || 0,
+      verifyLoginLimit: Number(getColumnValue('verifyLoginLimit')) || 0,
+      getCookieLimit: Number(getColumnValue('getCookieLimit')) || 0,
+      extractionLimit: Number(getColumnValue('extractionLimit')) || 0,
+      shootContactsLimit: Number(getColumnValue('shootContactsLimit')) || 0,
+      interactionLimit: Number(getColumnValue('interactionLimit')) || 0
+    };
+  } catch (error) {
+    console.error('Error getting user limits:', error);
+    return null;
+  }
+};

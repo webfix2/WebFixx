@@ -37,6 +37,7 @@ export interface UserData {
   email: string;
   username: string;
   role: 'ADMIN' | 'USER';
+  plan: string;
   verifyStatus: 'TRUE' | 'FALSE' | '';
   btcAddress: string;
   ethAddress: string;
@@ -92,6 +93,12 @@ export interface AppData {
     count: number;
   };
   sender?: {
+    success: boolean;
+    headers: string[];
+    data: any[];
+    count: number;
+  };
+  limits?: {
     success: boolean;
     headers: string[];
     data: any[];
@@ -173,6 +180,12 @@ export interface TokenValidationResponse {
       count: number;
     };
     users?: {
+      success: boolean;
+      headers: string[];
+      data: any[];
+      count: number;
+    };
+    limits?: {
       success: boolean;
       headers: string[];
       data: any[];
@@ -294,6 +307,7 @@ export const authApi = {
         email: responseData.user.email,
         username: responseData.user.username,
         role: responseData.user.role,
+        plan: responseData.user.plan,
         verifyStatus: responseData.user.verifyStatus,
         btcAddress: responseData.user.btcAddress || '',
         ethAddress: responseData.user.ethAddress || '',
@@ -312,7 +326,8 @@ export const authApi = {
         hub: responseData.data?.hub || [],
         redirect: responseData.data?.redirect || [],
         custom: responseData.data?.custom || [],
-        sender: responseData.data?.sender || []
+        sender: responseData.data?.sender || [],
+        limits: responseData.data?.limits || []
       },
       needsVerification: responseData.needsVerification || false,
       error: responseData.error || undefined

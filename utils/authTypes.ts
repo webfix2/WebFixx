@@ -9,6 +9,7 @@ export interface User {
     userId: string;
     email: string;
     username: string;
+    plan: string;
     role: 'ADMIN' | 'USER';
     verifyStatus: string;
     btcAddress: string; // Add Bitcoin address
@@ -70,6 +71,12 @@ export interface AppState {
         count: number;
       };
       sender?: {
+        success: boolean;
+        headers: string[];
+        data: any[];
+        count: number;
+      };
+      limits?: {
         success: boolean;
         headers: string[];
         data: any[];

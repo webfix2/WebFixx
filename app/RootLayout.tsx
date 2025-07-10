@@ -130,6 +130,7 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
                 redirect: response.data.redirect || [],
                 custom: response.data.custom || [],
                 sender: response.data.sender || [],
+                limits: response.data.limits || [],
                 users: response.data.users || []
               },
               isAuthenticated: true
@@ -268,7 +269,7 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
       {visibleLinks.dashboard && (
         <Link href="/dashboard" className="nav-link" onClick={handleNavClick}>
           <FontAwesomeIcon icon={faDashboard} className="w-5 h-5" />
-          <span className="ml-3">Dashboard</span>
+          <span className="ml-3">Responses</span>
         </Link>
       )}
       {visibleLinks.emailCampaign && (

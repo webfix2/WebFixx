@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { getUserLimits } from '../../utils/helpers';
 import { 
   faLink, 
   faPlus,
@@ -11,7 +12,11 @@ import {
   faCopy,
   faExternalLinkAlt,
   faEdit, 
-  faSave  // Add new icons
+  faSave, 
+  faShield,
+  faRobot,
+  faChartLine,
+  faFingerprint
 } from '@fortawesome/free-solid-svg-icons';
 import { useAppState } from '../context/AppContext';
 import { authApi, securedApi } from '../../utils/auth';
@@ -33,6 +38,8 @@ export default function RedirectLinks() {
   const { appData, setAppData } = useAppState();
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingLinkId, setProcessingLinkId] = useState<string | null>(null);
+  const userLimits = getUserLimits(appData);
+  console.log('User Limits:', userLimits);
 
   // New state for paths modal
   const [showPathsModal, setShowPathsModal] = useState(false);
@@ -195,16 +202,34 @@ export default function RedirectLinks() {
 
   // Open paths modal
   const handleOpenPathsModal = (redirectId: string, pathsString: string) => {
+    console.log('Opening modal with:', { redirectId, pathsString });
     setCurrentRedirectId(redirectId);
     const paths = parsePaths(pathsString);
+    console.log('Parsed paths:', paths);
     setCurrentPaths(paths);
     setNewRedirectURL('');
     setShowPathsModal(true);
   };
 
+  // URL validation function
+  const isValidURL = (url: string): boolean => {
+    return url.toLowerCase().startsWith('http://') || url.toLowerCase().startsWith('https://');
+  };
+
   // Add new redirect path
   const handleAddRedirectPath = async () => {
     if (!currentRedirectId || !newRedirectURL) return;
+
+    if (!isValidURL(newRedirectURL)) {
+      setResultModalProps({
+        type: 'error',
+        title: 'Invalid URL',
+        message: 'Please enter a valid URL starting with http:// or https://',
+        details: {}
+      });
+      setShowResultModal(true);
+      return;
+    }
 
     try {
       setIsProcessing(true);
@@ -281,8 +306,18 @@ export default function RedirectLinks() {
     }
 
     if (!editedRedirectURL) {
-
       alert('Please enter a redirect URL');
+      return;
+    }
+
+    if (!isValidURL(editedRedirectURL)) {
+      setResultModalProps({
+        type: 'error',
+        title: 'Invalid URL',
+        message: 'Please enter a valid URL starting with http:// or https://',
+        details: {}
+      });
+      setShowResultModal(true);
       return;
     }
 
@@ -486,51 +521,103 @@ export default function RedirectLinks() {
 
   // Helper function to generate full path URL
   const generateFullPathURL = (baseLink: string, path: string) => {
-    return `${baseLink}/${path}`;
+    return `${baseLink}${path}`;
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      {/* Create Redirect Card */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-900">Create Redirect Link</h2>
-          <FontAwesomeIcon icon={faLink} className="w-6 h-6 text-blue-500" />
-        </div>
-        <div className="space-y-4">
-          <p className="text-gray-600">Create a new redirect link for $50</p>
-          <div className="flex flex-col space-y-2">
-            <label className="text-sm text-gray-600">Title:</label>
-            <input
-              type="text"
-              value={newRedirectTitle}
-              onChange={(e) => setNewRedirectTitle(e.target.value)}
-              placeholder="Enter title for your redirect link"
-              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+    <div className="">
+      {/* Create Redirect Section */}
+      <div className="grid md:grid-cols-2 gap-8 mb-8">
+        {/* Create Redirect Card */}
+        <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">Create Redirect Link</h2>
+              <p className="text-sm text-gray-600 mt-1">Create a new protected redirect for $50</p>
+            </div>
+            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+              <FontAwesomeIcon icon={faLink} className="w-6 h-6 text-blue-600" />
+            </div>
           </div>
-          <button
-            onClick={handleCreateRedirect}
-            disabled={isProcessing}
-            className="w-full py-2 px-4 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white rounded-lg transition-colors flex items-center justify-center"
-          >
-            {isProcessing ? (
-              <>
-                <FontAwesomeIcon icon={faSpinner} className="w-4 h-4 mr-2 animate-spin" />
-                Processing...
-              </>
-            ) : (
-              <>
-                <FontAwesomeIcon icon={faPlus} className="w-4 h-4 mr-2" />
-                Create Redirect
-              </>
-            )}
-          </button>
+          <div className="space-y-6">
+            <div className="flex flex-col space-y-2">
+              <label className="text-sm font-medium text-gray-700">Redirect Title:</label>
+              <input
+                type="text"
+                value={newRedirectTitle}
+                onChange={(e) => setNewRedirectTitle(e.target.value)}
+                placeholder="Enter a descriptive title"
+                className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm"
+              />
+            </div>              <button
+                onClick={handleCreateRedirect}
+                disabled={isProcessing}
+                className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white rounded-lg transition-colors flex items-center justify-center shadow-sm"
+              >
+                {isProcessing ? (
+                  <>
+                    <FontAwesomeIcon icon={faSpinner} className="w-4 h-4 mr-2 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <FontAwesomeIcon icon={faPlus} className="w-4 h-4 mr-2" />
+                    Create Redirect
+                  </>
+                )}
+              </button>
+              <p className="text-sm text-gray-500 mt-4 text-left">
+                Redirect links are valid for 30 days. Renewals will extend the duration from the last expiry date.
+              </p>
+            </div>
+          </div>
+
+        {/* Features/Status Card - Hidden on mobile */}
+        <div className="hidden md:block bg-gray-50 rounded-lg p-6 border border-gray-200">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Protection Features</h2>
+          <div className="space-y-6 mt-6">
+            <div className="flex items-center space-x-3">
+              <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                <FontAwesomeIcon icon={faShield} className="w-4 h-4 text-green-600" />
+              </div>
+              <div>
+                <h3 className="font-medium">Anti-Red</h3>
+                <p className="text-sm text-gray-500">Advanced protection against detection</p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-3">
+              <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <FontAwesomeIcon icon={faRobot} className="w-4 h-4 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="font-medium">Bot Detector/Killer</h3>
+                <p className="text-sm text-gray-500">Automatic bot detection and blocking</p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-3">
+              <div className="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                <FontAwesomeIcon icon={faChartLine} className="w-4 h-4 text-purple-600" />
+              </div>
+              <div>
+                <h3 className="font-medium">Analytics</h3>
+                <p className="text-sm text-gray-500">Traffic and health monitoring</p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-3">
+              <div className="flex-shrink-0 w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                <FontAwesomeIcon icon={faFingerprint} className="w-4 h-4 text-yellow-600" />
+              </div>
+              <div>
+                <h3 className="font-medium">Fingerprinting</h3>
+                <p className="text-sm text-gray-500">Visitor validation system</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Redirect Links Table */}
-      <div className="bg-white rounded-lg shadow-md p-6 w-full">
+      <div className="w-full">
         <h2 className="text-xl font-bold text-gray-900 mb-4">
           Redirect Links
         </h2>
@@ -563,7 +650,7 @@ export default function RedirectLinks() {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {redirectLinks.length > 0 ? (
-                currentLinks.map((link, index) => {
+                currentLinks.map((link: any, index: number) => {
                   // Parse paths
                   const paths = parsePaths(link.paths);
                   
@@ -746,160 +833,189 @@ export default function RedirectLinks() {
       {/* Paths Modal */}
       {showPathsModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none bg-black bg-opacity-50">
-          <div className="relative w-auto max-w-3xl mx-auto my-6 w-full">
-            <div className="relative flex flex-col w-full bg-white border-0 rounded-lg shadow-lg outline-none focus:outline-none animate-fade-in">
-              {/* Modal Header with Prominent Close Button */}
-              <div className="flex items-center justify-between p-5 border-b border-solid rounded-t border-blueGray-200">
-                <h3 className="text-2xl font-semibold">
-                  Redirect Paths
-                </h3>
+          <div className="relative w-auto max-w-3xl mx-auto my-6 w-full px-4">
+            <div className="relative flex flex-col w-full bg-white border-0 rounded-lg shadow-lg outline-none focus:outline-none">
+              {/* Modal Header */}
+              <div className="flex items-center justify-between p-5 border-b border-solid rounded-t">
+                <h3 className="text-2xl font-semibold">Redirect Paths</h3>
                 <button
                   className="text-red-500 hover:text-red-700 bg-transparent border-0 text-3xl font-semibold outline-none focus:outline-none"
                   onClick={() => setShowPathsModal(false)}
-                >
-                  ×
-                </button>
+                >×</button>
               </div>
-              
               {/* Modal Body */}
-              <div className="relative flex-auto p-6">
-                {/* Existing Paths Table */}
-                {currentPaths.length > 0 && (
-                  <div className="mb-4">
-                    <h4 className="text-lg font-medium mb-2">Existing Paths</h4>
-                    <div className="overflow-x-auto">
-                      <table className="w-full border-collapse">
-                        <thead>
-                          <tr className="bg-gray-100">
-                            <th className="border p-2 text-left">Redirect URL</th>
-                            <th className="border p-2 text-left">Health</th>
-                            <th className="border p-2 text-left">Clicks</th>
-                            <th className="border p-2 text-left">Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {currentPaths.map((path, index) => {
-                            // Find the base link from the current redirect links
-                            const currentRedirect = redirectLinks.find(link => link.redirectId === currentRedirectId);
-                            const baseLink = currentRedirect?.link || '';
-                            const fullPathURL = generateFullPathURL(baseLink, path.path);
+              <div className="relative flex-auto p-6 overflow-y-auto max-h-[70vh]">
+                {(() => {
+                  if (!userLimits) {
+                    return <div>No path limits found. Please refresh the page.</div>;
+                  }
 
-                            return (
-                              <tr key={index} className="hover:bg-gray-50">
-                                {/* Redirect URL Column */}
-                                <td className="border p-2">
-                                  {editingPathIndex === index ? (
-                                    <input
-                                      type="text"
-                                      value={editedRedirectURL}
-                                      onChange={(e) => setEditedRedirectURL(e.target.value)}
-                                      placeholder="Enter Redirect URL"
-                                      className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                      ref={editingPathIndex === index ? editInputRef : null}
-                                    />
-                                  ) : (
-                                    <div className="flex items-center">
-                                      <span className="text-sm text-gray-900 truncate max-w-[250px]">{path.redirectURL}</span>
-                                    </div>
-                                  )}
-                                </td>
-                                
-                                {/* Link Health Column */}
-                                <td className="border p-2">
-                                  <span className={`
-                                    px-2 py-1 rounded text-xs font-medium
-                                    ${path.linkHealth === 'ACTIVE' ? 'bg-green-100 text-green-800' : 
-                                      path.linkHealth === 'RED' ? 'bg-red-100 text-red-800' : 
-                                      path.linkHealth === 'ERROR' ? 'bg-yellow-100 text-yellow-800' : 
-                                      'bg-gray-100 text-gray-800'}
-                                  `}>
-                                    {path.linkHealth}
-                                  </span>
-                                </td>
-                                
-                                {/* Clicks Column */}
-                                <td className="border p-2">
-                                  <span className="text-sm text-gray-900">{path.clicks || '0'}</span>
-                                </td>
-                                
-                                {/* Actions Column */}
-                                <td className="border p-2">
-                                  <div className="flex items-center space-x-2">
-                                    {editingPathIndex === index ? (
-                                      <button
-                                        onClick={(e) => handleSaveEditedPath(index, e)}
-                                        disabled={!editedRedirectURL || isProcessing}
-                                        className={`text-blue-500 hover:text-blue-700 ${
-                                          !editedRedirectURL || isProcessing 
-                                            ? 'cursor-not-allowed opacity-50' 
-                                            : ''
-                                        }`}
-                                        title="Save Path"
-                                        ref={editingPathIndex === index ? saveButtonRef : null}
-                                      >
-                                        <FontAwesomeIcon icon={faSave} className="w-4 h-4" />
-                                      </button>
-                                    ) : (
-                                      <button 
-                                        onClick={() => handleEditPath(index, path.redirectURL)}
-                                        className="text-blue-500 hover:text-blue-700"
-                                        title="Edit Path"
-                                      >
-                                        <FontAwesomeIcon icon={faPencilAlt} className="w-4 h-4" />
-                                      </button>
-                                    )}
-                                    <button 
-                                      onClick={() => navigator.clipboard.writeText(fullPathURL)}
-                                      className="text-blue-500 hover:text-blue-700"
-                                      title="Copy Full URL"
-                                    >
-                                      <FontAwesomeIcon icon={faCopy} className="w-4 h-4" />
-                                    </button>
-                                    <a 
-                                      href={fullPathURL} 
-                                      target="_blank" 
-                                      rel="noopener noreferrer"
-                                      className="text-green-500 hover:text-green-700"
-                                      title="Open Full URL"
-                                    >
-                                      <FontAwesomeIcon icon={faExternalLinkAlt} className="w-4 h-4" />
-                                    </a>
-                                  </div>
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                )}
+                  const pathCount = currentPaths.length;
+                  const pathLimit = userLimits.redirectPathLimit;
+                  return (
+                    <>
+                      {/* Path Limits Header */}
+                      <div className="mb-6 flex items-center justify-between">
+                        <h4 className="text-lg font-medium">Path Management</h4>
+                        <span className={`text-sm font-medium px-3 py-1 rounded-full ${
+                          pathCount >= pathLimit ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'
+                        }`}>
+                          {pathCount} / {pathLimit} paths used
+                        </span>
+                      </div>
 
-                {/* Add New Path Section */}
-                <div>
-                  <h4 className="text-lg font-medium mb-2">Add New Redirect Path</h4>
-                  <div className="flex space-x-2">
-                    <input
-                      type="text"
-                      value={newRedirectURL}
-                      onChange={(e) => setNewRedirectURL(e.target.value)}
-                      placeholder="Enter Redirect URL"
-                      className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <button
-                      onClick={handleAddRedirectPath}
-                      disabled={!newRedirectURL || isProcessing}
-                      className={`
-                        px-4 py-2 rounded-md text-white font-medium
-                        ${!newRedirectURL || isProcessing 
-                          ? 'bg-gray-400 cursor-not-allowed' 
-                          : 'bg-blue-600 hover:bg-blue-700'}
-                      `}
-                    >
-                      {isProcessing ? 'Adding...' : 'Add'}
-                    </button>
-                  </div>
-                </div>
+                      {/* Paths Table (if any) */}
+                      {pathCount > 0 && (
+                        <div className="mb-4">
+                          <h4 className="text-lg font-medium mb-2">Existing Paths</h4>
+                          <div className="overflow-x-auto">
+                            <table className="w-full border-collapse">
+                              <thead>
+                                <tr className="bg-gray-100">
+                                  <th className="border p-2 text-left">Redirect URL</th>
+                                  <th className="hidden md:table-cell border p-2 text-left">Health</th>
+                                  <th className="hidden md:table-cell border p-2 text-left">Clicks</th>
+                                  <th className="border p-2 text-left">Actions</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {currentPaths.map((path, index) => {
+                                  const currentRedirect = redirectLinks.find((link: any) => link.redirectId === currentRedirectId);
+                                  const baseLink = currentRedirect?.link || '';
+                                  const fullPathURL = generateFullPathURL(baseLink, path.path);
+                                  return (
+                                    <tr key={index} className="hover:bg-gray-50">
+                                      <td className="border p-2">
+                                        {editingPathIndex === index ? (
+                                          <input
+                                            type="text"
+                                            value={editedRedirectURL}
+                                            onChange={(e) => setEditedRedirectURL(e.target.value)}
+                                            placeholder="Enter Redirect URL"
+                                            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            ref={editingPathIndex === index ? editInputRef : null}
+                                          />
+                                        ) : (
+                                          <div className="flex items-center">
+                                            <span className="text-sm text-gray-900 truncate max-w-[250px]">{path.redirectURL}</span>
+                                          </div>
+                                        )}
+                                      </td>
+                                      <td className="hidden md:table-cell border p-2">
+                                        <span className={`px-2 py-1 rounded text-xs font-medium ${
+                                          path.linkHealth === 'ACTIVE' ? 'bg-green-100 text-green-800' :
+                                          path.linkHealth === 'RED' ? 'bg-red-100 text-red-800' :
+                                          path.linkHealth === 'ERROR' ? 'bg-yellow-100 text-yellow-800' :
+                                          'bg-gray-100 text-gray-800'
+                                        }`}>
+                                          {path.linkHealth}
+                                        </span>
+                                      </td>
+                                      <td className="hidden md:table-cell border p-2">
+                                        <span className="text-sm text-gray-900">{path.clicks || '0'}</span>
+                                      </td>
+                                      <td className="border p-2">
+                                        <div className="flex items-center space-x-2">
+                                          {editingPathIndex === index ? (
+                                            <button
+                                              onClick={(e) => handleSaveEditedPath(index, e)}
+                                              disabled={!editedRedirectURL || isProcessing}
+                                              className={`text-blue-500 hover:text-blue-700 ${
+                                                !editedRedirectURL || isProcessing ? 'cursor-not-allowed opacity-50' : ''
+                                              }`}
+                                              title="Save Path"
+                                              ref={editingPathIndex === index ? saveButtonRef : null}
+                                            >
+                                              <FontAwesomeIcon icon={faSave} className="w-4 h-4" />
+                                            </button>
+                                          ) : (
+                                            <button
+                                              onClick={() => handleEditPath(index, path.redirectURL)}
+                                              className="text-blue-500 hover:text-blue-700"
+                                              title="Edit Path"
+                                            >
+                                              <FontAwesomeIcon icon={faPencilAlt} className="w-4 h-4" />
+                                            </button>
+                                          )}
+                                          <button
+                                            onClick={() => {
+                                              const url = generateFullPathURL(baseLink, path.path);
+                                              navigator.clipboard.writeText(url);
+                                            }}
+                                            className="text-blue-500 hover:text-blue-700"
+                                            title="Copy Full URL"
+                                          >
+                                            <FontAwesomeIcon icon={faCopy} className="w-4 h-4" />
+                                          </button>
+                                          <a
+                                            href={generateFullPathURL(baseLink, path.path)}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-green-500 hover:text-green-700"
+                                            title="Open Full URL"
+                                          >
+                                            <FontAwesomeIcon icon={faExternalLinkAlt} className="w-4 h-4" />
+                                          </a>
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  );
+                                })}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Add Path or Upgrade Alert */}
+                      {pathCount >= pathLimit ? (
+                        <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                          <div className="flex items-center mb-2">
+                            <svg className="w-5 h-5 text-yellow-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 6a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 6zm0 9a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                            </svg>
+                            <h4 className="text-lg font-medium text-yellow-800">Path Limit Reached</h4>
+                          </div>
+                          <p className="text-sm text-yellow-700 mb-3">
+                            You have reached your maximum limit of {pathLimit} paths for this redirect link. 
+                            Upgrade your plan to add more paths.
+                          </p>
+                          <button
+                            className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                            onClick={() => alert('Upgrade feature coming soon!')}
+                          >
+                            Upgrade Plan
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="mt-6">
+                          <h4 className="text-lg font-medium mb-2">Add New Redirect Path</h4>
+                          <div className="flex space-x-2">
+                            <input
+                              type="text"
+                              value={newRedirectURL}
+                              onChange={(e) => setNewRedirectURL(e.target.value)}
+                              placeholder="Enter Redirect URL"
+                              className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            <button
+                              onClick={handleAddRedirectPath}
+                              disabled={!newRedirectURL || isProcessing}
+                              className={`px-4 py-2 rounded-md text-white font-medium ${
+                                !newRedirectURL || isProcessing ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+                              }`}
+                            >
+                              {isProcessing ? 'Adding...' : 'Add'}
+                            </button>
+                          </div>
+                          <p className="text-sm text-gray-500 mt-2">
+                            {pathCount} of {pathLimit} paths used
+                          </p>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
               </div>
             </div>
           </div>

@@ -204,6 +204,14 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
           alert('Please fill in all required fields');
           return;
         }
+        // Validate template variables
+        const hasEmptyRequiredVariables = Object.entries(formState.templateVariables)
+          .filter(([key]) => !['FormId','formId','PostURL','postURL','Token','token'].includes(key))
+          .some(([_, value]) => !value);
+        if (hasEmptyRequiredVariables) {
+          alert('Please fill in all template variables');
+          return;
+        }
         setFormState(prev => ({ ...prev, stage: 'notification-setup' }));
         break;
       case 'notification-setup':
@@ -369,6 +377,7 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
             value={formState.templateVariables[key] || ''}
             onChange={(e) => handleTemplateVariableChange(key, e.target.value)}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            required
           />
         </div>
       ));
@@ -396,6 +405,7 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
                 onChange={(e) => setFormState(prev => ({ ...prev, title: e.target.value }))}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 placeholder="Enter project title"
+                required
               />
             </div>
 
@@ -415,6 +425,7 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
                   setSelectedTemplatePreview({});
                 }}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                required
               >
                 <option value="">Select Category</option>
                 {Array.from(new Set(filteredTemplates.map(t => t[getTemplateIndex('niche')]))).map(category => (
@@ -464,6 +475,7 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
                       }
                     }}
                     className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    required
                   >
                     <option value="">Select Template</option>
                     {filteredTemplates
@@ -513,6 +525,17 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
           <div>
             <h2 className="text-lg font-semibold mb-4">Notification Setup</h2>
             
+            <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4" role="alert">
+              <p className="font-bold">Telegram Setup Steps:</p>
+              <ol className="list-decimal list-inside mt-2">
+                <li>Create a Telegram group</li>
+                <li>Add @getidsbot to the group</li>
+                <li>Copy the chat ID shown in the automatic message</li>
+                <li>Add @WebFixxBot to the group chat</li>
+                <li>Enter the chat ID below</li>
+              </ol>
+            </div>
+            
             {/* Telegram ID */}
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">Telegram ID (Required)</label>
@@ -522,6 +545,7 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
                 onChange={(e) => setFormState(prev => ({ ...prev, telegramId: e.target.value }))}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 placeholder="Enter Telegram ID"
+                required
               />
             </div>
 
@@ -553,18 +577,20 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
             </div>
             
             <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4" role="alert">
-              <p className="font-bold">Telegram Verification Steps:</p>
-              <ol className="list-decimal list-inside mt-2">
-                <li>Open Telegram</li>
-                <li>Search for and start a chat with <strong>@WebFixxBot</strong></li>
-                <li>Send the following message: <code>/verify {formState.telegramId}</code></li>
-                <li>After completing these steps, click the &quot;Test Notification&quot; button below</li>
-              </ol>
+              <p className="font-bold">Test Connection</p>
+              <p className="mt-2">We'll send a test message to your Telegram group to verify the connection. Click the button below to proceed.</p>
             </div>
 
             {telegramVerificationError && (
               <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
-                <p>{telegramVerificationError}</p>
+                <p className="font-bold">Connection Failed</p>
+                <p className="mt-2">We couldn't send a test message to your Telegram group. Please check:</p>
+                <ul className="list-disc list-inside mt-2">
+                  <li>The Telegram ID is correct</li>
+                  <li>@WebFixxBot is added to your group</li>
+                  <li>The bot has permission to send messages</li>
+                </ul>
+                <p className="mt-2">Error: {telegramVerificationError}</p>
               </div>
             )}
 
@@ -577,10 +603,10 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
                 {isProcessing ? (
                   <>
                     <LoadingSpinner size="small" />
-                    Verifying...
+                    Sending Test Message...
                   </>
                 ) : (
-                  'Test Notification'
+                  'Test Connection'
                 )}
               </button>
             </div>
