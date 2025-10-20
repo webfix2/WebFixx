@@ -31,17 +31,21 @@ export default function Home() {
   const router = useRouter();
   const { appData, setAppData } = useAppState();
 
+  const handleRedirect = (user: LoginResponse['user']) => {
+    if (user.role === "ADMIN") {
+      router.replace("/root");
+    } else if (user.verifyStatus === "FALSE" || !user.verifyStatus) {
+      router.replace("/verify");
+    } else {
+      router.replace("/dashboard");
+    }
+  };
+
   // Modified auth check
   useEffect(() => {
     const checkAuth = async () => {
       if (appData?.user && appData.isAuthenticated) {
-        if (appData.user.role === "ADMIN") {
-          router.replace("/root");
-        } else if (appData.user.verifyStatus === "FALSE" || !appData.user.verifyStatus) {
-          router.replace("/verify");
-        } else {
-          router.replace("/dashboard");
-        }
+        handleRedirect(appData.user);
       } else {
         setIsCheckingAuth(false);
       }
@@ -93,13 +97,7 @@ export default function Home() {
           });
 
           // Handle routing
-          if (response.user.verifyStatus === 'FALSE' || !response.user.verifyStatus) {
-            router.push('/verify');
-          } else if (response.user.role === 'ADMIN') {
-            router.push('/root');
-          } else {
-            router.push('/dashboard');
-          }
+          handleRedirect(response.user);
         }
       } else {
         console.log('Starting registration with:', formData);
@@ -144,7 +142,7 @@ export default function Home() {
             isAuthenticated: true
           });
 
-          router.push("/dashboard");
+          handleRedirect(loginResponse.user);
         } else {
           setError(registerResponse.error || registerResponse.message || 'Registration failed');
           console.error('Registration failed:', registerResponse);

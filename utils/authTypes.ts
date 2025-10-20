@@ -1,23 +1,8 @@
 import type { CryptoAddress, WalletState, WalletTransaction } from '../app/types/wallet';
+import type { UserData } from './auth'; // Import UserData from auth.ts
 
 export interface SecuredApiRequest {
     [key: string]: any;
-}
-
-export interface User {
-    id: string;
-    userId: string;
-    email: string;
-    username: string;
-    plan: string;
-    role: 'ADMIN' | 'USER';
-    verifyStatus: string;
-    btcAddress: string; // Add Bitcoin address
-    ethAddress: string;
-    usdtAddress: string;
-    balance: string;
-    pendingBalance: string;
-    addresses?: CryptoAddress[];
 }
 
 export interface SecuredApiResponse {
@@ -31,9 +16,9 @@ export interface SecuredApiResponse {
 }
 
 export interface AppState {
-    user: User | null;
+    user: UserData | null; // Use UserData here
     data: {
-      user?: User;
+      user: UserData | null; // Allow null for user in data
       transactions: {
         success: boolean;
         headers: string[];

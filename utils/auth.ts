@@ -1,8 +1,8 @@
 import type { SecuredApiRequest, SecuredApiResponse } from './authTypes';
 import type { CryptoAddress, WalletState, WalletTransaction } from '../app/types/wallet';
 
-const API_BASE_URL = 'https://web-fixx-hoo.vercel.app/api';
-// const API_BASE_URL = 'https://webfixx-backend.vercel.app/api';
+const API_BASE_URL = 'http://127.0.0.1:5000/api';
+// const API_BASE_URL = 'https://webfixx-backend.vercel.app/api'; https://jshx9c6n-5000.uks1.devtunnels.ms/
 
 export interface RegisterData {
   username: string;
@@ -49,7 +49,7 @@ export interface UserData {
 }
 
 export interface AppData {
-  user: any;
+  user: UserData | null;
   users?: {
     success: boolean;
     headers: string[];
@@ -308,7 +308,7 @@ export const authApi = {
         username: responseData.user.username,
         role: responseData.user.role,
         plan: responseData.user.plan,
-        verifyStatus: responseData.user.verifyStatus,
+        verifyStatus: responseData.user.verifyStatus as 'TRUE' | 'FALSE' | '',
         btcAddress: responseData.user.btcAddress || '',
         ethAddress: responseData.user.ethAddress || '',
         usdtAddress: responseData.user.usdtAddress || '',
