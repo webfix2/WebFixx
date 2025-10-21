@@ -38,7 +38,7 @@ export default function RedirectProtectionSettings({ project, onSave }: Redirect
   const linkIndex = redirectHeaders.indexOf('link');
   const linkIdIndex = redirectHeaders.indexOf('redirectId');
   const statusIndex = redirectHeaders.indexOf('status');
-  const userRole = appData?.data?.user?.role || '';
+  const userRole = appData?.user?.role || '';
 
   const activeRedirects = redirects.filter(r => r[statusIndex] === 'ACTIVE');
   const getLink = (r: any) => r[linkIndex];
