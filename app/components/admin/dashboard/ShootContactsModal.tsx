@@ -57,7 +57,10 @@ export const ShootContactsModal = ({
   const [formData, setFormData] = useState({
     campaign: '',
     emailTemplate: '',
-    templateVariables: {},
+    templateVariables: {
+      greeting: '',
+      body: ''
+    },
     selectedLink: ''
   });
   const [currentItem, setCurrentItem] = useState<any>(null);
