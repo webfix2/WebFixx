@@ -51,9 +51,8 @@ export default function Wallet() {
 
   // Sort transactions to show most recent first
   const sortedTransactions = [...transactions].sort((a, b) => {
-    const timestampIndex = transactionHeaders.indexOf('timestamp');
-    const dateA = new Date(a[timestampIndex]);
-    const dateB = new Date(b[timestampIndex]);
+    const dateA = new Date(a.timestamp);
+    const dateB = new Date(b.timestamp);
     return dateB.getTime() - dateA.getTime(); // Descending order (newest first)
   });
 
