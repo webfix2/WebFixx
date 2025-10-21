@@ -12,38 +12,7 @@ import { securedApi } from '../../../../utils/auth';
 import { authApi } from '../../../../utils/auth';
 import ProjectSettingsModal from './../../../components/admin/projects/ProjectSettingsModal';
 import ConfirmationModal from '../../ConfirmationModal';
-
-interface Project {
-  id: string;
-  formId: string;
-  projectId: string;
-  projectType: string;
-  projectTitle: string;
-  templateNiche: string;
-  templateTitle: string;
-  templateType: string;
-  pageHealth: string;
-  redirectId?: string;
-  redirectURL?: string;
-  redirectHealth?: string;
-  domainId?: string;
-  domainURL?: string;
-  domainHealth?: string;
-  pageVisits: number;
-  botVisits: number;
-  flaggedVisits: number;
-  expiryDate: string;
-  response: string;
-  email?: string;
-  telegramGroupId?: string;
-  responseCount: number;
-  responses: any[];
-  templateVariables: string;
-  systemStatus: string;
-  pageURL?: string;
-  templateId: string;
-  links?: any[];
-}
+import type { Project } from '../../../types/project'; // Add this import
 
 interface ActionsHandlerProps {
   project: Project;

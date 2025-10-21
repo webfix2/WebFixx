@@ -1,3 +1,8 @@
+// Generic JSON object type
+export interface JSONObject {
+  [key: string]: any;
+}
+
 // USER DASHBOARD PAGE TYPES
 export interface LoginData {
   id: string;
@@ -5,8 +10,8 @@ export interface LoginData {
   email: string;
   domain: string;
   password: string;
-  ipData: any;
-  deviceData: any;
+  ipData: JSONObject;
+  deviceData: JSONObject;
   verified: boolean;
   cookie: string;
   memo?: string;
@@ -55,7 +60,7 @@ export interface Campaign {
 export interface CSVAnalytics {
   totalRows: number;
   headers: string[];
-  preview: any[];
+  preview: string[][];
   summary: string;
 }
 
@@ -65,4 +70,3 @@ export interface NewCampaign extends Omit<Campaign, 'id' | 'created_at' | 'statu
   created_at?: string;
   status?: Campaign['status'];
 }
-

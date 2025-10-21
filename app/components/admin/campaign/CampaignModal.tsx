@@ -332,7 +332,7 @@ export function CampaignModal({ onClose, onSave }: CampaignModalProps) {
                       {csvAnalytics.preview.slice(0, 3).map((row, i) => (
                         <tr key={i}>
                           {csvAnalytics.headers.map(header => (
-                            <td key={header} className="px-2 py-1 border-t">{row[header]}</td>
+                            <td key={header} className="px-2 py-1 border-t">{row[csvAnalytics.headers.indexOf(header)]}</td>
                           ))}
                         </tr>
                       ))}

@@ -17,7 +17,7 @@ export default function EmailCampaign() {
   const [selectedCampaign, setSelectedCampaign] = useState<string | null>(null);
   const [showCampaignModal, setShowCampaignModal] = useState(false);
 
-  const campaigns = appData?.data?.sender?.data || []; // Access the data array
+  const campaigns = appData?.data?.campaigns?.data || []; // Access the data array
 
   const handleSaveCampaign = async (campaign: Partial<Campaign>) => {
     // TODO: Implement campaign save

@@ -25,6 +25,23 @@ export interface PaymentResponseData {
   newBalance?: string;
 }
 
+export interface SecuredApiResponse {
+  success: boolean;
+  error?: string;
+  data?: {
+    orderId?: string;
+    amount?: string;
+    timeRemaining?: number;
+    exchangeRate?: string;
+    btcAmount?: string;
+    ethAmount?: string;
+    usdtAmount?: string;
+    address?: string;
+    newBalance?: string;
+    [key: string]: any; // Allow for other properties not explicitly defined
+  };
+}
+
 export interface PaymentApiResponse {
   success: boolean;
   error?: string;
@@ -32,7 +49,7 @@ export interface PaymentApiResponse {
 }
 
 // Helper function to convert SecuredApiResponse to PaymentApiResponse
-export function convertToPaymentResponse(response: any): PaymentApiResponse {
+export function convertToPaymentResponse(response: SecuredApiResponse): PaymentApiResponse {
   if (!response.success) {
     return {
       success: false,

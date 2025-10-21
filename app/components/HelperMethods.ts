@@ -27,7 +27,11 @@ export function getRowsByColumn(
         data: filteredRows,
         count: filteredRows.length
       };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error: unknown) {
+      let errorMessage = 'An unknown error occurred.';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      return { success: false, error: errorMessage };
     }
   }

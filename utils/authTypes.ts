@@ -1,14 +1,30 @@
 import type { CryptoAddress, WalletState, WalletTransaction } from '../app/types/wallet';
 import type { UserData } from './auth'; // Import UserData from auth.ts
+import type { User } from '../app/api/admin/types'; // Import User from admin types
+import type { Project } from '../app/types/project'; // Corrected import
+import type { Template } from '../app/types/template'; // Add this import
+import type { Hub } from '../app/types/hub'; // Add this import
+import type { Redirect } from '../app/types/redirect'; // Add this import
+import type { Custom } from '../app/types/custom'; // Add this import
+import type { Sender } from '../app/types/sender'; // Add this import
+import type { Limit } from '../app/types/limit'; // Add this import
+import type { Campaign } from '../app/types'; // Import Campaign
 
 export interface SecuredApiRequest {
     [key: string]: any;
 }
 
-export interface SecuredApiResponse {
+export interface ApiResponseData<T> {
+  success: boolean;
+  headers: string[];
+  data: T[];
+  count: number;
+}
+
+export interface SecuredApiResponse<T = any> {
     success: boolean;
     error?: string;
-    data?: any;
+    data?: T;
     details?: any;
     needsVerification?: boolean;
     transactionId?: string;
@@ -18,60 +34,21 @@ export interface SecuredApiResponse {
 export interface AppState {
     user: UserData | null; // Use UserData here
     data: {
-      transactions: {
-        success: boolean;
-        headers: string[];
-        data: any[];
-        count: number;
-      };
-      projects: {
-        success: boolean;
-        headers: string[];
-        data: any[];
-        count: number;
-      };
-      template: {
-        success: boolean;
-        headers: string[];
-        data: any[];
-        count: number;
-      };
-      hub: {
-        success: boolean;
-        headers: string[];
-        data: any[];
-        count: number;
-      };
-      redirect?: {
-        success: boolean;
-        headers: string[];
-        data: any[];
-        count: number;
-      };
-      custom?: {
-        success: boolean;
-        headers: string[];
-        data: any[];
-        count: number;
-      };
-      sender?: {
-        success: boolean;
-        headers: string[];
-        data: any[];
-        count: number;
-      };
-      limits?: {
-        success: boolean;
-        headers: string[];
-        data: any[];
-        count: number;
-      };
-      users?: {
-        success: boolean;
-        headers: string[];
-        data: any[];
-        count: number;
-      };
+      transactions: ApiResponseData<WalletTransaction>;
+      projects: ApiResponseData<Project>; // Use Project type
+      template: ApiResponseData<Template>; // Use Template type
+      hub: ApiResponseData<Hub>; // Use Hub type
+      redirect?: ApiResponseData<Redirect>; // Use Redirect type
+      custom?: ApiResponseData<Custom>; // Use Custom type
+      sender?: ApiResponseData<Sender>; // Use Sender type
+      limits?: ApiResponseData<Limit>; // Use Limit type
+      users?: ApiResponseData<User>; // Use User type
+      campaigns?: ApiResponseData<Campaign>; // Add campaigns
     };
     isAuthenticated: boolean;
+}
+
+export interface GlobalAppStateContext {
+  appData: AppState;
+  setAppData: (state: AppState) => void;
 }

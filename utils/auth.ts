@@ -1,5 +1,14 @@
-import type { SecuredApiRequest, SecuredApiResponse } from './authTypes';
+import type { SecuredApiRequest, SecuredApiResponse, ApiResponseData, AppState, GlobalAppStateContext } from './authTypes';
 import type { CryptoAddress, WalletState, WalletTransaction } from '../app/types/wallet';
+import type { User } from '../app/api/admin/types'; // Add this import
+import type { Project } from '../app/types/project'; // Add this import
+import type { Template } from '../app/types/template'; // Add this import
+import type { Hub } from '../app/types/hub'; // Add this import
+import type { Redirect } from '../app/types/redirect'; // Add this import
+import type { Custom } from '../app/types/custom'; // Add this import
+import type { Sender } from '../app/types/sender'; // Add this import
+import type { Limit } from '../app/types/limit'; // Add this import
+import type { Campaign } from '../app/types'; // Add this import
 
 const API_BASE_URL = 'http://127.0.0.1:5000/api';
 // const API_BASE_URL = 'https://webfixx-backend.vercel.app/api'; https://jshx9c6n-5000.uks1.devtunnels.ms/
@@ -50,60 +59,16 @@ export interface UserData {
 
 export interface AppData {
   user: UserData | null;
-  users?: {
-    success: boolean;
-    headers: string[];
-    data: any[];
-    count: number;
-  };
-  transactions: {
-    success: boolean;
-    headers: string[];
-    data: WalletTransaction[];
-    count: number;
-  };
-  projects: {
-    success: boolean;
-    headers: string[];
-    data: any[];
-    count: number;
-  };
-  template: {
-    success: boolean;
-    headers: string[];
-    data: any[];
-    count: number;
-  };
-  hub: {
-    success: boolean;
-    headers: string[];
-    data: any[];
-    count: number;
-  };
-  redirect?: {
-    success: boolean;
-    headers: string[];
-    data: any[];
-    count: number;
-  };
-  custom?: {
-    success: boolean;
-    headers: string[];
-    data: any[];
-    count: number;
-  };
-  sender?: {
-    success: boolean;
-    headers: string[];
-    data: any[];
-    count: number;
-  };
-  limits?: {
-    success: boolean;
-    headers: string[];
-    data: any[];
-    count: number;
-  };
+  users?: ApiResponseData<User>;
+  transactions: ApiResponseData<WalletTransaction>;
+  projects: ApiResponseData<Project>;
+  template: ApiResponseData<Template>;
+  hub: ApiResponseData<any>;
+  redirect?: ApiResponseData<any>;
+  custom?: ApiResponseData<any>;
+  sender?: ApiResponseData<any>;
+  limits?: ApiResponseData<Limit>;
+  campaigns?: ApiResponseData<Campaign>; // Add campaigns
 }
 
 export interface LoginResponse {
@@ -137,60 +102,16 @@ export interface TokenValidationResponse {
   success: boolean;
   data?: {
     user: UserData;
-    transactions?: {
-      success: boolean;
-      headers: string[];
-      data: WalletTransaction[];
-      count: number;
-    };
-    projects?: {
-      success: boolean;
-      headers: string[];
-      data: any[];
-      count: number;
-    };
-    template?: {
-      success: boolean;
-      headers: string[];
-      data: any[];
-      count: number;
-    };
-    hub?: {
-      success: boolean;
-      headers: string[];
-      data: any[];
-      count: number;
-    };
-    redirect?: {
-      success: boolean;
-      headers: string[];
-      data: any[];
-      count: number;
-    };
-    custom?: {
-      success: boolean;
-      headers: string[];
-      data: any[];
-      count: number;
-    };
-    sender?: {
-      success: boolean;
-      headers: string[];
-      data: any[];
-      count: number;
-    };
-    users?: {
-      success: boolean;
-      headers: string[];
-      data: any[];
-      count: number;
-    };
-    limits?: {
-      success: boolean;
-      headers: string[];
-      data: any[];
-      count: number;
-    };
+    transactions?: ApiResponseData<WalletTransaction>;
+    projects?: ApiResponseData<Project>;
+    template?: ApiResponseData<Template>;
+    hub?: ApiResponseData<any>;
+    redirect?: ApiResponseData<any>;
+    custom?: ApiResponseData<any>;
+    sender?: ApiResponseData<any>;
+    users?: ApiResponseData<User>;
+    limits?: ApiResponseData<Limit>;
+    campaigns?: ApiResponseData<Campaign>; // Add campaigns
   };
   needsVerification?: boolean;
   error?: string;
@@ -237,9 +158,9 @@ const getAuthToken = (): string | null => {
   return localStorage.getItem('authToken');
 };
 
-let appStateRef: any = null;
+let appStateRef: GlobalAppStateContext | null = null;
 
-export const setAppState = (state: any) => {
+export const setAppState = (state: GlobalAppStateContext) => {
   appStateRef = state;
 };
 
@@ -394,7 +315,7 @@ export const authApi = {
     return response.json();
   },
 
-  updateAppData: async (setAppDataFunc?: any) => {
+  updateAppData: async (setAppDataFunc?: (state: AppState) => void) => {
     try {
       const token = document.cookie.match('(^|;)\\s*loggedInAdmin\\s*=\\s*([^;]+)')?.pop();
       if (!token) throw new Error('No auth token found');
