@@ -102,10 +102,10 @@ export default function ResponseModal({ selectedProject, onClose }: ResponseModa
     }).filter(response => response !== null) as ResponseData[];
   }, [selectedProject]); // Add selectedProject to dependencies
 
-  if (!selectedProject) return null;
-
   // State for detailed view
   const [detailedResponseIndex, setDetailedResponseIndex] = useState<number | null>(null);
+
+  if (!selectedProject) return null;
 
   // Copy to clipboard function
   const copyToClipboard = (text: string, successMessage: string = 'Copied to clipboard') => {

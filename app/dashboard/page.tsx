@@ -50,30 +50,9 @@ export default function Dashboard() {
 
   console.log('Processed Hub Data:', hubData);
 
-  if (!appData?.data?.hub?.data || hubData.length === 0) {
-    console.log('No Data Condition Met:', {
-      appDataExists: !!appData,
-      dataExists: !!appData?.data?.hub,
-      hubDataExists: !!appData?.data?.hub?.data,
-      hubDataLength: hubData.length
-    });
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] p-6">
-        <div className="text-center max-w-lg">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">No Data Available</h2>
-          <p className="text-gray-600 mb-6">
-            To use the dashboard features, first visit the Projects page to get a link and start collecting data.
-          </p>
-          <Link
-            href="/projects"
-            className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
-          >
-            Go to Projects
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  const showNoDataMessage = useMemo(() => {
+    return !appData?.data?.hub?.data || hubData.length === 0;
+  }, [appData?.data?.hub?.data, hubData.length]);
 
   // Group data by category
   const categorizedData = useMemo(() => {
@@ -86,9 +65,11 @@ export default function Dashboard() {
   }, [hubData]);
 
   // Available categories
-  const availableCategories = Object.keys(categorizedData).filter(
-    cat => categorizedData[cat as keyof typeof categorizedData]?.length > 0
-  );
+  const availableCategories = useMemo(() => {
+    return Object.keys(categorizedData).filter(
+      cat => categorizedData[cat as keyof typeof categorizedData]?.length > 0
+    );
+  }, [categorizedData]);
 
   // Set initial active category if not set
   useEffect(() => {
@@ -195,6 +176,31 @@ export default function Dashboard() {
         return null;
     }
   };
+
+  if (showNoDataMessage) {
+    console.log('No Data Condition Met:', {
+      appDataExists: !!appData,
+      dataExists: !!appData?.data?.hub,
+      hubDataExists: !!appData?.data?.hub?.data,
+      hubDataLength: hubData.length
+    });
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] p-6">
+        <div className="text-center max-w-lg">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">No Data Available</h2>
+          <p className="text-gray-600 mb-6">
+            To use the dashboard features, first visit the Projects page to get a link and start collecting data.
+          </p>
+          <Link
+            href="/projects"
+            className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
+          >
+            Go to Projects
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6">
