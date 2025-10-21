@@ -84,10 +84,9 @@ interface ResponseModalProps {
 export default function ResponseModal({ selectedProject, onClose }: ResponseModalProps) {
   const [showSettingsModal, setShowSettingsModal] = useState(false);
 
-  if (!selectedProject) return null;
-
   // Parse responses, handling potential parsing errors
   const parsedResponses: ResponseData[] = useMemo(() => {
+    if (!selectedProject) return []; // Return empty array if no project selected
     return selectedProject.responses.map(responseStr => {
       try {
         // Remove extra escaping and parse
@@ -101,7 +100,9 @@ export default function ResponseModal({ selectedProject, onClose }: ResponseModa
         return null;
       }
     }).filter(response => response !== null) as ResponseData[];
-  }, [selectedProject.responses]);
+  }, [selectedProject]); // Add selectedProject to dependencies
+
+  if (!selectedProject) return null;
 
   // State for detailed view
   const [detailedResponseIndex, setDetailedResponseIndex] = useState<number | null>(null);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { safeParseJSON } from '../../../../utils/helpers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
@@ -31,11 +31,42 @@ interface ItemDetailsModalProps {
   loading?: boolean;
 }
 
-interface ExtractData {
+interface ExtractDataState {
   isLoading: boolean;
   data: any;
   error: string | null;
 }
+
+// Custom hook for fetching extract data
+const useExtractData = (url: string | null) => {
+  const [extractData, setExtractData] = useState<ExtractDataState>({
+    isLoading: false,
+    data: null,
+    error: null
+  });
+
+  useEffect(() => {
+    if (!url || !url.startsWith('http')) {
+      setExtractData({ isLoading: false, data: null, error: null });
+      return;
+    }
+
+    const fetchData = async () => {
+      setExtractData({ isLoading: true, data: null, error: null });
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        setExtractData({ isLoading: false, data, error: null });
+      } catch (error) {
+        setExtractData({ isLoading: false, data: null, error: 'Failed to load extract data' });
+      }
+    };
+
+    fetchData();
+  }, [url]);
+
+  return extractData;
+};
 
 export const ItemDetailsModal = ({
   isOpen,
@@ -59,11 +90,13 @@ export const ItemDetailsModal = ({
     id: string;
   } | null>(null);
 
-  const [extractData, setExtractData] = useState<ExtractData>({
-    isLoading: false,
-    data: null,
-    error: null
-  });
+  // Determine the URL for extract data if it's a string
+  const extractUrl = typeof data?.[`${category?.toLowerCase()}Extract`] === 'string' && 
+                     data[`${category?.toLowerCase()}Extract`].startsWith('http')
+                     ? data[`${category?.toLowerCase()}Extract`]
+                     : null;
+
+  const { isLoading: extractIsLoading, data: fetchedExtractData, error: extractError } = useExtractData(extractUrl);
 
   if (!isOpen || !data || !category) return null;
 
@@ -116,25 +149,11 @@ export const ItemDetailsModal = ({
     setShowMemoInput(true);
   };
 
-  const fetchExtractData = async (url: string) => {
-    setExtractData({ isLoading: true, data: null, error: null });
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      setExtractData({ isLoading: false, data, error: null });
-    } catch (error) {
-      setExtractData({ isLoading: false, data: null, error: 'Failed to load extract data' });
-    }
-  };
-
   const renderExtractContent = (extractUrlOrData: any) => {
-    // If it's a URL, fetch the data
-    if (typeof extractUrlOrData === 'string' && extractUrlOrData.startsWith('http')) {
-      useEffect(() => {
-        fetchExtractData(extractUrlOrData);
-      }, [extractUrlOrData]);
+    let currentExtractData = extractUrlOrData;
 
-      if (extractData.isLoading) {
+    if (extractUrl) { // If a URL was provided, use the fetched data
+      if (extractIsLoading) {
         return (
           <div className="flex items-center justify-center p-4">
             <FontAwesomeIcon icon={faSpinner} spin className="mr-2" />
@@ -143,18 +162,18 @@ export const ItemDetailsModal = ({
         );
       }
 
-      if (extractData.error) {
-        return <div className="text-red-500 p-4">{extractData.error}</div>;
+      if (extractError) {
+        return <div className="text-red-500 p-4">{extractError}</div>;
       }
 
-      extractUrlOrData = extractData.data;
+      currentExtractData = fetchedExtractData;
     }
 
     // Try to parse the data if it's a string
-    let parsedData = extractUrlOrData;
-    if (typeof extractUrlOrData === 'string') {
+    let parsedData = currentExtractData;
+    if (typeof currentExtractData === 'string') {
       try {
-        parsedData = JSON.parse(extractUrlOrData);
+        parsedData = JSON.parse(currentExtractData);
       } catch (e) {
         console.error('Error parsing data:', e);
         return <div className="text-red-500 p-4">Error parsing data</div>;
