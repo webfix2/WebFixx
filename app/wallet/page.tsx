@@ -460,7 +460,7 @@ export default function Wallet() {
                   
                   {/* Page numbers */}
                   {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                    let pageNumber;
+                    let pageNumber: number;
                     if (totalPages <= 5) {
                       // If we have 5 or fewer pages, show all page numbers
                       pageNumber = i + 1;
