@@ -1,6 +1,5 @@
 import type { SecuredApiRequest, SecuredApiResponse, ApiResponseData, AppState, GlobalAppStateContext } from './authTypes';
 import type { CryptoAddress, WalletState, WalletTransaction } from '../app/types/wallet';
-import type { User } from '../app/api/admin/types'; // Add this import
 import type { Project } from '../app/types/project'; // Add this import
 import type { Template } from '../app/types/template'; // Add this import
 import type { Hub } from '../app/types/hub'; // Add this import
@@ -59,7 +58,7 @@ export interface UserData {
 
 export interface AppData {
   user: UserData | null;
-  users?: ApiResponseData<User>;
+  users?: ApiResponseData<UserData>;
   transactions: ApiResponseData<WalletTransaction>;
   projects: ApiResponseData<Project>;
   template: ApiResponseData<Template>;
@@ -109,7 +108,7 @@ export interface TokenValidationResponse {
     redirect?: ApiResponseData<any>;
     custom?: ApiResponseData<any>;
     sender?: ApiResponseData<any>;
-    users?: ApiResponseData<User>;
+    users?: ApiResponseData<UserData>;
     limits?: ApiResponseData<Limit>;
     campaigns?: ApiResponseData<Campaign>; // Add campaigns
   };
