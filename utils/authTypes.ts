@@ -1,6 +1,5 @@
 import type { CryptoAddress, WalletState, WalletTransaction } from '../app/types/wallet';
 import type { UserData } from './auth'; // Import UserData from auth.ts
-import type { User } from '../app/api/admin/types'; // Import User from admin types
 import type { Project } from '../app/types/project'; // Corrected import
 import type { Template } from '../app/types/template'; // Add this import
 import type { Hub } from '../app/types/hub'; // Add this import
@@ -42,7 +41,7 @@ export interface AppState {
       custom?: ApiResponseData<Custom>; // Use Custom type
       sender?: ApiResponseData<Sender>; // Use Sender type
       limits?: ApiResponseData<Limit>; // Use Limit type
-      users?: ApiResponseData<User>; // Use User type
+      users?: ApiResponseData<UserData>; // Use UserData type
       campaigns?: ApiResponseData<Campaign>; // Add campaigns
     };
     isAuthenticated: boolean;
