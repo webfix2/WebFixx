@@ -54,6 +54,7 @@ export interface UserData {
   pendingBalance: string;
   addresses?: CryptoAddress[];
   tokens?: TokenData[];
+  createdAt?: string; // Add createdAt property
 }
 
 export interface AppData {
