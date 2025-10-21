@@ -18,7 +18,6 @@ export interface SecuredApiResponse {
 export interface AppState {
     user: UserData | null; // Use UserData here
     data: {
-      user: UserData | null; // Allow null for user in data
       transactions: {
         success: boolean;
         headers: string[];
