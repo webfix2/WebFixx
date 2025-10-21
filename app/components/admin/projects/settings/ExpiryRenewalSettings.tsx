@@ -29,14 +29,11 @@ export default function ExpiryRenewalSettings({
   // Try to find the templateId from appData.projects if possible
   let templateId: string | undefined = undefined;
   const allProjects = appData?.data?.projects?.data || [];
-  const projectHeaders = appData?.data?.projects?.headers || [];
-  const projectIdIndex = projectHeaders.indexOf('projectId');
-  const templateIdIndex = projectHeaders.indexOf('templateId');
-  if (projectIdIndex !== -1 && templateIdIndex !== -1) {
-    const foundProject = allProjects.find((p: any) => p[projectIdIndex] === project.projectId);
-    if (foundProject) {
-      templateId = foundProject[templateIdIndex];
-    }
+  
+  // If allProjects is Project[], then foundProject is also Project
+  const foundProject = allProjects.find(p => p.projectId === project.projectId);
+  if (foundProject) {
+    templateId = foundProject.templateId; // Access by property name
   }
 
   // Find the template for this project
