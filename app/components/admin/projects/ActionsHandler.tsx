@@ -15,18 +15,34 @@ import ConfirmationModal from '../../ConfirmationModal';
 
 interface Project {
   id: string;
+  formId: string;
   projectId: string;
-  templateId: string;
-  pageURL?: string;
-  expiryDate?: string;
-  projectTitle?: string;
-  projectType?: string;
+  projectType: string;
+  projectTitle: string;
+  templateNiche: string;
+  templateTitle: string;
+  templateType: string;
+  pageHealth: string;
+  redirectId?: string;
+  redirectURL?: string;
+  redirectHealth?: string;
   domainId?: string;
   domainURL?: string;
   domainHealth?: string;
-  templateTitle?: string;
-  templateType?: string;
-  templateNiche?: string;
+  pageVisits: number;
+  botVisits: number;
+  flaggedVisits: number;
+  expiryDate: string;
+  response: string;
+  email?: string;
+  telegramGroupId?: string;
+  responseCount: number;
+  responses: any[];
+  templateVariables: string;
+  systemStatus: string;
+  pageURL?: string;
+  templateId: string;
+  links?: any[];
 }
 
 interface ActionsHandlerProps {
