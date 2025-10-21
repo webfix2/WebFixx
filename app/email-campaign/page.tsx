@@ -17,7 +17,7 @@ export default function EmailCampaign() {
   const [selectedCampaign, setSelectedCampaign] = useState<string | null>(null);
   const [showCampaignModal, setShowCampaignModal] = useState(false);
 
-  const campaigns = appData?.data?.sender || [];
+  const campaigns = appData?.data?.sender?.data || []; // Access the data array
 
   const handleSaveCampaign = async (campaign: Partial<Campaign>) => {
     // TODO: Implement campaign save
@@ -27,7 +27,7 @@ export default function EmailCampaign() {
   const handleUpdateCampaignSMTP = async (campaignId: string, smtpSettings: SMTPSetting[]) => {
     try {
       // TODO: Implement API call to update campaign SMTP settings
-      const updatedCampaigns = campaigns.map(campaign => {
+      const updatedCampaigns = campaigns.map((campaign: Campaign) => { // Explicitly type campaign
         if (campaign.id === campaignId) {
           return { ...campaign, smtpSettings };
         }
