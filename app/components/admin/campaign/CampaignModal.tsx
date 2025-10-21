@@ -20,11 +20,15 @@ export function CampaignModal({ onClose, onSave }: CampaignModalProps) {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<Campaign>({
+    id: '', // Default value for id
     name: '',
     type: 'general',
     subject: '',
     smtpSettings: [],
     template: '',
+    fileUrl: '', // Default value for fileUrl
+    created_at: new Date().toISOString(), // Default value for created_at
+    status: 'draft', // Default value for status
   });
   const [csvAnalytics, setCsvAnalytics] = useState<CSVAnalytics | null>(null);
   const [editingSMTP, setEditingSMTP] = useState<SMTPSetting | null>(null);
