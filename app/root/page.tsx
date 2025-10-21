@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppState } from '../context/AppContext';
 import { UserData } from '../../utils/auth';
@@ -15,8 +15,8 @@ export default function AdminDashboard() {
     const { appData, setAppData } = useAppState();
 
     // Extract users and transactions from appData
-    const allUsers: UserData[] = appData?.data?.users?.data || [];
-    const allTransactions: WalletTransaction[] = appData?.data?.transactions?.data || [];
+    const allUsers: UserData[] = useMemo(() => appData?.data?.users?.data || [], [appData]);
+    const allTransactions: WalletTransaction[] = useMemo(() => appData?.data?.transactions?.data || [], [appData]);
 
     const [loggedInAdmin, setLoggedInAdmin] = useState<string | null>(null);
     const [users, setFilteredUsers] = useState<UserData[]>([]);

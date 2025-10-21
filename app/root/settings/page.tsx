@@ -149,16 +149,16 @@ export default function Wallet() {
       </div>
 
       {/* Send/Receive Modal */}
-      {showSend && (
+      {/* {showSend && (
         <SendReceiveModal
           onClose={() => setShowSend(false)}
           onSend={(data) => {
             // Handle send transaction
           }}
         />
-      )}
+      )} */}
     </div>
   );
 }
 
-// Add SendReceiveModal component implementation
+{/* // Add SendReceiveModal component implementation */}

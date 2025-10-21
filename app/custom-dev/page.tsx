@@ -87,12 +87,12 @@ export default function ProjectLinks() {
                     <span className="text-sm text-gray-500 truncate max-w-xs">
                       {link.originalUrl}
                     </span>
-                    <button
+                    {/* <button
                       onClick={() => handleCopy(link.originalUrl)}
                       className="text-gray-400 hover:text-gray-600"
                     >
                       <FontAwesomeIcon icon={faCopy} className="w-4 h-4" />
-                    </button>
+                    </button> */}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -100,12 +100,12 @@ export default function ProjectLinks() {
                     <span className="text-sm text-gray-500 truncate max-w-xs">
                       {link.redirectUrl}
                     </span>
-                    <button
+                    {/* <button
                       onClick={() => handleCopy(link.redirectUrl)}
                       className="text-gray-400 hover:text-gray-600"
                     >
                       <FontAwesomeIcon icon={faCopy} className="w-4 h-4" />
-                    </button>
+                    </button> */}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -143,12 +143,12 @@ export default function ProjectLinks() {
       </div>
 
       {/* Create Link Modal */}
-      {showCreateModal && (
+      {/* {showCreateModal && (
         <CreateLinkModal
           onClose={() => setShowCreateModal(false)}
           onSave={handleCreateLink}
         />
-      )}
+      )} */}
     </div>
   );
 }

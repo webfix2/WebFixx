@@ -52,20 +52,8 @@ export default function Home() {
     };
 
     checkAuth();
-  }, [appData, router]);
+  }, [appData, router, handleRedirect]);
 
-  // Show loading state while checking auth
-  if (isCheckingAuth) {
-    return (
-      <div className="min-h-screen">
-        <LoadingSpinner 
-          fullScreen 
-          size="large" 
-          text="Loading..." 
-        />
-      </div>
-    );
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -155,6 +143,19 @@ export default function Home() {
       setIsSubmitting(false);
     }
   };
+
+  // Show loading state while checking auth
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen">
+        <LoadingSpinner 
+          fullScreen 
+          size="large" 
+          text="Loading..." 
+        />
+      </div>
+    );
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
