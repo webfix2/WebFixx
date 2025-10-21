@@ -67,7 +67,6 @@ export default function AdminDashboard() {
         setAppData({ 
             user: null, 
             data: { 
-                user: null, // Explicitly set user to null within data
                 transactions: { success: false, headers: [], data: [], count: 0 }, 
                 projects: { success: false, headers: [], data: [], count: 0 }, 
                 template: { success: false, headers: [], data: [], count: 0 }, 
