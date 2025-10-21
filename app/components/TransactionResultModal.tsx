@@ -127,8 +127,8 @@ const TransactionResultModal: React.FC<TransactionResultModalProps> = ({
                                 ))}
                               </div>
                             ) : Array.isArray(parsedValue) ? (
-                              (parsedValue as any[]).map((v, i) => (
-                                <span key={i}>{typeof v === 'object' ? JSON.stringify(v) : String(v)}{i !== (parsedValue as any[]).length - 1 ? ', ' : ''}</span>
+                              (parsedValue as unknown as any[]).map((v, i) => (
+                                <span key={i}>{typeof v === 'object' ? JSON.stringify(v) : String(v)}{i !== (parsedValue as unknown as any[]).length - 1 ? ', ' : ''}</span>
                               ))
                             ) : typeof parsedValue === 'object' && parsedValue !== null ? (
                               <div className="ml-2 border-l border-gray-200 pl-2">
