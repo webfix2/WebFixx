@@ -49,12 +49,8 @@ export default function Wallet() {
   const transactions = appData.data.transactions?.data || [];
   const transactionHeaders = appData.data.transactions?.headers || [];
 
-  // Sort transactions to show most recent first
-  const sortedTransactions = [...transactions].sort((a, b) => {
-    const dateA = new Date(a.timestamp);
-    const dateB = new Date(b.timestamp);
-    return dateB.getTime() - dateA.getTime(); // Descending order (newest first)
-  });
+  // Reverse the transactions array to show most recent first (assuming backend sends in ascending order)
+  const sortedTransactions = [...transactions].reverse();
 
   // Calculate pagination
   const totalPages = Math.ceil(sortedTransactions.length / rowsPerPage);

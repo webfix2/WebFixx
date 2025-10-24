@@ -9,8 +9,7 @@ import type { Sender } from '../app/types/sender'; // Add this import
 import type { Limit } from '../app/types/limit'; // Add this import
 import type { Campaign } from '../app/types'; // Add this import
 
-const API_BASE_URL = 'http://127.0.0.1:5000/api';
-// const API_BASE_URL = 'https://webfixx-backend.vercel.app/api'; https://jshx9c6n-5000.uks1.devtunnels.ms/
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:5000/api';
 
 export interface RegisterData {
   username: string;

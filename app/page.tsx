@@ -83,9 +83,7 @@ export default function Home() {
             data: response.data,
             isAuthenticated: true
           });
-
-          // Handle routing
-          handleRedirect(response.user);
+          // The useEffect will handle redirection based on updated appData
         }
       } else {
         console.log('Starting registration with:', formData);
@@ -129,8 +127,7 @@ export default function Home() {
             data: loginResponse.data,
             isAuthenticated: true
           });
-
-          handleRedirect(loginResponse.user);
+          // The useEffect will handle redirection based on updated appData
         } else {
           setError(registerResponse.error || registerResponse.message || 'Registration failed');
           console.error('Registration failed:', registerResponse);
