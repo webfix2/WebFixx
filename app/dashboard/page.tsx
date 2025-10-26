@@ -182,8 +182,8 @@ export default function Dashboard() {
       {showNoDataMessage ? (
         <div className="flex flex-col items-center justify-center min-h-[60vh] p-6">
           <div className="text-center max-w-lg">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">No Data Available</h2>
-            <p className="text-gray-600 mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">No Data Available</h2>
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
               To use the dashboard features, first visit the Projects page to get a link and start collecting data.
             </p>
             <Link
@@ -197,7 +197,7 @@ export default function Dashboard() {
       ) : (
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
           </div>
 
           <DashboardTabs

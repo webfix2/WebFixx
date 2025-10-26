@@ -55,9 +55,9 @@ export const SocialTable: React.FC<SocialTableProps> = ({
   };
 
   const getRowBackgroundColor = (item: any) => {
-    if (item.verified === 'TRUE' && item.fullAccess === 'TRUE') return 'bg-green-50 hover:bg-green-100';
-    if (item.verified === 'TRUE') return 'bg-amber-50 hover:bg-amber-100';
-    return 'bg-red-50 hover:bg-red-100';
+    if (item.verified === 'TRUE' && item.fullAccess === 'TRUE') return 'bg-green-50 hover:bg-green-100 dark:bg-green-900 dark:hover:bg-green-800';
+    if (item.verified === 'TRUE') return 'bg-amber-50 hover:bg-amber-100 dark:bg-amber-900 dark:hover:bg-amber-800';
+    return 'bg-red-50 hover:bg-red-100 dark:bg-red-900 dark:hover:bg-red-800';
   };
 
   const formatTimestamp = (timestamp: string) => {
@@ -77,17 +77,17 @@ export const SocialTable: React.FC<SocialTableProps> = ({
 
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
+      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <thead className="bg-gray-50 dark:bg-gray-700">
           <tr>
             {columns.map(column => (
-              <th key={column} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th key={column} className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                 {column === 'actions' || column === 'logo' ? '' : column}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200">
+        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
           {data.map((item) => {
             const socials = getSocialData(item.socials);
             // If there are multiple social accounts, create a row for each
@@ -95,10 +95,10 @@ export const SocialTable: React.FC<SocialTableProps> = ({
               <tr 
                 key={`${item.id}-${socialIndex}`}
                 onClick={() => onRowClick(item.id)}
-                className={`cursor-pointer ${getRowBackgroundColor(item)} ${selectedId === item.id ? '!bg-blue-50' : ''}`}
+                className={`cursor-pointer ${getRowBackgroundColor(item)} ${selectedId === item.id ? '!bg-blue-50 dark:!bg-blue-900' : ''}`}
               >
                 {columns.map(column => (
-                  <td key={column} className="px-6 py-4 whitespace-nowrap text-sm">
+                  <td key={column} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
                     {column === 'logo' ? (
                       <img 
                         src={getLogoUrl(social.website || social.platform + '.com')} 
@@ -118,7 +118,7 @@ export const SocialTable: React.FC<SocialTableProps> = ({
                                 e.stopPropagation();
                                 handleCopy(social.ipData ? JSON.stringify(social.ipData) : item.ipData, 'IP Data');
                               }}
-                              className="text-gray-400 hover:text-gray-600"
+                              className="text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100"
                               title="Copy IP Data"
                             >
                               <FontAwesomeIcon icon={faGlobe} />
@@ -128,7 +128,7 @@ export const SocialTable: React.FC<SocialTableProps> = ({
                                 e.stopPropagation();
                                 handleCopy(social.deviceData ? JSON.stringify(social.deviceData) : item.deviceData, 'Device Data');
                               }}
-                              className="text-gray-400 hover:text-gray-600"
+                              className="text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100"
                               title="Copy Device Data"
                             >
                               <FontAwesomeIcon icon={faLaptop} />
@@ -171,11 +171,11 @@ export const SocialTable: React.FC<SocialTableProps> = ({
 
       {/* Memo Input Modal */}
       {showMemoInput && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-xl w-full">
+        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-75 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-xl w-full">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Edit Memo</h2>
-              <button onClick={() => setShowMemoInput(null)} className="text-gray-500 hover:text-gray-700">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Edit Memo</h2>
+              <button onClick={() => setShowMemoInput(null)} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
                 ×
               </button>
             </div>
@@ -188,11 +188,11 @@ export const SocialTable: React.FC<SocialTableProps> = ({
                   setLastSaved(new Date());
                 }
               }}
-              className="w-full h-32 p-2 border rounded"
+              className="w-full h-32 p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               placeholder="Enter memo text..."
             />
             {lastSaved && (
-              <div className="mt-2 text-sm text-gray-500">
+              <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
                 <FontAwesomeIcon icon={faClock} className="mr-1" />
                 Last saved: {lastSaved.toLocaleTimeString()}
               </div>

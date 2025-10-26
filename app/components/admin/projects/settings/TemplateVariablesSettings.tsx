@@ -156,11 +156,11 @@ export default function TemplateVariablesSettings({
   return (
     <div>
       {Object.keys(templateVariables).length === 0 ? (
-        <div className="text-gray-500 text-sm mb-4">No template variables to edit for this project.</div>
+        <div className="text-gray-500 text-sm mb-4 dark:text-gray-400">No template variables to edit for this project.</div>
       ) : (
         Object.entries(templateVariables).map(([key, value]) => (
           <div key={key} className="mb-3">
-            <label className="block text-sm text-gray-700 mb-1">{key}</label>
+            <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">{key}</label>
             <input
               type="text"
               value={value}
@@ -171,23 +171,23 @@ export default function TemplateVariablesSettings({
                 }));
                 setSuccess(false);
               }}
-              className="w-full px-3 py-2 border rounded-md"
+              className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             />
           </div>
         ))
       )}
       {success && (
-        <div className="text-green-600 text-sm mt-2">Template variables updated successfully!</div>
+        <div className="text-green-600 text-sm mt-2 dark:text-green-400">Template variables updated successfully!</div>
       )}
       {error && (
-        <div className="text-red-500 text-sm mt-2">{error}</div>
+        <div className="text-red-500 text-sm mt-2 dark:text-red-400">{error}</div>
       )}
       {Object.keys(templateVariables).length > 0 && (
         <div className="flex justify-end mt-4">
           <button
             onClick={handleSave}
             disabled={loading}
-            className="btn-primary"
+            className="btn-primary dark:bg-blue-700 dark:hover:bg-blue-600 dark:text-white"
           >
             {loading ? 'Saving...' : 'Save Variables'}
           </button>

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShieldAlt, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import { faShieldAlt, faExclamationTriangle, faMoon, faSun } from '@fortawesome/free-solid-svg-icons'; // Import faMoon and faSun
 import { useAppState } from "../context/AppContext";
 import { securedApi, authApi } from "../../utils/auth";
 import type { AppState } from '../../utils/authTypes';
@@ -26,6 +26,35 @@ export default function VerifyPage() {
   const [canResend, setCanResend] = useState(false);
   const router = useRouter();
   const { appData, setAppData, clearAppData } = useAppState();
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      // Prioritize appData for authenticated users, otherwise local storage
+      if (appData?.user?.darkMode !== undefined) {
+        return appData.user.darkMode;
+      }
+      const localPreference = localStorage.getItem('darkModePreference');
+      return localPreference ? JSON.parse(localPreference) : false;
+    }
+    return false;
+  });
+
+  // Effect to apply dark mode class to HTML element
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      if (isDarkMode) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    }
+  }, [isDarkMode]);
+
+  // Effect to sync with appData for authenticated users
+  useEffect(() => {
+    if (appData?.user?.darkMode !== undefined && appData.isAuthenticated) {
+      setIsDarkMode(appData.user.darkMode);
+    }
+  }, [appData?.user?.darkMode, appData?.isAuthenticated]);
 
   const handleResendEmail = async () => {
     console.log('Starting resend email process...');
@@ -219,18 +248,8 @@ export default function VerifyPage() {
       });
 
       if (response.success) {
-        const updatedAppData: AppState = {
-          ...appData,
-          user: {
-            ...appData.user,
-            verifyStatus: "TRUE"
-          }
-        };
-
-        setAppData(updatedAppData);
-
+        // The securedApi.callBackendFunction will handle appData update
         document.cookie = `verifyStatus=TRUE; path=/; max-age=2592000`;
-
         router.replace("/dashboard");
       } else {
         setError(response.error || "Verification failed");
@@ -273,23 +292,35 @@ export default function VerifyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
-      <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md shadow-sm z-10">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-black" suppressHydrationWarning>
+      <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md shadow-sm z-10 dark:bg-gray-800/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center py-4">
-            <span className="text-xl font-bold text-gray-900">WebFixx</span>
+          <div className="flex items-center justify-between py-4">
+            <span className="text-xl font-bold text-gray-900 dark:text-white">WebFixx</span>
+            <button 
+              onClick={() => {
+                const newDarkMode = !isDarkMode;
+                setIsDarkMode(newDarkMode);
+                // Store preference locally for unauthenticated pages
+                localStorage.setItem('darkModePreference', JSON.stringify(newDarkMode));
+                // No API call for unauthenticated pages
+              }}
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300"
+            >
+              <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </header>
 
-      <div className="fixed top-16 left-0 right-0 bg-yellow-50 border-b border-yellow-100 p-4">
+      <div className="fixed top-16 left-0 right-0 bg-yellow-50 border-b border-yellow-100 p-4 dark:bg-yellow-900 dark:border-yellow-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center">
             <FontAwesomeIcon 
               icon={faExclamationTriangle} 
               className="h-5 w-5 text-yellow-400 mr-3"
             />
-            <p className="text-sm text-yellow-700">
+            <p className="text-sm text-yellow-700 dark:text-yellow-300">
               Please do not refresh this page. A verification code has been sent to your email.
             </p>
           </div>
@@ -298,16 +329,16 @@ export default function VerifyPage() {
 
       <main className="pt-36 min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full">
-          <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-8">
+          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-2xl shadow-xl dark:shadow-none p-8">
             <div className="text-center mb-8">
               <FontAwesomeIcon 
                 icon={faShieldAlt} 
                 className="h-12 w-12 text-blue-500 mb-4"
               />
-              <h2 className="text-3xl font-extrabold text-gray-900">
+              <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
                 Verify Your Account
               </h2>
-              <p className="mt-2 text-sm text-gray-600">
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 {emailSent 
                   ? `We've sent a verification code to ${appData?.user?.email}`
                   : "Please wait while we send you a verification code..."}
@@ -319,7 +350,7 @@ export default function VerifyPage() {
                 <input
                   type="text"
                   required
-                  className="w-full px-4 py-3 text-center text-2xl tracking-widest border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 text-center text-2xl tracking-widest border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                   placeholder="Enter code"
                   maxLength={6}
                   value={verificationCode}
@@ -328,7 +359,7 @@ export default function VerifyPage() {
               </div>
 
               {error && (
-                <div className="text-center px-4 py-3 rounded-lg bg-red-50 text-red-600">
+                <div className="text-center px-4 py-3 rounded-lg bg-red-50 text-red-600 dark:bg-red-900 dark:text-red-300">
                   {error}
                 </div>
               )}
@@ -351,13 +382,13 @@ export default function VerifyPage() {
 
             <div className="mt-4 text-center">
               {countdown > 0 ? (
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   Resend code in {formatTime(countdown)}
                 </p>
               ) : canResend ? (
                 <button
                   onClick={handleResendEmail}
-                  className="text-sm text-blue-600 hover:text-blue-700 hover:underline"
+                  className="text-sm text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-500"
                   disabled={sendingEmail}
                 >
                   Resend verification code
@@ -369,7 +400,7 @@ export default function VerifyPage() {
               <button
                 onClick={handleLogout}
                 disabled={isLoggingOut}
-                className="text-sm text-red-600 hover:text-red-700 hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+                className="text-sm text-red-600 hover:text-red-700 hover:underline disabled:opacity-50 disabled:cursor-not-allowed dark:text-red-400 dark:hover:text-red-500"
               >
                 {isLoggingOut ? 'Logging out...' : 'Logout'}
               </button>

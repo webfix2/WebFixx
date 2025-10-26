@@ -69,9 +69,9 @@ export default function NotificationSettings({
   return (
     <div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Telegram ID</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Telegram ID</label>
         {project.telegramGroupId && (
-          <div className="text-xs text-gray-500 mb-1">Current: <span className="font-mono">{project.telegramGroupId}</span></div>
+          <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Current: <span className="font-mono">{project.telegramGroupId}</span></div>
         )}
         <input
           type="text"
@@ -80,14 +80,14 @@ export default function NotificationSettings({
             setTelegramId(e.target.value);
             setSuccess(false);
           }}
-          className="w-full px-3 py-2 border rounded-md"
+          className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
         />
       </div>
 
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
         {project.email && (
-          <div className="text-xs text-gray-500 mb-1">Current: <span className="font-mono">{project.email}</span></div>
+          <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Current: <span className="font-mono">{project.email}</span></div>
         )}
         <input
           type="email"
@@ -96,22 +96,22 @@ export default function NotificationSettings({
             setEmail(e.target.value);
             setSuccess(false);
           }}
-          className="w-full px-3 py-2 border rounded-md"
+          className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
         />
       </div>
 
       {success && (
-        <div className="text-green-600 text-sm mt-2">Notification settings updated successfully!</div>
+        <div className="text-green-600 text-sm mt-2 dark:text-green-400">Notification settings updated successfully!</div>
       )}
       {error && (
-        <div className="text-red-500 text-sm mt-2">{error}</div>
+        <div className="text-red-500 text-sm mt-2 dark:text-red-400">{error}</div>
       )}
 
       <div className="flex justify-end mt-4">
         <button
           onClick={handleSave}
           disabled={loading}
-          className="btn-primary"
+          className="btn-primary dark:bg-blue-700 dark:hover:bg-blue-600 dark:text-white"
         >
           {loading ? 'Saving...' : 'Save Notifications'}
         </button>

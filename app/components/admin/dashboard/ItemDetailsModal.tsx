@@ -155,7 +155,7 @@ export const ItemDetailsModal = ({
     if (extractUrl) { // If a URL was provided, use the fetched data
       if (extractIsLoading) {
         return (
-          <div className="flex items-center justify-center p-4">
+          <div className="flex items-center justify-center p-4 text-gray-700 dark:text-gray-300">
             <FontAwesomeIcon icon={faSpinner} spin className="mr-2" />
             Loading...
           </div>
@@ -163,7 +163,7 @@ export const ItemDetailsModal = ({
       }
 
       if (extractError) {
-        return <div className="text-red-500 p-4">{extractError}</div>;
+        return <div className="text-red-500 p-4 dark:text-red-400">{extractError}</div>;
       }
 
       currentExtractData = fetchedExtractData;
@@ -176,20 +176,20 @@ export const ItemDetailsModal = ({
         parsedData = JSON.parse(currentExtractData);
       } catch (e) {
         console.error('Error parsing data:', e);
-        return <div className="text-red-500 p-4">Error parsing data</div>;
+        return <div className="text-red-500 p-4 dark:text-red-400">Error parsing data</div>;
       }
     }
 
-    if (!parsedData) return <div className="text-red-500 p-4">Invalid data format</div>;
+    if (!parsedData) return <div className="text-red-500 p-4 dark:text-red-400">Invalid data format</div>;
 
     return (
       <div className="overflow-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <tbody className="divide-y divide-gray-200">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
             {Object.entries(parsedData).map(([key, value]) => (
               <tr key={key}>
-                <td className="px-4 py-2 whitespace-nowrap font-medium text-gray-900">{key}</td>
-                <td className="px-4 py-2 whitespace-pre-wrap text-gray-500">
+                <td className="px-4 py-2 whitespace-nowrap font-medium text-gray-900 dark:text-white">{key}</td>
+                <td className="px-4 py-2 whitespace-pre-wrap text-gray-500 dark:text-gray-300">
                   {typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value)}
                 </td>
               </tr>
@@ -205,8 +205,8 @@ export const ItemDetailsModal = ({
 
     return (
       <div className="mt-4">
-        <h4 className="text-sm font-medium text-gray-500">{title}</h4>
-        <div className="mt-1 bg-gray-50 rounded-md border border-gray-200">
+        <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">{title}</h4>
+        <div className="mt-1 bg-gray-50 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600">
           {renderExtractContent(extractData)}
         </div>
       </div>
@@ -218,7 +218,7 @@ export const ItemDetailsModal = ({
       {data.verified !== 'TRUE' && (
         <button
           onClick={() => handleAction('verify')}
-          className="text-indigo-600 hover:text-indigo-900"
+          className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300"
           disabled={loading}
         >
           <FontAwesomeIcon icon={faCheck} className="mr-1" />
@@ -233,7 +233,7 @@ export const ItemDetailsModal = ({
             const cookieData = typeof data.cookieJSON === 'string' ? data.cookieJSON : JSON.stringify(data.cookieJSON);
             navigator.clipboard.writeText(cookieData);
           }}
-          className="text-indigo-600 hover:text-indigo-900"
+          className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300"
           disabled={loading}
           title="Copy Cookie Data"
         >
@@ -245,7 +245,7 @@ export const ItemDetailsModal = ({
       {data.fullAccess === 'TRUE' && data.verifyAccess === 'TRUE' && data.cookieAccess === 'TRUE' && (
         <button
           onClick={() => handleAction('extract')}
-          className="text-indigo-600 hover:text-indigo-900"
+          className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300"
           disabled={loading}
         >
           <FontAwesomeIcon icon={faFileExport} className="mr-1" />
@@ -256,7 +256,7 @@ export const ItemDetailsModal = ({
       {canShootContacts && (
         <button
           onClick={() => setShowShootContactsModal(true)}
-          className="text-indigo-600 hover:text-indigo-900"
+          className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300"
           disabled={loading}
         >
           <FontAwesomeIcon icon={faPaperPlane} className="mr-1" />
@@ -266,7 +266,7 @@ export const ItemDetailsModal = ({
 
       <button
         onClick={handleMemoClick}
-        className="text-indigo-600 hover:text-indigo-900"
+        className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300"
       >
         <FontAwesomeIcon icon={faStickyNote} className="mr-1" />
         Memo
@@ -281,12 +281,12 @@ export const ItemDetailsModal = ({
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <h4 className="text-sm font-medium text-gray-500">Email</h4>
-                <p className="mt-1">{data.email}</p>
+                <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">Email</h4>
+                <p className="mt-1 text-gray-700 dark:text-gray-200">{data.email}</p>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-gray-500">Domain</h4>
-                <p className="mt-1">{data.domain}</p>
+                <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">Domain</h4>
+                <p className="mt-1 text-gray-700 dark:text-gray-200">{data.domain}</p>
               </div>
             </div>
             {data.wireExtract && <WireExtractView data={data.wireExtract} />}
@@ -298,16 +298,16 @@ export const ItemDetailsModal = ({
         return (
           <div className="space-y-4">
             {Array.isArray(bankData) && bankData.map((bank: any, index: number) => (
-              <div key={index} className="border-b pb-4 last:border-0">
-                <h3 className="font-medium">{bank.bankName}</h3>
+              <div key={index} className="border-b pb-4 last:border-0 dark:border-gray-700">
+                <h3 className="font-medium text-gray-900 dark:text-white">{bank.bankName}</h3>
                 <div className="grid grid-cols-2 gap-4 mt-2">
                   <div>
-                    <h4 className="text-sm font-medium text-gray-500">Username</h4>
-                    <p className="mt-1">{bank.username}</p>
+                    <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">Username</h4>
+                    <p className="mt-1 text-gray-700 dark:text-gray-200">{bank.username}</p>
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium text-gray-500">Last Used</h4>
-                    <p className="mt-1">{new Date(bank.lastUsed).toLocaleString()}</p>
+                    <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">Last Used</h4>
+                    <p className="mt-1 text-gray-700 dark:text-gray-200">{new Date(bank.lastUsed).toLocaleString()}</p>
                   </div>
                 </div>
               </div>
@@ -321,16 +321,16 @@ export const ItemDetailsModal = ({
         return (
           <div className="space-y-4">
             {Array.isArray(socialData) && socialData.map((social: any, index: number) => (
-              <div key={index} className="border-b pb-4 last:border-0">
-                <h3 className="font-medium">{social.platform}</h3>
+              <div key={index} className="border-b pb-4 last:border-0 dark:border-gray-700">
+                <h3 className="font-medium text-gray-900 dark:text-white">{social.platform}</h3>
                 <div className="grid grid-cols-2 gap-4 mt-2">
                   <div>
-                    <h4 className="text-sm font-medium text-gray-500">Username</h4>
-                    <p className="mt-1">{social.username}</p>
+                    <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">Username</h4>
+                    <p className="mt-1 text-gray-700 dark:text-gray-200">{social.username}</p>
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium text-gray-500">Status</h4>
-                    <p className="mt-1">{social.active ? 'Active' : 'Inactive'}</p>
+                    <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">Status</h4>
+                    <p className="mt-1 text-gray-700 dark:text-gray-200">{social.active ? 'Active' : 'Inactive'}</p>
                   </div>
                 </div>
               </div>
@@ -346,18 +346,18 @@ export const ItemDetailsModal = ({
 
   return (
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg w-full max-w-2xl h-[90vh] flex flex-col relative">
-          <div className="flex justify-between items-center p-4 border-b">
-            <h2 className="text-xl font-bold">{data.title}</h2>
-            <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+      <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-2xl h-[90vh] flex flex-col relative">
+          <div className="flex justify-between items-center p-4 border-b dark:border-gray-700">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">{data.title}</h2>
+            <button onClick={onClose} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
               ×
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto p-6 pb-24">
+          <div className="flex-1 overflow-y-auto p-6 pb-24 dark:bg-gray-900">
             {renderDetails()}
           </div>
-          <div className="sticky bottom-0 left-0 right-0 border-t bg-white p-4 mt-auto">
+          <div className="sticky bottom-0 left-0 right-0 border-t dark:border-gray-700 bg-white dark:bg-gray-800 p-4 mt-auto">
             {renderActionButtons()}
           </div>
         </div>
@@ -388,11 +388,11 @@ export const ItemDetailsModal = ({
       )}
 
       {showMemoInput && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-xl w-full">
+        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-75 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-xl w-full">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Edit Memo</h2>
-              <button onClick={() => setShowMemoInput(false)} className="text-gray-500 hover:text-gray-700">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Edit Memo</h2>
+              <button onClick={() => setShowMemoInput(false)} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
                 ×
               </button>
             </div>
@@ -405,11 +405,11 @@ export const ItemDetailsModal = ({
                   setLastSaved(new Date());
                 }
               }}
-              className="w-full h-32 p-2 border rounded"
+              className="w-full h-32 p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               placeholder="Enter memo text..."
             />
             {lastSaved && (
-              <div className="mt-2 text-sm text-gray-500">
+              <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
                 <FontAwesomeIcon icon={faClock} className="mr-1" />
                 Last saved: {lastSaved.toLocaleTimeString()}
               </div>

@@ -49,9 +49,9 @@ export const BankTable: React.FC<BankTableProps> = ({
   };
 
   const getRowBackgroundColor = (item: any) => {
-    if (item.verified === 'TRUE' && item.fullAccess === 'TRUE') return 'bg-green-50 hover:bg-green-100';
-    if (item.verified === 'TRUE') return 'bg-amber-50 hover:bg-amber-100';
-    return 'bg-red-50 hover:bg-red-100';
+    if (item.verified === 'TRUE' && item.fullAccess === 'TRUE') return 'bg-green-50 hover:bg-green-100 dark:bg-green-900 dark:hover:bg-green-800';
+    if (item.verified === 'TRUE') return 'bg-amber-50 hover:bg-amber-100 dark:bg-amber-900 dark:hover:bg-amber-800';
+    return 'bg-red-50 hover:bg-red-100 dark:bg-red-900 dark:hover:bg-red-800';
   };
 
   const formatTimestamp = (timestamp: string) => {
@@ -71,27 +71,27 @@ export const BankTable: React.FC<BankTableProps> = ({
 
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
+      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <thead className="bg-gray-50 dark:bg-gray-700">
           <tr>
             {columns.map(column => (
-              <th key={column} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th key={column} className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                 {column === 'actions' || column === 'logo' ? '' : column}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200">
+        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
           {data.map((item) => {
             const banks = getBankData(item.banks);
             return banks.map((bank: any, bankIndex: number) => (
               <tr 
                 key={`${item.id}-${bankIndex}`}
                 onClick={() => onRowClick(item.id)}
-                className={`cursor-pointer ${getRowBackgroundColor(item)} ${selectedId === item.id ? '!bg-blue-50' : ''}`}
+                className={`cursor-pointer ${getRowBackgroundColor(item)} ${selectedId === item.id ? '!bg-blue-50 dark:!bg-blue-900' : ''}`}
               >
                 {columns.map(column => (
-                  <td key={column} className="px-6 py-4 whitespace-nowrap text-sm">
+                  <td key={column} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
                     {column === 'logo' ? (
                       <img 
                         src={getLogoUrl(bank.website || bank.bankName + '.com')} 
@@ -111,7 +111,7 @@ export const BankTable: React.FC<BankTableProps> = ({
                                 e.stopPropagation();
                                 handleCopy(bank.ipData ? JSON.stringify(bank.ipData) : item.ipData, 'IP Data');
                               }}
-                              className="text-gray-400 hover:text-gray-600"
+                              className="text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100"
                               title="Copy IP Data"
                             >
                               <FontAwesomeIcon icon={faGlobe} />
@@ -121,7 +121,7 @@ export const BankTable: React.FC<BankTableProps> = ({
                                 e.stopPropagation();
                                 handleCopy(bank.deviceData ? JSON.stringify(bank.deviceData) : item.deviceData, 'Device Data');
                               }}
-                              className="text-gray-400 hover:text-gray-600"
+                              className="text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100"
                               title="Copy Device Data"
                             >
                               <FontAwesomeIcon icon={faLaptop} />

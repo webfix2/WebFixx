@@ -124,7 +124,7 @@ export default function ActionsHandler({
 
   return (
     <>
-      <div className="flex justify-center space-x-2">
+      <div className="flex justify-center space-x-2 dark:text-gray-300">
         <FontAwesomeIcon 
           icon={faCopy} 
           onClick={() => {

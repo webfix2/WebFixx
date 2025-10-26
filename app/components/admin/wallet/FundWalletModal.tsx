@@ -409,8 +409,8 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
   const renderAmountStep = () => (
     <div className="space-y-6">
       <div className="text-center space-y-3">
-        <h3 className="text-xl font-bold text-gray-900">Add Funds</h3>
-        <p className="text-sm text-yellow-600 bg-yellow-50 p-3 rounded-lg border border-yellow-100">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white">Add Funds</h3>
+        <p className="text-sm text-yellow-600 bg-yellow-50 p-3 rounded-lg border border-yellow-100 dark:bg-yellow-900 dark:text-yellow-200 dark:border-yellow-700">
           Please follow the payment instructions carefully when making your deposit. Incorrect payment details or network selection may result in loss of funds.
         </p>
       </div>
@@ -423,22 +423,22 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
             onChange={(e) => setAgreed(e.target.checked)}
             className="h-4 w-4 text-blue-600 rounded border-gray-300"
           />
-          <label htmlFor="agreement" className="ml-2 text-sm text-gray-600">
+          <label htmlFor="agreement" className="ml-2 text-sm text-gray-600 dark:text-gray-300">
             Check to confirm you understand.
           </label>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-200">
             Credit Amount
           </label>
           <div className="relative">
-            <span className="absolute left-3 top-2 text-gray-500">$</span>
+            <span className="absolute left-3 top-2 text-gray-500 dark:text-gray-400">$</span>
             <input
               type="number"
               min="20"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="pl-8 pr-4 py-2 w-full border rounded-lg"
+              className="pl-8 pr-4 py-2 w-full border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               placeholder="20"
             />
           </div>
@@ -447,7 +447,7 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
       <div className="flex justify-end space-x-4">
         <button
           onClick={onClose}
-          className="px-4 py-2 text-gray-600 hover:text-gray-800"
+          className="px-4 py-2 text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white"
         >
           Cancel
         </button>
@@ -465,54 +465,54 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
   const renderMethodStep = () => (
     <div className="space-y-6">
       <div className="text-center space-y-3">
-        <h3 className="text-xl font-bold text-gray-900">Choose Payment Method</h3>
-        <p className="text-sm text-blue-600 bg-blue-50 p-3 rounded-lg border border-blue-100">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white">Choose Payment Method</h3>
+        <p className="text-sm text-blue-600 bg-blue-50 p-3 rounded-lg border border-blue-100 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-700">
           Please ensure you are ready to make the payment before continuing. The payment window has a time limit and the exchange rate may change if you delay.
         </p>
       </div>
       <div className="space-y-4">
-        <h4 className="font-medium">Choose Payment method</h4>
+        <h4 className="font-medium dark:text-gray-200">Choose Payment method</h4>
         
         {/* Bitcoin Option */}
         <button
           onClick={() => setSelectedMethod('BTC')}
-          className={`w-full p-4 border rounded-lg flex items-center justify-between ${
-            selectedMethod === 'BTC' ? 'border-orange-500 bg-orange-50' : ''
+          className={`w-full p-4 border rounded-lg flex items-center justify-between dark:border-gray-700 dark:text-gray-200 ${
+            selectedMethod === 'BTC' ? 'border-orange-500 bg-orange-50 dark:border-orange-400 dark:bg-orange-900' : ''
           }`}
         >
           <div className="flex items-center">
             {renderIcon('btc')}
             <span>Bitcoin (BTC)</span>
           </div>
-          <span className="text-sm text-gray-500">≈ {paymentDetails?.btcAmount} BTC</span>
+          <span className="text-sm text-gray-500 dark:text-gray-400">≈ {paymentDetails?.btcAmount} BTC</span>
         </button>
 
         {/* Ethereum Option */}
         <button
           onClick={() => setSelectedMethod('ETH')}
-          className={`w-full p-4 border rounded-lg flex items-center justify-between ${
-            selectedMethod === 'ETH' ? 'border-blue-500 bg-blue-50' : ''
+          className={`w-full p-4 border rounded-lg flex items-center justify-between dark:border-gray-700 dark:text-gray-200 ${
+            selectedMethod === 'ETH' ? 'border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900' : ''
           }`}
         >
           <div className="flex items-center">
             {renderIcon('ethereum')}
             <span>Ethereum (ETH)</span>
           </div>
-          <span className="text-sm text-gray-500">≈ {paymentDetails?.ethAmount} ETH</span>
+          <span className="text-sm text-gray-500 dark:text-gray-400">≈ {paymentDetails?.ethAmount} ETH</span>
         </button>
 
         {/* USDT Option */}
         <button
           onClick={() => setSelectedMethod('USDT')}
-          className={`w-full p-4 border rounded-lg flex items-center justify-between ${
-            selectedMethod === 'USDT' ? 'border-green-500 bg-green-50' : ''
+          className={`w-full p-4 border rounded-lg flex items-center justify-between dark:border-gray-700 dark:text-gray-200 ${
+            selectedMethod === 'USDT' ? 'border-green-500 bg-green-50 dark:border-green-400 dark:bg-green-900' : ''
           }`}
         >
           <div className="flex items-center">
             <img src="/usdt-icon.svg" className="w-6 h-6 mr-2" alt="USDT" />
             <span>USDT (ERC-20)</span>
           </div>
-          <span className="text-sm text-gray-500">≈ {paymentDetails?.usdtAmount} USDT</span>
+          <span className="text-sm text-gray-500 dark:text-gray-400">≈ {paymentDetails?.usdtAmount} USDT</span>
         </button>
       </div>
       <div className="flex justify-end mt-6">
@@ -524,7 +524,7 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
           Continue
         </button>
       </div>
-      <div className="text-xs text-gray-500 text-center">
+      <div className="text-xs text-gray-500 text-center dark:text-gray-400">
         order id: {paymentDetails?.orderId}
       </div>
     </div>
@@ -561,13 +561,13 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
       return (
         <div className="space-y-6 text-center">
           <div className="space-y-2">
-            <h3 className="text-xl font-bold text-gray-900">Order Expired</h3>
-            <p className="text-gray-500">This order has expired</p>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white">Order Expired</h3>
+            <p className="text-gray-500 dark:text-gray-400">This order has expired</p>
           </div>
           
-          <div className="bg-yellow-50 border border-yellow-100 p-4 rounded-lg">
-            <h4 className="font-medium text-yellow-800">Already sent funds?</h4>
-            <p className="text-sm text-yellow-700 mt-1">
+          <div className="bg-yellow-50 border border-yellow-100 p-4 rounded-lg dark:bg-yellow-900 dark:border-yellow-700">
+            <h4 className="font-medium text-yellow-800 dark:text-yellow-200">Already sent funds?</h4>
+            <p className="text-sm text-yellow-700 mt-1 dark:text-yellow-300">
               Don't worry, funds are not lost. Contact us on support from your dashboard.
             </p>
           </div>
@@ -589,8 +589,8 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
             <FontAwesomeIcon icon={faWallet} className="h-8 w-8 text-green-500" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Payment Confirmed!</h3>
-            <p className="text-sm text-gray-600">Your balance has been updated successfully.</p>
+            <h3 className="text-xl font-bold text-gray-900 mb-2 dark:text-white">Payment Confirmed!</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300">Your balance has been updated successfully.</p>
           </div>
           <button
             onClick={onClose}
@@ -605,7 +605,7 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
     if (showPaymentPrompt) {
       return (
         <div className="space-y-6 text-center">
-          <h3 className="text-xl font-bold text-gray-900">Have you made the payment?</h3>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white">Have you made the payment?</h3>
           <div className="space-y-3">
             <button
               onClick={() => handlePaymentPromptResponse(true)}
@@ -615,7 +615,7 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
             </button>
             <button
               onClick={() => handlePaymentPromptResponse(false)}
-              className="w-full px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors"
+              className="w-full px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white"
             >
               No, continue waiting
             </button>
@@ -627,17 +627,17 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
     return (
       <div className="space-y-5">
         <div className="text-center space-y-3">
-          <h3 className="text-xl font-bold text-gray-900">Payment</h3>
-          <div className="text-sm text-gray-500">Time remaining {formatTime(timeRemaining)}</div>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white">Payment</h3>
+          <div className="text-sm text-gray-500 dark:text-gray-400">Time remaining {formatTime(timeRemaining)}</div>
           <div>
-            <div className="text-sm text-gray-600">Send this amount</div>
+            <div className="text-sm text-gray-600 dark:text-gray-300">Send this amount</div>
             <div className="text-2xl font-bold mt-1">
               {getCryptoAmount()} {selectedMethod}
             </div>
-            <div className="text-sm text-gray-500 mt-1">
+            <div className="text-sm text-gray-500 mt-1 dark:text-gray-400">
               (≈ ${paymentDetails?.amount} USD)
             </div>
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-gray-500 dark:text-gray-400">
               {selectedMethod === 'BTC' ? '(Bitcoin Network)' :
                selectedMethod === 'ETH' ? '(Mainnet - ERC-20)' :
                '(ERC-20)'}
@@ -645,12 +645,12 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
           </div>
         </div>
 
-<div className="bg-yellow-50 border border-yellow-100 p-3 rounded-lg text-sm">
+<div className="bg-yellow-50 border border-yellow-100 p-3 rounded-lg text-sm dark:bg-yellow-900 dark:border-yellow-700 dark:text-yellow-200">
   <p>{getPaymentWarning(selectedMethod!)}</p>
 </div>
 
         <div className="flex justify-center py-2">
-          <div className="p-4 bg-white rounded-lg shadow-sm">
+          <div className="p-4 bg-white rounded-lg shadow-sm dark:bg-gray-700 dark:shadow-none">
             <QRCodeSVG
               value={paymentDetails?.address || ''}
               size={180}
@@ -660,8 +660,8 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
           </div>
         </div>
 
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+        <div className="bg-gray-50 p-4 rounded-lg dark:bg-gray-700">
+          <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-200">
             To this {selectedMethod} address
           </label>
           <div className="flex items-center space-x-2">
@@ -669,11 +669,11 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
               type="text"
               readOnly
               value={paymentDetails?.address}
-              className="flex-1 bg-transparent border-none focus:ring-0 text-sm font-mono"
+              className="flex-1 bg-transparent border-none focus:ring-0 text-sm font-mono dark:text-white"
             />
             <button
               onClick={() => copyToClipboard(paymentDetails?.address || '')}
-              className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
+              className="p-2 hover:bg-gray-200 rounded-lg transition-colors dark:hover:bg-gray-600 dark:text-gray-300"
               title={copied ? "Copied!" : "Copy to clipboard"}
             >
               {renderIcon('copy')}
@@ -697,7 +697,7 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
           </a>
         </div>
 
-        <div className="text-xs text-gray-500 text-center">
+        <div className="text-xs text-gray-500 text-center dark:text-gray-400">
           order id: {paymentDetails?.orderId}
         </div>
       </div>
@@ -730,13 +730,13 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
   }, [countdownInterval]);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg w-full max-w-md relative max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-75 flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-md relative max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           {currentStep === 'payment' ? (
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-500"
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-500 dark:text-gray-400 dark:hover:text-gray-200"
             >
               {renderIcon('times')}
             </button>

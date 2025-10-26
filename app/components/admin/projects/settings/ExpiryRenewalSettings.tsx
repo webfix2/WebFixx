@@ -95,28 +95,28 @@ export default function ExpiryRenewalSettings({
 
   return (
     <>
-      <div className="bg-white rounded-lg shadow-md p-6 mb-4 border border-gray-200 text-left">
+      <div className="bg-white rounded-lg shadow-md p-6 mb-4 border border-gray-200 text-left dark:bg-gray-800 dark:border-gray-700">
         <div className="mb-2">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Current Expiry Date</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Current Expiry Date</label>
           <div className="flex flex-col md:flex-row md:items-center gap-2">
-            <span className="text-blue-900 font-semibold">
+            <span className="text-blue-900 font-semibold dark:text-blue-200">
               {expiryDate ? new Date(expiryDate).toLocaleString() : 'No expiry date set'}
             </span>
             {expiryDate && (
-              <span className={`px-2 py-1 rounded text-xs ml-1 ${timeRemaining === 'Expired' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
+              <span className={`px-2 py-1 rounded text-xs ml-1 ${timeRemaining === 'Expired' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'}`}>
                 {timeRemaining === 'Expired' ? 'Expired' : `Time left: ${timeRemaining}`}
               </span>
             )}
             <button
               onClick={() => setShowRenewConfirmation(true)}
               disabled={loading}
-              className="btn-primary md:ml-4"
+              className="btn-primary md:ml-4 dark:bg-blue-700 dark:hover:bg-blue-600 dark:text-white"
             >
               {loading ? 'Processing...' : 'Renew'}
             </button>
           </div>
         </div>
-        {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
+        {error && <div className="text-red-500 text-sm mt-2 dark:text-red-400">{error}</div>}
       </div>
 
       {/* Confirmation Modal for Renewal */}
@@ -130,12 +130,12 @@ export default function ExpiryRenewalSettings({
           cancelText="Cancel"
         >
           <div className="mb-2">
-            <span className="text-green-900 font-medium block mb-1">Renewal will extend your project's usage period.</span>
-            <span className="text-blue-700 text-sm font-semibold">
+            <span className="text-green-900 font-medium block mb-1 dark:text-green-200">Renewal will extend your project's usage period.</span>
+            <span className="text-blue-700 text-sm font-semibold dark:text-blue-400">
               {renewalPrice !== null ? `Renewal price: $${renewalPrice.toFixed(2)}` : 'Renewal price not available.'}
             </span>
           </div>
-          <p className="text-gray-700 text-sm">Are you sure you want to renew this project?</p>
+          <p className="text-gray-700 text-sm dark:text-gray-300">Are you sure you want to renew this project?</p>
         </ConfirmationModal>
       )}
     </>

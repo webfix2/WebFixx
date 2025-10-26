@@ -95,7 +95,7 @@ export const TableActions = ({
               e.stopPropagation();
               handleAction('verify');
             }}
-            className="text-indigo-600 hover:text-indigo-900"
+            className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
             disabled={loading}
             title="Verify"
           >
@@ -111,7 +111,7 @@ export const TableActions = ({
               const cookieData = typeof item.cookieJSON === 'string' ? item.cookieJSON : JSON.stringify(item.cookieJSON);
               navigator.clipboard.writeText(cookieData);
             }}
-            className="text-indigo-600 hover:text-indigo-900"
+            className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
             disabled={loading}
             title="Cookie"
           >
@@ -126,7 +126,7 @@ export const TableActions = ({
               e.stopPropagation();
               handleAction('extract');
             }}
-            className="text-indigo-600 hover:text-indigo-900"
+            className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
             disabled={loading}
             title="Extract"
           >
@@ -141,7 +141,7 @@ export const TableActions = ({
               e.stopPropagation();
               setShowShootContactsModal(true);
             }}
-            className="text-indigo-600 hover:text-indigo-900"
+            className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
             disabled={loading}
             title="Shoot"
           >
@@ -155,7 +155,7 @@ export const TableActions = ({
             e.stopPropagation();
             setShowMemoInput(true);
           }}
-          className="text-indigo-600 hover:text-indigo-900"
+          className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
           title="Memo"
         >
           <FontAwesomeIcon icon={faStickyNote} />
@@ -188,22 +188,22 @@ export const TableActions = ({
       />
 
       {showMemoInput && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={(e) => e.stopPropagation()}>
-          <div className="bg-white rounded-lg p-6 max-w-xl w-full">
+        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-75 flex items-center justify-center z-50" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-xl w-full">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Edit Memo</h2>
-              <button onClick={() => setShowMemoInput(false)} className="text-gray-500 hover:text-gray-700">
+              <h2 className="text-xl font-bold dark:text-white">Edit Memo</h2>
+              <button onClick={() => setShowMemoInput(false)} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
                 ×
               </button>
             </div>
             <textarea
               value={memoText}
               onChange={(e) => setMemoText(e.target.value)}
-              className="w-full h-32 p-2 border rounded"
+              className="w-full h-32 p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               placeholder="Enter memo text..."
             />
             {lastSaved && (
-              <div className="mt-2 text-sm text-gray-500">
+              <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
                 <FontAwesomeIcon icon={faClock} className="mr-1" />
                 Last saved: {lastSaved.toLocaleTimeString()}
               </div>

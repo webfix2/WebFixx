@@ -1,154 +1,48 @@
 "use client";
 
-import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faSync, 
-  faCopy, 
-  faGlobe,
-  faPlus,
-  faTimes 
-} from '@fortawesome/free-solid-svg-icons';
+import { faCode, faRocket, faLightbulb } from '@fortawesome/free-solid-svg-icons';
 
-interface ProjectLink {
-  id: string;
-  name: string;
-  originalUrl: string;
-  redirectUrl: string;
-  domain: string;
-  created_at: string;
-  status: 'active' | 'inactive';
-}
-
-export default function ProjectLinks() {
-  const [links, setLinks] = useState<ProjectLink[]>([]);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const handleCreateLink = async (data: Partial<ProjectLink>) => {
-    // Implementation for creating new link
-  };
-
-  const handleRefreshRedirect = async (id: string) => {
-    // Implementation for refreshing redirect
-  };
-
-  const handleGetDomain = async (id: string) => {
-    // Implementation for getting domain
-  };
-
+export default function CustomDevelopment() {
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Project Links</h1>
-        <button
-          onClick={() => setShowCreateModal(true)}
-          className="btn-primary"
-        >
-          <FontAwesomeIcon icon={faPlus} className="w-4 h-4 mr-2" />
-          Create Link
+    <div className="p-6 dark:bg-gray-900 dark:text-gray-100 min-h-screen flex flex-col items-center justify-center">
+      <div className="max-w-4xl mx-auto text-center">
+        <FontAwesomeIcon icon={faCode} className="w-16 h-16 text-blue-600 dark:text-blue-400 mb-6" />
+        <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-4">
+          Custom Development Services
+        </h1>
+        <p className="text-lg text-gray-700 dark:text-gray-300 mb-8">
+          Need a tailor-made solution? Our expert team can build custom applications, integrations, and features to perfectly fit your unique business requirements. From concept to deployment, we're here to bring your vision to life.
+        </p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md dark:shadow-none">
+            <FontAwesomeIcon icon={faLightbulb} className="w-8 h-8 text-green-500 mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Innovative Solutions</h3>
+            <p className="text-gray-600 dark:text-gray-400">
+              We craft cutting-edge solutions designed to give you a competitive edge.
+            </p>
+          </div>
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md dark:shadow-none">
+            <FontAwesomeIcon icon={faRocket} className="w-8 h-8 text-purple-500 mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Scalable Architecture</h3>
+            <p className="text-gray-600 dark:text-gray-400">
+              Build for growth with robust and scalable application architectures.
+            </p>
+          </div>
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md dark:shadow-none">
+            <FontAwesomeIcon icon={faCode} className="w-8 h-8 text-red-500 mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Seamless Integration</h3>
+            <p className="text-gray-600 dark:text-gray-400">
+              Integrate with your existing systems for a unified workflow.
+            </p>
+          </div>
+        </div>
+
+        <button className="px-8 py-4 bg-blue-600 text-white text-xl font-semibold rounded-lg hover:bg-blue-700 transition-colors duration-200">
+          Request a Custom Quote
         </button>
       </div>
-
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Name
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Original URL
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Redirect URL
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Domain
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {links.map((link) => (
-              <tr key={link.id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">
-                    {link.name}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center space-x-2">
-                    <span className="text-sm text-gray-500 truncate max-w-xs">
-                      {link.originalUrl}
-                    </span>
-                    {/* <button
-                      onClick={() => handleCopy(link.originalUrl)}
-                      className="text-gray-400 hover:text-gray-600"
-                    >
-                      <FontAwesomeIcon icon={faCopy} className="w-4 h-4" />
-                    </button> */}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center space-x-2">
-                    <span className="text-sm text-gray-500 truncate max-w-xs">
-                      {link.redirectUrl}
-                    </span>
-                    {/* <button
-                      onClick={() => handleCopy(link.redirectUrl)}
-                      className="text-gray-400 hover:text-gray-600"
-                    >
-                      <FontAwesomeIcon icon={faCopy} className="w-4 h-4" />
-                    </button> */}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-500">{link.domain}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    link.status === 'active'
-                      ? 'bg-green-100 text-green-800'
-                      : 'bg-red-100 text-red-800'
-                  }`}>
-                    {link.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => handleRefreshRedirect(link.id)}
-                      className="text-blue-600 hover:text-blue-900"
-                    >
-                      <FontAwesomeIcon icon={faSync} className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => handleGetDomain(link.id)}
-                      className="text-green-600 hover:text-green-900"
-                    >
-                      <FontAwesomeIcon icon={faGlobe} className="w-4 h-4" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Create Link Modal */}
-      {/* {showCreateModal && (
-        <CreateLinkModal
-          onClose={() => setShowCreateModal(false)}
-          onSave={handleCreateLink}
-        />
-      )} */}
     </div>
   );
 }

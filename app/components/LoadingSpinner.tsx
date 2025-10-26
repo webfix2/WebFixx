@@ -24,7 +24,7 @@ export default function LoadingSpinner({
     <div className="flex flex-col items-center justify-center space-y-4">
       <div className="relative">
         {/* Outer circle */}
-        <div className={`rounded-full border-4 border-blue-100 ${sizeClasses[size]}`} />
+        <div className={`rounded-full border-4 border-blue-100 dark:border-blue-800 ${sizeClasses[size]}`} />
         {/* Spinning inner circle */}
         <div 
           className={`absolute top-0 left-0 rounded-full border-4 border-blue-600 border-t-transparent animate-spin ${sizeClasses[size]}`} 
@@ -42,7 +42,7 @@ export default function LoadingSpinner({
         </div>
       </div>
       {text && (
-        <p className="text-gray-600 font-medium text-sm animate-pulse">
+        <p className="text-gray-600 dark:text-gray-300 font-medium text-sm animate-pulse">
           {text}
         </p>
       )}
@@ -51,7 +51,7 @@ export default function LoadingSpinner({
 
   if (fullScreen) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-white z-50">
+      <div className="fixed inset-0 flex items-center justify-center bg-white dark:bg-gray-900 z-50">
         {spinnerContent}
       </div>
     );
@@ -60,7 +60,7 @@ export default function LoadingSpinner({
   if (overlay) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
-        <div className="bg-white/90 rounded-lg p-8 shadow-xl">
+        <div className="bg-white/90 dark:bg-gray-800/90 rounded-lg p-8 shadow-xl">
           {spinnerContent}
         </div>
       </div>

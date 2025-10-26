@@ -63,16 +63,16 @@ export default function ProjectSettingsModal({ project, onClose, onSave }: Proje
   };
 
   const renderSettingsSection = (title: string, section: string, SettingsComponent: React.ComponentType<any>) => (
-    <div className="border rounded-lg">
+    <div className="border rounded-lg dark:border-gray-700">
       <div 
         onClick={() => setOpenSection(openSection === section ? null : section)}
-        className="flex justify-between items-center p-4 cursor-pointer hover:bg-gray-50"
+        className="flex justify-between items-center p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-white"
       >
-        <h3 className="text-lg font-semibold">{title}</h3>
+        <h3 className="text-lg font-semibold dark:text-white">{title}</h3>
         <FontAwesomeIcon icon={openSection === section ? faChevronUp : faChevronDown} />
       </div>
       {openSection === section && (
-        <div className="p-4 border-t">
+        <div className="p-4 border-t dark:border-gray-700">
           <SettingsComponent 
             project={project} 
             onSave={(updatedData: Partial<Project>) => handleSave(section, updatedData)}
@@ -83,43 +83,43 @@ export default function ProjectSettingsModal({ project, onClose, onSave }: Proje
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-75">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl dark:shadow-none w-full max-w-2xl mx-4">
         {/* Modal Header */}
-        <div className="relative p-4 border-b bg-gradient-to-r from-blue-50 to-blue-100">
+        <div className="relative p-4 border-b dark:border-gray-700 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800">
           {/* Absolute X button */}
           <button
             onClick={onClose}
-            className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 z-10"
+            className="absolute top-3 right-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 z-10"
             aria-label="Close"
           >
             <FontAwesomeIcon icon={faTimes} />
           </button>
           <div className="flex flex-col gap-2">
-            <h2 className="text-xl font-semibold text-gray-900 flex items-center">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
               {project.projectTitle}
             </h2>
             {/* Project summary row */}
-            <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-4 mt-1 text-sm">
-              <span><span className="font-semibold">Template:</span> {project.templateTitle}</span>
-              <span><span className="font-semibold">Type:</span> {project.projectType}</span>
-              <span><span className="font-semibold">Expiry:</span> {project.expiryDate}</span>
+            <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-4 mt-1 text-sm text-gray-700 dark:text-gray-200">
+              <span><span className="font-semibold dark:text-gray-300">Template:</span> {project.templateTitle}</span>
+              <span><span className="font-semibold dark:text-gray-300">Type:</span> {project.projectType}</span>
+              <span><span className="font-semibold dark:text-gray-300">Expiry:</span> {project.expiryDate}</span>
             </div>
             {/* URLs as styled links with copy, each on its own row */}
             {project.pageURL && (
-              <div className="flex items-center text-xs bg-blue-50 px-2 py-1 rounded w-fit mt-2">
+              <div className="flex items-center text-xs bg-blue-50 dark:bg-blue-900 px-2 py-1 rounded w-fit mt-2 dark:text-blue-200">
                 <span className="font-semibold mr-1">Page URL:</span>
                 <a
                   href={project.pageURL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mr-1 underline text-blue-700 truncate max-w-[160px] md:max-w-[280px]"
+                  className="mr-1 underline text-blue-700 dark:text-blue-400 truncate max-w-[160px] md:max-w-[280px]"
                   title={project.pageURL}
                 >
                   {project.pageURL}
                 </a>
                 <button
-                  className="ml-1 text-gray-500 hover:text-blue-600"
+                  className="ml-1 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-300"
                   title="Copy Page URL"
                   onClick={() => navigator.clipboard.writeText(project.pageURL || '')}
                 >
@@ -128,19 +128,19 @@ export default function ProjectSettingsModal({ project, onClose, onSave }: Proje
               </div>
             )}
             {project.domainURL && (
-              <div className="flex items-center text-xs bg-green-50 px-2 py-1 rounded w-fit mt-2">
+              <div className="flex items-center text-xs bg-green-50 dark:bg-green-900 px-2 py-1 rounded w-fit mt-2 dark:text-green-200">
                 <span className="font-semibold mr-1">Domain URL:</span>
                 <a
                   href={project.domainURL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mr-1 underline text-green-700 truncate max-w-[160px] md:max-w-[280px]"
+                  className="mr-1 underline text-green-700 dark:text-green-400 truncate max-w-[160px] md:max-w-[280px]"
                   title={project.domainURL}
                 >
                   {project.domainURL}
                 </a>
                 <button
-                  className="ml-1 text-gray-500 hover:text-green-600"
+                  className="ml-1 text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-300"
                   title="Copy Domain URL"
                   onClick={() => navigator.clipboard.writeText(project.domainURL || '')}
                 >
@@ -149,19 +149,19 @@ export default function ProjectSettingsModal({ project, onClose, onSave }: Proje
               </div>
             )}
             {project.redirectURL && (
-              <div className="flex items-center text-xs bg-yellow-50 px-2 py-1 rounded w-fit mt-2">
+              <div className="flex items-center text-xs bg-yellow-50 dark:bg-yellow-900 px-2 py-1 rounded w-fit mt-2 dark:text-yellow-200">
                 <span className="font-semibold mr-1">Redirect URL:</span>
                 <a
                   href={project.redirectURL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mr-1 underline text-yellow-700 truncate max-w-[160px] md:max-w-[280px]"
+                  className="mr-1 underline text-yellow-700 dark:text-yellow-400 truncate max-w-[160px] md:max-w-[280px]"
                   title={project.redirectURL}
                 >
                   {project.redirectURL}
                 </a>
                 <button
-                  className="ml-1 text-gray-500 hover:text-yellow-600"
+                  className="ml-1 text-gray-500 dark:text-gray-400 hover:text-yellow-600 dark:hover:text-yellow-300"
                   title="Copy Redirect URL"
                   onClick={() => navigator.clipboard.writeText(project.redirectURL || '')}
                 >
@@ -173,7 +173,7 @@ export default function ProjectSettingsModal({ project, onClose, onSave }: Proje
         </div>
 
         {/* Modal Content (scrollable) */}
-        <div className="p-4 space-y-4 overflow-y-auto" style={{ maxHeight: '70vh' }}>
+        <div className="p-4 space-y-4 overflow-y-auto dark:bg-gray-900" style={{ maxHeight: '70vh' }}>
           {renderSettingsSection('Template Variables', 'templateVariables', TemplateVariablesSettings)}
           {renderSettingsSection('Notification Settings', 'notifications', NotificationSettings)}
           {renderSettingsSection('Redirect Protection', 'redirectProtection', RedirectProtectionSettings)}
@@ -182,7 +182,7 @@ export default function ProjectSettingsModal({ project, onClose, onSave }: Proje
         </div>
 
         {/* Modal Footer */}
-        <div className="p-4 border-t flex justify-end">
+        <div className="p-4 border-t dark:border-gray-700 flex justify-end">
           <button 
             onClick={onClose} 
             className="btn-secondary mr-2"

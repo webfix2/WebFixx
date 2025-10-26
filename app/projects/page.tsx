@@ -264,10 +264,10 @@ export default function ProjectLinks() {
 
   // Mobile View Renderer
   const renderMobileView = (project: Project) => (
-    <div key={project.id} className="grid grid-cols-3 gap-2 items-center border-b py-2">
+    <div key={project.id} className="grid grid-cols-3 gap-2 items-center border-b dark:border-gray-700 py-2">
       <div>
-        <span className="font-semibold">{project.projectTitle}</span>
-        <span className="text-xs block text-gray-500">
+        <span className="font-semibold text-gray-900 dark:text-white">{project.projectTitle}</span>
+        <span className="text-xs block text-gray-500 dark:text-gray-400">
           {project.templateNiche} - {project.templateType}
         </span>
         {project.expiryDate && (
@@ -369,7 +369,7 @@ export default function ProjectLinks() {
           <select 
             value={filters.category}
             onChange={(e) => setFilters(prev => ({ ...prev, category: e.target.value }))}
-            className="form-select"
+            className="form-select dark:bg-gray-700 dark:border-gray-600 dark:text-white"
           >
             <option value="">All Categories</option>
             {Array.from(new Set(projects.map(p => p.templateNiche))).map(category => (
@@ -379,7 +379,7 @@ export default function ProjectLinks() {
           <select 
             value={filters.type}
             onChange={(e) => setFilters(prev => ({ ...prev, type: e.target.value }))}
-            className="form-select"
+            className="form-select dark:bg-gray-700 dark:border-gray-600 dark:text-white"
           >
             <option value="">All Types</option>
             {Array.from(new Set(projects.map(p => p.templateType))).map(type => (
@@ -389,7 +389,7 @@ export default function ProjectLinks() {
           <select 
             value={filters.template}
             onChange={(e) => setFilters(prev => ({ ...prev, template: e.target.value }))}
-            className="form-select"
+            className="form-select dark:bg-gray-700 dark:border-gray-600 dark:text-white"
           >
             <option value="">All Templates</option>
             {Array.from(new Set(projects.map(p => p.templateTitle))).map(template => (
@@ -407,21 +407,21 @@ export default function ProjectLinks() {
       {/* Desktop View */}
       <table className="w-full hidden md:table">
         <thead>
-          <tr>
-            <th>Project Title</th>
-            <th>Responses</th>
-            <th>Page Health</th>
-            <th>Page Visits</th>
-            <th>Time Left</th>
-            <th>Actions</th>
+          <tr className="bg-gray-100 dark:bg-gray-700">
+            <th className="px-4 py-2 text-left text-gray-900 dark:text-white">Project Title</th>
+            <th className="px-4 py-2 text-center text-gray-900 dark:text-white">Responses</th>
+            <th className="px-4 py-2 text-center text-gray-900 dark:text-white">Page Health</th>
+            <th className="px-4 py-2 text-center text-gray-900 dark:text-white">Page Visits</th>
+            <th className="px-4 py-2 text-center text-gray-900 dark:text-white">Time Left</th>
+            <th className="px-4 py-2 text-center text-gray-900 dark:text-white">Actions</th>
           </tr>
         </thead>
         <tbody>
           {currentProjects.map((project) => (
-            <tr key={project.id} className="hover:bg-gray-50">
+            <tr key={project.id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
               <td className="px-4 py-2">
-                <div className="font-semibold">{project.projectTitle}</div>
-                <div className="text-xs text-gray-500">
+                <div className="font-semibold text-gray-900 dark:text-white">{project.projectTitle}</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">
                   {project.templateNiche} - {project.templateType}
                 </div>
               </td>
@@ -436,8 +436,8 @@ export default function ProjectLinks() {
                   {project.responseCount} Responses
                 </button>
               </td>
-              <td className="px-4 py-2 text-center">{project.pageHealth}</td>
-              <td className="px-4 py-2 text-center">{project.pageVisits}</td>
+              <td className="px-4 py-2 text-center text-gray-900 dark:text-white">{project.pageHealth}</td>
+              <td className="px-4 py-2 text-center text-gray-900 dark:text-white">{project.pageVisits}</td>
               <td className="px-4 py-2 text-center">
                 <span className={`text-sm font-medium ${
                   calculateTimeRemaining(project.expiryDate) === 'Expired'
@@ -474,7 +474,7 @@ export default function ProjectLinks() {
               <button
                 key={number}
                 onClick={() => paginate(number)}
-                className={`mx-1 px-3 py-1 rounded ${currentPage === number ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                className={`mx-1 px-3 py-1 rounded ${currentPage === number ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700 dark:text-gray-200'}`}
               >
                 {number}
               </button>

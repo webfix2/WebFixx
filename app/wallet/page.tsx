@@ -283,16 +283,16 @@ export default function Wallet() {
       {/* Balance Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         {/* Available Balance Card */}
-        <div className="bg-white rounded-lg shadow-md p-6 h-full">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-none p-6 h-full">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">Available Balance</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Available Balance</h2>
             <FontAwesomeIcon icon={faWallet} className="w-6 h-6 text-blue-500" />
           </div>
-          <div className="text-3xl font-bold text-gray-900">
+          <div className="text-3xl font-bold text-gray-900 dark:text-white">
             ${appData?.user?.balance || '0.00'}
           </div>
           {parseFloat(appData?.user?.pendingBalance || '0') > 0 && (
-            <div className="text-sm text-gray-500 mt-1">
+            <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               Pending: ${appData?.user?.pendingBalance}
             </div>
           )}
@@ -308,21 +308,21 @@ export default function Wallet() {
         </div>
 
         {/* Buy us a drink Card */}
-        <div className="bg-white rounded-lg shadow-md p-6 h-full">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-none p-6 h-full">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">Buy us a drink</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Buy us a drink</h2>
             <FontAwesomeIcon icon={faCoffee} className="w-6 h-6 text-amber-500" />
           </div>
           <div className="space-y-4">
-            <p className="text-gray-600">Support our team with a virtual drink!</p>
+            <p className="text-gray-600 dark:text-gray-300">Support our team with a virtual drink!</p>
             <div className="space-y-4">
               <div>
-                <label htmlFor="drinkAmount" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="drinkAmount" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Amount (min. $5)
                 </label>
                 <div className="relative rounded-md shadow-sm">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span className="text-gray-500 sm:text-sm">$</span>
+                    <span className="text-gray-500 dark:text-gray-400 sm:text-sm">$</span>
                   </div>
                   <input
                     type="number"
@@ -331,7 +331,7 @@ export default function Wallet() {
                     step="1"
                     value={drinkAmount}
                     onChange={(e) => setDrinkAmount(e.target.value)}
-                    className="focus:ring-amber-500 focus:border-amber-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md"
+                    className="focus:ring-amber-500 focus:border-amber-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md"
                     placeholder="5"
                   />
                 </div>
@@ -359,19 +359,19 @@ export default function Wallet() {
       </div>
 
       {/* Transaction History */}
-      <div className="bg-white rounded-lg shadow-md p-6 w-full">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-none p-6 w-full">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
           Transaction History
         </h2>
         <div className="overflow-x-auto">
           <table className="w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
                 {transactionTableHeaders.map((header, index) => (
                   <th 
                     key={index}
                     className={`
-                      px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase
+                      px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase
                       ${header.hiddenOnMobile ? 'hidden md:table-cell' : ''}
                     `}
                   >
@@ -380,7 +380,7 @@ export default function Wallet() {
                 ))}
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {currentTransactions.length > 0 ? (
                 currentTransactions.map((tx: any, index: number) => {
                   // Check if tx is an array (raw data) or already an object
@@ -397,7 +397,7 @@ export default function Wallet() {
                 })
               ) : (
                 <tr>
-                  <td colSpan={6} className="px-6 py-4 text-center text-sm text-gray-500">
+                  <td colSpan={6} className="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
                     No transactions found
                   </td>
                 </tr>
@@ -408,13 +408,13 @@ export default function Wallet() {
 
         {/* Pagination Controls */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between border-t border-gray-200 px-4 py-3 sm:px-6 mt-4">
+          <div className="flex items-center justify-between border-t border-gray-200 dark:border-gray-700 px-4 py-3 sm:px-6 mt-4">
             <div className="flex flex-1 justify-between sm:hidden">
               <button
                 onClick={goToPreviousPage}
                 disabled={currentPage === 1}
-                className={`relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium ${
-                  currentPage === 1 ? 'text-gray-300' : 'text-gray-700 hover:bg-gray-50'
+                className={`relative inline-flex items-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm font-medium ${
+                  currentPage === 1 ? 'text-gray-300 dark:text-gray-500' : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600'
                 }`}
               >
                 Previous
@@ -422,8 +422,8 @@ export default function Wallet() {
               <button
                 onClick={goToNextPage}
                 disabled={currentPage === totalPages}
-                className={`relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium ${
-                  currentPage === totalPages ? 'text-gray-300' : 'text-gray-700 hover:bg-gray-50'
+                className={`relative ml-3 inline-flex items-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm font-medium ${
+                  currentPage === totalPages ? 'text-gray-300 dark:text-gray-500' : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600'
                 }`}
               >
                 Next
@@ -431,7 +431,7 @@ export default function Wallet() {
             </div>
             <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
               <div>
-                <p className="text-sm text-gray-700">
+                <p className="text-sm text-gray-700 dark:text-gray-300">
                   Showing <span className="font-medium">{indexOfFirstRow + 1}</span> to{' '}
                   <span className="font-medium">
                     {Math.min(indexOfLastRow, sortedTransactions.length)}
@@ -445,7 +445,7 @@ export default function Wallet() {
                     onClick={goToPreviousPage}
                     disabled={currentPage === 1}
                     className={`relative inline-flex items-center rounded-l-md px-2 py-2 ${
-                      currentPage === 1 ? 'text-gray-300' : 'text-gray-400 hover:bg-gray-50'
+                      currentPage === 1 ? 'text-gray-300 dark:text-gray-500' : 'text-gray-400 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'
                     }`}
                   >
                     <span className="sr-only">Previous</span>
@@ -478,7 +478,7 @@ export default function Wallet() {
                         className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${
                           currentPage === pageNumber
                             ? 'z-10 bg-blue-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600'
-                            : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0'
+                            : 'text-gray-900 dark:text-gray-200 ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-offset-0'
                         }`}
                       >
                         {pageNumber}
@@ -490,12 +490,12 @@ export default function Wallet() {
                     onClick={goToNextPage}
                     disabled={currentPage === totalPages}
                     className={`relative inline-flex items-center rounded-r-md px-2 py-2 ${
-                      currentPage === totalPages ? 'text-gray-300' : 'text-gray-400 hover:bg-gray-50'
+                      currentPage === totalPages ? 'text-gray-300 dark:text-gray-500' : 'text-gray-400 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'
                     }`}
                   >
                     <span className="sr-only">Next</span>
                     <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                      <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06.02z" clipRule="evenodd" />
+                      <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01.02-1.06z" clipRule="evenodd" />
                     </svg>
                   </button>
                 </nav>

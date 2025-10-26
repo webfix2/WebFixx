@@ -369,14 +369,14 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
       if (editableKeys.length === 0) return null;
       return editableKeys.map(key => (
         <div key={key} className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
             {key.charAt(0).toUpperCase() + key.slice(1)}
           </label>
           <input
             type="text"
             value={formState.templateVariables[key] || ''}
             onChange={(e) => handleTemplateVariableChange(key, e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             required
           />
         </div>
@@ -394,16 +394,16 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
       case 'template':
         return (
           <div>
-            <h2 className="text-lg font-semibold mb-4">Template Selection</h2>
+            <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Template Selection</h2>
             
             {/* Title Input */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Title</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Title</label>
               <input
                 type="text"
                 value={formState.title}
                 onChange={(e) => setFormState(prev => ({ ...prev, title: e.target.value }))}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 placeholder="Enter project title"
                 required
               />
@@ -411,7 +411,7 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
 
             {/* Category Selection */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Category</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Category</label>
               <select
                 value={formState.category}
                 onChange={(e) => {
@@ -424,19 +424,19 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
                   }));
                   setSelectedTemplatePreview({});
                 }}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 required
               >
-                <option value="">Select Category</option>
+                <option value="" className="dark:bg-gray-700">Select Category</option>
                 {Array.from(new Set(filteredTemplates.map(t => t[getTemplateIndex('niche')]))).map(category => (
-                  <option key={category} value={category}>{category}</option>
+                  <option key={category} value={category} className="dark:bg-gray-700">{category}</option>
                 ))}
               </select>
             </div>
 
             {/* Page Type Selection */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Page Type</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Page Type</label>
               <select
                 value={formState.pageType}
                 onChange={(e) => {
@@ -448,18 +448,18 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
                   }));
                   setSelectedTemplatePreview({});
                 }}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               >
-                <option value="">Select Page Type</option>
+                <option value="" className="dark:bg-gray-700">Select Page Type</option>
                 {Array.from(new Set(filteredTemplates.map(t => t[getTemplateIndex('type')]))).map(type => (
-                  <option key={type} value={type}>{type}</option>
+                  <option key={type} value={type} className="dark:bg-gray-700">{type}</option>
                 ))}
               </select>
             </div>
 
             {formState.category && formState.pageType && (
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Template</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Template</label>
                 <div>
                   <select
                     value={formState.template}
@@ -474,10 +474,10 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
                         setSelectedTemplatePreview({});
                       }
                     }}
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     required
                   >
-                    <option value="">Select Template</option>
+                    <option value="" className="dark:bg-gray-700">Select Template</option>
                     {filteredTemplates
                       .filter(t => 
                         t[getTemplateIndex('niche')] === formState.category && 
@@ -489,6 +489,7 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
                           <option 
                             key={template[getTemplateIndex('templateId')]} 
                             value={template[getTemplateIndex('templateId')]}
+                            className="dark:bg-gray-700"
                           >
                             {template[getTemplateIndex('name')]} - ${price.toFixed(2)}
                           </option>
@@ -502,7 +503,7 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
                 </div>
                 {/* Show selected template price and renewal price */}
                 {formState.template && formState.price && formState.price > 0 && (
-                  <div className="mt-2 p-2 bg-blue-50 rounded text-sm">
+                  <div className="mt-2 p-2 bg-blue-50 dark:bg-blue-900 rounded text-sm dark:text-blue-200">
                     <span className="font-semibold">Template Price:</span> ${formState.price?.toFixed(2)}
                     {formState.renewal !== undefined && formState.renewal > 0 && (
                       <span className="ml-4 font-semibold">Renewal Price:</span>
@@ -523,9 +524,9 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
       case 'notification-setup':
         return (
           <div>
-            <h2 className="text-lg font-semibold mb-4">Notification Setup</h2>
+            <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Notification Setup</h2>
             
-            <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4" role="alert">
+            <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4 dark:bg-blue-900 dark:border-blue-700 dark:text-blue-200" role="alert">
               <p className="font-bold">Telegram Setup Steps:</p>
               <ol className="list-decimal list-inside mt-2">
                 <li>Create a Telegram group</li>
@@ -538,12 +539,12 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
             
             {/* Telegram ID */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Telegram ID (Required)</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Telegram ID (Required)</label>
               <input
                 type="text"
                 value={formState.telegramId}
                 onChange={(e) => setFormState(prev => ({ ...prev, telegramId: e.target.value }))}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 placeholder="Enter Telegram ID"
                 required
               />
@@ -551,12 +552,12 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
 
             {/* Optional Email */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Email (Optional)</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Email (Optional)</label>
               <input
                 type="email"
                 value={formState.email || ''}
                 onChange={(e) => setFormState(prev => ({ ...prev, email: e.target.value }))}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 placeholder="Enter email address (Optional)"
               />
             </div>
@@ -567,22 +568,22 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
         return (
           <div>
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold">Telegram Verification</h2>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Telegram Verification</h2>
               <button
                 onClick={() => setFormState(prev => ({ ...prev, stage: 'notification-setup' }))}
-                className="text-blue-600 hover:text-blue-800 text-sm"
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm"
               >
                 Change Telegram ID
               </button>
             </div>
             
-            <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4" role="alert">
+            <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4 dark:bg-blue-900 dark:border-blue-700 dark:text-blue-200" role="alert">
               <p className="font-bold">Test Connection</p>
               <p className="mt-2">We'll send a test message to your Telegram group to verify the connection. Click the button below to proceed.</p>
             </div>
 
             {telegramVerificationError && (
-              <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
+              <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 dark:bg-red-900 dark:border-red-700 dark:text-red-200" role="alert">
                 <p className="font-bold">Connection Failed</p>
                 <p className="mt-2">We couldn't send a test message to your Telegram group. Please check:</p>
                 <ul className="list-disc list-inside mt-2">
@@ -620,42 +621,42 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
         const selectedTemplateName = selectedTemplateObj ? selectedTemplateObj[getTemplateIndex('name')] : '';
         return (
           <div>
-            <h2 className="text-xl font-bold mb-4 text-center">Confirm Link Details</h2>
+            <h2 className="text-xl font-bold mb-4 text-center text-gray-900 dark:text-white">Confirm Link Details</h2>
             <div className="space-y-6">
               {/* Template Details Card */}
-              <div className="bg-gray-50 p-4 rounded-lg shadow-sm border">
-                <h3 className="font-semibold mb-3 text-blue-700 text-base flex items-center">
+              <div className="bg-gray-50 p-4 rounded-lg shadow-sm border dark:bg-gray-700 dark:shadow-none dark:border-gray-600">
+                <h3 className="font-semibold mb-3 text-blue-700 text-base flex items-center dark:text-blue-300">
                   <FontAwesomeIcon icon={faCheck} className="mr-2 text-blue-500" />Template Details
                 </h3>
                 <dl className="grid grid-cols-1 gap-x-3 gap-y-1">
-                  <div className="flex justify-between py-1 border-b border-dashed border-gray-200"><dt className="font-medium">Title:</dt><dd>{formState.title}</dd></div>
-                  <div className="flex justify-between py-1 border-b border-dashed border-gray-200"><dt className="font-medium">Category:</dt><dd>{formState.category}</dd></div>
-                  <div className="flex justify-between py-1 border-b border-dashed border-gray-200"><dt className="font-medium">Page Type:</dt><dd>{formState.pageType}</dd></div>
+                  <div className="flex justify-between py-1 border-b border-dashed border-gray-200 dark:border-gray-600"><dt className="font-medium dark:text-gray-300">Title:</dt><dd className="dark:text-gray-200">{formState.title}</dd></div>
+                  <div className="flex justify-between py-1 border-b border-dashed border-gray-200 dark:border-gray-600"><dt className="font-medium dark:text-gray-300">Category:</dt><dd className="dark:text-gray-200">{formState.category}</dd></div>
+                  <div className="flex justify-between py-1 border-b border-dashed border-gray-200 dark:border-gray-600"><dt className="font-medium dark:text-gray-300">Page Type:</dt><dd className="dark:text-gray-200">{formState.pageType}</dd></div>
                   {selectedTemplateName && (
-                    <div className="flex justify-between py-1 border-b border-dashed border-gray-200"><dt className="font-medium">Template Name:</dt><dd>{selectedTemplateName}</dd></div>
+                    <div className="flex justify-between py-1 border-b border-dashed border-gray-200 dark:border-gray-600"><dt className="font-medium dark:text-gray-300">Template Name:</dt><dd className="dark:text-gray-200">{selectedTemplateName}</dd></div>
                   )}
                   {formState.price && formState.price > 0 && (
-                    <div className="flex justify-between py-1 border-b border-dashed border-gray-200"><dt className="font-medium">Template Price:</dt><dd>${formState.price?.toFixed(2)}</dd></div>
+                    <div className="flex justify-between py-1 border-b border-dashed border-gray-200 dark:border-gray-600"><dt className="font-medium dark:text-gray-300">Template Price:</dt><dd className="dark:text-gray-200">${formState.price?.toFixed(2)}</dd></div>
                   )}
                   {formState.renewal !== undefined && formState.renewal > 0 && (
-                    <div className="flex justify-between py-1"><dt className="font-medium">Renewal Price:</dt><dd>${formState.renewal?.toFixed(2) || '0.00'}</dd></div>
+                    <div className="flex justify-between py-1"><dt className="font-medium dark:text-gray-300">Renewal Price:</dt><dd className="dark:text-gray-200">${formState.renewal?.toFixed(2) || '0.00'}</dd></div>
                   )}
                 </dl>
               </div>
 
               {/* Template Variables Card */}
               {Object.keys(formState.templateVariables).filter(key => !['FormId','formId','PostURL','postURL','Token','token'].includes(key)).length > 0 && (
-                <div className="bg-gray-50 p-4 rounded-lg shadow-sm border">
-                  <h3 className="font-semibold mb-3 text-blue-700 text-base flex items-center">
+                <div className="bg-gray-50 p-4 rounded-lg shadow-sm border dark:bg-gray-700 dark:shadow-none dark:border-gray-600">
+                  <h3 className="font-semibold mb-3 text-blue-700 text-base flex items-center dark:text-blue-300">
                     <FontAwesomeIcon icon={faCheck} className="mr-2 text-blue-500" />Template Variables
                   </h3>
                   <dl className="grid grid-cols-1 gap-x-3 gap-y-1">
                     {Object.entries(formState.templateVariables)
                       .filter(([key]) => !['FormId','formId','PostURL','postURL','Token','token'].includes(key))
                       .map(([key, value]) => (
-                        <div className="flex justify-between py-1 border-b border-dashed border-gray-200" key={key}>
-                          <dt className="font-medium">{key}</dt>
-                          <dd>{value}</dd>
+                        <div className="flex justify-between py-1 border-b border-dashed border-gray-200 dark:border-gray-600" key={key}>
+                          <dt className="font-medium dark:text-gray-300">{key}</dt>
+                          <dd className="dark:text-gray-200">{value}</dd>
                         </div>
                       ))}
                   </dl>
@@ -663,14 +664,14 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
               )}
 
               {/* Telegram Details Card */}
-              <div className="bg-gray-50 p-4 rounded-lg shadow-sm border">
-                <h3 className="font-semibold mb-3 text-blue-700 text-base flex items-center">
+              <div className="bg-gray-50 p-4 rounded-lg shadow-sm border dark:bg-gray-700 dark:shadow-none dark:border-gray-600">
+                <h3 className="font-semibold mb-3 text-blue-700 text-base flex items-center dark:text-blue-300">
                   <FontAwesomeIcon icon={faCheck} className="mr-2 text-blue-500" />Telegram Details
                 </h3>
                 <dl className="grid grid-cols-1 gap-x-3 gap-y-1">
-                  <div className="flex justify-between py-1 border-b border-dashed border-gray-200"><dt className="font-medium">Telegram ID:</dt><dd>{formState.telegramId}</dd></div>
+                  <div className="flex justify-between py-1 border-b border-dashed border-gray-200 dark:border-gray-600"><dt className="font-medium dark:text-gray-300">Telegram ID:</dt><dd className="dark:text-gray-200">{formState.telegramId}</dd></div>
                   {formState.email && (
-                    <div className="flex justify-between py-1"><dt className="font-medium">Email:</dt><dd>{formState.email}</dd></div>
+                    <div className="flex justify-between py-1"><dt className="font-medium dark:text-gray-300">Email:</dt><dd className="dark:text-gray-200">{formState.email}</dd></div>
                   )}
                 </dl>
               </div>
@@ -681,26 +682,26 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 flex flex-col min-h-[200px] max-h-[95vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-75">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl dark:shadow-none w-full max-w-md mx-4 flex flex-col min-h-[200px] max-h-[95vh]">
         {/* Modal Header */}
-        <div className="flex justify-between items-center p-4 border-b">
-          <h2 className="text-xl font-semibold">Create New Link</h2>
+        <div className="flex justify-between items-center p-4 border-b dark:border-gray-700">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Create New Link</h2>
           <button 
             onClick={onClose} 
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
           >
             <FontAwesomeIcon icon={faTimes} />
           </button>
         </div>
 
         {/* Modal Content */}
-        <div className="p-4 overflow-y-auto flex-1">
+        <div className="p-4 overflow-y-auto flex-1 dark:bg-gray-900">
           {renderStage()}
         </div>
 
         {/* Modal Footer with Navigation */}
-        <div className="flex justify-between p-4 border-t">
+        <div className="flex justify-between p-4 border-t dark:border-gray-700">
           {formState.stage !== 'template' && formState.stage !== 'telegram-verification' && (
             <button 
               onClick={prevStage}

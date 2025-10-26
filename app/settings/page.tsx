@@ -24,11 +24,11 @@ interface ModalProps {
 const EditProfileModal = ({ isOpen, onClose }: ModalProps) => {
   if (!isOpen) return null;
   return (
-    <div className="modal-backdrop">
-      <div className="modal-content">
-        <h2>Edit Profile</h2>
+    <div className="modal-backdrop bg-gray-900 bg-opacity-50 dark:bg-opacity-75 fixed inset-0 flex items-center justify-center z-50">
+      <div className="modal-content bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/3 relative">
+        <h2 className="text-xl font-bold mb-4">Edit Profile</h2>
         {/* Form fields will go here */}
-        <button onClick={onClose}>Close</button>
+        <button onClick={onClose} className="mt-4 btn-secondary">Close</button>
       </div>
     </div>
   );
@@ -37,11 +37,11 @@ const EditProfileModal = ({ isOpen, onClose }: ModalProps) => {
 const UpgradePlanModal = ({ isOpen, onClose }: ModalProps) => {
   if (!isOpen) return null;
   return (
-    <div className="modal-backdrop">
-      <div className="modal-content">
-        <h2>Upgrade Plan</h2>
+    <div className="modal-backdrop bg-gray-900 bg-opacity-50 dark:bg-opacity-75 fixed inset-0 flex items-center justify-center z-50">
+      <div className="modal-content bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/3 relative">
+        <h2 className="text-xl font-bold mb-4">Upgrade Plan</h2>
         {/* Plan options will go here */}
-        <button onClick={onClose}>Close</button>
+        <button onClick={onClose} className="mt-4 btn-secondary">Close</button>
       </div>
     </div>
   );
@@ -50,11 +50,11 @@ const UpgradePlanModal = ({ isOpen, onClose }: ModalProps) => {
 const TwoFactorModal = ({ isOpen, onClose }: ModalProps) => {
   if (!isOpen) return null;
   return (
-    <div className="modal-backdrop">
-      <div className="modal-content">
-        <h2>Two-Factor Authentication</h2>
+    <div className="modal-backdrop bg-gray-900 bg-opacity-50 dark:bg-opacity-75 fixed inset-0 flex items-center justify-center z-50">
+      <div className="modal-content bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/3 relative">
+        <h2 className="text-xl font-bold mb-4">Two-Factor Authentication</h2>
         {/* 2FA setup will go here */}
-        <button onClick={onClose}>Close</button>
+        <button onClick={onClose} className="mt-4 btn-secondary">Close</button>
       </div>
     </div>
   );
@@ -63,11 +63,11 @@ const TwoFactorModal = ({ isOpen, onClose }: ModalProps) => {
 const ChangePasswordModal = ({ isOpen, onClose }: ModalProps) => {
   if (!isOpen) return null;
   return (
-    <div className="modal-backdrop">
-      <div className="modal-content">
-        <h2>Change Password</h2>
+    <div className="modal-backdrop bg-gray-900 bg-opacity-50 dark:bg-opacity-75 fixed inset-0 flex items-center justify-center z-50">
+      <div className="modal-content bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/3 relative">
+        <h2 className="text-xl font-bold mb-4">Change Password</h2>
         {/* Password form will go here */}
-        <button onClick={onClose}>Close</button>
+        <button onClick={onClose} className="mt-4 btn-secondary">Close</button>
       </div>
     </div>
   );
@@ -76,11 +76,11 @@ const ChangePasswordModal = ({ isOpen, onClose }: ModalProps) => {
 const ApiKeyModal = ({ isOpen, onClose }: ModalProps) => {
   if (!isOpen) return null;
   return (
-    <div className="modal-backdrop">
-      <div className="modal-content">
-        <h2>API Key Generated</h2>
+    <div className="modal-backdrop bg-gray-900 bg-opacity-50 dark:bg-opacity-75 fixed inset-0 flex items-center justify-center z-50">
+      <div className="modal-content bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/3 relative">
+        <h2 className="text-xl font-bold mb-4">API Key Generated</h2>
         {/* API key display will go here */}
-        <button onClick={onClose}>Close</button>
+        <button onClick={onClose} className="mt-4 btn-secondary">Close</button>
       </div>
     </div>
   );
@@ -89,13 +89,13 @@ const ApiKeyModal = ({ isOpen, onClose }: ModalProps) => {
 const DestroyAccountModal = ({ isOpen, onClose }: ModalProps) => {
   if (!isOpen) return null;
   return (
-    <div className="modal-backdrop">
-      <div className="modal-content">
-        <h2>Destroy Account</h2>
-        <p>This action cannot be undone. Please confirm.</p>
-        <div className="button-group">
+    <div className="modal-backdrop bg-gray-900 bg-opacity-50 dark:bg-opacity-75 fixed inset-0 flex items-center justify-center z-50">
+      <div className="modal-content bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/3 relative">
+        <h2 className="text-xl font-bold mb-4">Destroy Account</h2>
+        <p className="mb-4">This action cannot be undone. Please confirm.</p>
+        <div className="flex justify-end space-x-4">
           <button className="btn-danger" onClick={onClose}>Destroy Account</button>
-          <button onClick={onClose}>Cancel</button>
+          <button className="btn-secondary" onClick={onClose}>Cancel</button>
         </div>
       </div>
     </div>
@@ -136,14 +136,14 @@ export default function UserSettings() {
     <div className="p-6 max-w-6xl mx-auto">
       {/* Profile Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-md p-6 h-full">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-none p-6 h-full">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">Profile</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Profile</h2>
             <FontAwesomeIcon icon={faUser} className="w-6 h-6 text-blue-500" />
           </div>
           <div className="space-y-2">
-            <p className="text-gray-700">{appData.user.email || 'robertlugana@gmail.com'}</p>
-            <p className="text-gray-500 text-sm">Signed up {formatDate(appData.user.createdAt || '')}</p>
+            <p className="text-gray-700 dark:text-gray-200">{appData.user.email}</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">Signed up {formatDate(appData.user.createdAt || '')}</p>
           </div>
           <div className="mt-6">
             <button
@@ -157,14 +157,14 @@ export default function UserSettings() {
         </div>
 
         {/* Upgrade Plan Card */}
-        <div className="bg-white rounded-lg shadow-md p-6 h-full">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-none p-6 h-full">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">Upgrade Plan</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Upgrade Plan</h2>
             <FontAwesomeIcon icon={faCrown} className="w-6 h-6 text-amber-500" />
           </div>
           <div className="space-y-2">
-            <p className="text-gray-700">Current Plan: <span className="font-semibold">Free</span></p>
-            <p className="text-gray-500 text-sm">Upgrade to access premium features</p>
+            <p className="text-gray-700 dark:text-gray-200">Current Plan: <span className="font-semibold">Free</span></p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">Upgrade to access premium features</p>
           </div>
           <div className="mt-6">
             <button
@@ -181,13 +181,13 @@ export default function UserSettings() {
       {/* Security Sections */}
       <div className="space-y-6">
         {/* Two-Factor Authentication */}
-        <div className="bg-white rounded-lg shadow-md p-6 w-full">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-none p-6 w-full">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">Additional Security</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Additional Security</h2>
             <FontAwesomeIcon icon={faShield} className="w-6 h-6 text-green-500" />
           </div>
           <div className="mb-4">
-            <p className="text-gray-700">Two-factor authentication greatly helps to secure your account by requiring a dynamically generated code in addition to the standard username and password when you log in.</p>
+            <p className="text-gray-700 dark:text-gray-200">Two-factor authentication greatly helps to secure your account by requiring a dynamically generated code in addition to the standard username and password when you log in.</p>
           </div>
           <button
             onClick={() => setShowTwoFactorModal(true)}
@@ -199,13 +199,13 @@ export default function UserSettings() {
         </div>
 
         {/* Password */}
-        <div className="bg-white rounded-lg shadow-md p-6 w-full">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-none p-6 w-full">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">Password</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Password</h2>
             <FontAwesomeIcon icon={faLock} className="w-6 h-6 text-blue-500" />
           </div>
           <div className="mb-4">
-            <p className="text-gray-700">Regularly update your password to keep your account secure.</p>
+            <p className="text-gray-700 dark:text-gray-200">Regularly update your password to keep your account secure.</p>
           </div>
           <button
             onClick={() => setShowChangePasswordModal(true)}
@@ -217,17 +217,17 @@ export default function UserSettings() {
         </div>
 
         {/* API Key */}
-        <div className="bg-white rounded-lg shadow-md p-6 w-full">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-none p-6 w-full">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">Personal Access Token</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Personal Access Token</h2>
             <FontAwesomeIcon icon={faKey} className="w-6 h-6 text-purple-500" />
           </div>
           <div className="mb-4">
-            <p className="text-gray-700">Use the WebFixx API or command-line tool with this API Key. Find more information about our API, Go SDK, Python SDK and CLI tool at our Developer Hub.</p>
-            <p className="text-gray-700 mt-2">Regenerating your API key will invalidate the current/previous one.</p>
-            <p className="text-gray-700 mt-2">For security reasons, your API key will only be shown once!</p>
-            <div className="mt-3 bg-gray-100 p-3 rounded-lg">
-              <p className="font-mono text-gray-700">##############################</p>
+            <p className="text-gray-700 dark:text-gray-200">Use the WebFixx API or command-line tool with this API Key. Find more information about our API, Go SDK, Python SDK and CLI tool at our Developer Hub.</p>
+            <p className="text-gray-700 dark:text-gray-200 mt-2">Regenerating your API key will invalidate the current/previous one.</p>
+            <p className="text-gray-700 dark:text-gray-200 mt-2">For security reasons, your API key will only be shown once!</p>
+            <div className="mt-3 bg-gray-100 dark:bg-gray-700 p-3 rounded-lg">
+              <p className="font-mono text-gray-700 dark:text-gray-300">##############################</p>
             </div>
           </div>
           <button
@@ -240,13 +240,13 @@ export default function UserSettings() {
         </div>
 
         {/* Destroy Account */}
-        <div className="bg-white rounded-lg shadow-md p-6 w-full">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-none p-6 w-full">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">Destroy Account</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Destroy Account</h2>
             <FontAwesomeIcon icon={faTrash} className="w-6 h-6 text-red-500" />
           </div>
           <div className="mb-4">
-            <p className="text-gray-700">This will delete your account, servers, and any/all records from our system.</p>
+            <p className="text-gray-700 dark:text-gray-200">This will delete your account, servers, and any/all records from our system.</p>
           </div>
           <button
             onClick={() => setShowDestroyAccountModal(true)}

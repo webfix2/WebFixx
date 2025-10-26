@@ -94,7 +94,7 @@ export default function AdminDashboard() {
     return (
         <main className="p-4 lg:p-8 bg-gray-50 dark:bg-gray-900 min-h-screen">
             <div className="max-w-7xl mx-auto">
-                <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg mb-6 flex flex-col md:flex-row justify-between items-center">
+                <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg dark:shadow-none mb-6 flex flex-col md:flex-row justify-between items-center">
                     <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 md:mb-0">
                         Admin Dashboard
                     </h1>

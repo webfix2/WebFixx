@@ -9,7 +9,9 @@ import {
   faEnvelope, 
   faLock, 
   faUser, 
-  faTicket 
+  faTicket,
+  faMoon, // Import faMoon
+  faSun // Import faSun
 } from '@fortawesome/free-solid-svg-icons';
 import { authApi } from "../utils/auth";
 import { useAppState } from "./context/AppContext";
@@ -30,6 +32,35 @@ export default function Home() {
   const [isCheckingAuth, setIsCheckingAuth] = useState(true); // Add this state
   const router = useRouter();
   const { appData, setAppData } = useAppState();
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      // Prioritize appData for authenticated users, otherwise local storage
+      if (appData?.user?.darkMode !== undefined) {
+        return appData.user.darkMode;
+      }
+      const localPreference = localStorage.getItem('darkModePreference');
+      return localPreference ? JSON.parse(localPreference) : false;
+    }
+    return false;
+  });
+
+  // Effect to apply dark mode class to HTML element
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      if (isDarkMode) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    }
+  }, [isDarkMode]);
+
+  // Effect to sync with appData for authenticated users
+  useEffect(() => {
+    if (appData?.user?.darkMode !== undefined && appData.isAuthenticated) {
+      setIsDarkMode(appData.user.darkMode);
+    }
+  }, [appData?.user?.darkMode, appData?.isAuthenticated]);
 
   const handleRedirect = (user: LoginResponse['user']) => {
     if (user.role === "ADMIN") {
@@ -77,12 +108,7 @@ export default function Home() {
           document.cookie = `loggedInAdmin=${response.token}; path=/; max-age=2592000`;
           document.cookie = `verifyStatus=${response.user.verifyStatus}; path=/; max-age=2592000`;
 
-          // Update app state (will automatically persist to localStorage)
-          setAppData({
-            user: response.user,
-            data: response.data,
-            isAuthenticated: true
-          });
+          // The securedApi.callBackendFunction will handle appData update
           // The useEffect will handle redirection based on updated appData
         }
       } else {
@@ -122,11 +148,7 @@ export default function Home() {
           document.cookie = `loggedInAdmin=${loginResponse.token}; path=/; max-age=2592000`;
 
           sessionStorage.setItem("loggedInAdmin", loginResponse.token);
-          setAppData({
-            user: loginResponse.user,
-            data: loginResponse.data,
-            isAuthenticated: true
-          });
+          // The securedApi.callBackendFunction will handle appData update
           // The useEffect will handle redirection based on updated appData
         } else {
           setError(registerResponse.error || registerResponse.message || 'Registration failed');
@@ -162,12 +184,24 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-black" suppressHydrationWarning>
       {/* Simplified Header */}
-      <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md shadow-sm z-10">
+      <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md shadow-sm z-10 dark:bg-gray-800/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center py-4">
-            <span className="text-xl font-bold text-gray-900">WebFixx</span>
+          <div className="flex items-center justify-between py-4">
+            <span className="text-xl font-bold text-gray-900 dark:text-white">WebFixx</span>
+            <button 
+              onClick={() => {
+                const newDarkMode = !isDarkMode;
+                setIsDarkMode(newDarkMode);
+                // Store preference locally for unauthenticated pages
+                localStorage.setItem('darkModePreference', JSON.stringify(newDarkMode));
+                // No API call for unauthenticated pages
+              }}
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300"
+            >
+              <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </header>
@@ -176,13 +210,13 @@ export default function Home() {
       <main className={`pt-24 min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 ${!isLogin ? 'pb-12' : ''}`}>
         <div className="max-w-md w-full">
           {/* Form Card */}
-          <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-8">
+          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-2xl shadow-xl dark:shadow-none p-8">
             {/* Title */}
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-extrabold text-gray-900">
+              <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
                 {isLogin ? "Welcome back" : "Create account"}
               </h2>
-              <p className="mt-2 text-sm text-gray-600">
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 {isLogin 
                   ? "Sign in to access your account" 
                   : "Join us and start your journey"}
@@ -196,14 +230,14 @@ export default function Home() {
                   <div className="relative">
                     <FontAwesomeIcon 
                       icon={faUser} 
-                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"
                     />
                     <input
                       id="username"
                       name="username"
                       type="text"
                       required
-                      className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                       placeholder="Username"
                       value={formData.username}
                       onChange={handleChange}
@@ -215,14 +249,14 @@ export default function Home() {
               <div className="relative">
                 <FontAwesomeIcon 
                   icon={faEnvelope} 
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"
                 />
                 <input
                   id="email"
                   name="email"
                   type="email"
                   required
-                  className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   placeholder="Email address"
                   value={formData.email}
                   onChange={handleChange}
@@ -232,14 +266,14 @@ export default function Home() {
               <div className="relative">
                 <FontAwesomeIcon 
                   icon={faLock} 
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"
                 />
                 <input
                   id="password"
                   name="password"
                   type="password"
                   required
-                  className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   placeholder="Password"
                   value={formData.password}
                   onChange={handleChange}
@@ -251,14 +285,14 @@ export default function Home() {
                   <div className="relative">
                     <FontAwesomeIcon 
                       icon={faLock} 
-                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"
                     />
                     <input
                       id="confirmPassword"
                       name="confirmPassword"
                       type="password"
                       required
-                      className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                       placeholder="Confirm Password"
                       value={formData.confirmPassword}
                       onChange={handleChange}
@@ -268,13 +302,13 @@ export default function Home() {
                   <div className="relative">
                     <FontAwesomeIcon 
                       icon={faTicket} 
-                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"
                     />
                     <input
                       id="referralCode"
                       name="referralCode"
                       type="text"
-                      className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                       placeholder="Referral Code (Optional)"
                       value={formData.referralCode}
                       onChange={handleChange}
@@ -284,7 +318,7 @@ export default function Home() {
               )}
 
               {error && (
-                <div className="text-center px-4 py-3 rounded-lg bg-red-50 text-red-600">
+                <div className="text-center px-4 py-3 rounded-lg bg-red-50 text-red-600 dark:bg-red-900 dark:text-red-300">
                   {error}
                 </div>
               )}
@@ -311,7 +345,7 @@ export default function Home() {
                 <div className="text-center">
                   <Link
                     href="/reset-password"
-                    className="text-sm text-blue-600 hover:text-blue-700 hover:underline"
+                    className="text-sm text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-500"
                   >
                     Forgot your password?
                   </Link>
@@ -320,7 +354,7 @@ export default function Home() {
 
               <div className="text-center">
                 <button
-                  className="text-sm text-blue-600 hover:text-blue-700 hover:underline"
+                  className="text-sm text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-500"
                   onClick={() => setIsLogin(!isLogin)}
                 >
                   {isLogin

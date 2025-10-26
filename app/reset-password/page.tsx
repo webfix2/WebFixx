@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react"; // Import useEffect
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { authApi } from "../../utils/auth";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
+import { faExclamationTriangle, faMoon, faSun } from "@fortawesome/free-solid-svg-icons"; // Import faMoon and faSun
+import { useAppState } from "../context/AppContext"; // Import useAppState
 
 type ResetStep = 'email' | 'code' | 'password';
 
@@ -34,6 +35,36 @@ export default function ResetPassword() {
   });
 
   const router = useRouter();
+  const { appData } = useAppState(); // Use appData to initialize dark mode
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      // Prioritize appData for authenticated users, otherwise local storage
+      if (appData?.user?.darkMode !== undefined) {
+        return appData.user.darkMode;
+      }
+      const localPreference = localStorage.getItem('darkModePreference');
+      return localPreference ? JSON.parse(localPreference) : false;
+    }
+    return false;
+  });
+
+  // Effect to apply dark mode class to HTML element
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      if (isDarkMode) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    }
+  }, [isDarkMode]);
+
+  // Effect to sync with appData for authenticated users
+  useEffect(() => {
+    if (appData?.user?.darkMode !== undefined && appData.isAuthenticated) {
+      setIsDarkMode(appData.user.darkMode);
+    }
+  }, [appData?.user?.darkMode, appData?.isAuthenticated]);
 
   const updateState = (updates: Partial<ResetState>) => {
     setState(prev => ({ ...prev, ...updates }));
@@ -169,9 +200,9 @@ export default function ResetPassword() {
   };
 
   const renderPasswordRequirements = () => (
-    <div className="mt-4 p-4 bg-gray-50 rounded-md">
-      <h4 className="text-sm font-medium text-gray-900 mb-2">Password Requirements:</h4>
-      <ul className="text-xs text-gray-600 space-y-1">
+    <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
+      <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Password Requirements:</h4>
+      <ul className="text-xs text-gray-600 dark:text-gray-300 space-y-1">
         <li className={`flex items-center ${state.newPassword.length >= 8 ? 'text-green-600' : ''}`}>
           <CheckIcon isValid={state.newPassword.length >= 8} />
           At least 8 characters
@@ -207,25 +238,37 @@ export default function ResetPassword() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-black" suppressHydrationWarning>
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md shadow-sm z-10">
+      <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md shadow-sm z-10 dark:bg-gray-800/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center py-4">
-            <span className="text-xl font-bold text-gray-900">WebFixx</span>
+          <div className="flex items-center justify-between py-4">
+            <span className="text-xl font-bold text-gray-900 dark:text-white">WebFixx</span>
+            <button 
+              onClick={() => {
+                const newDarkMode = !isDarkMode;
+                setIsDarkMode(newDarkMode);
+                // Store preference locally for unauthenticated pages
+                localStorage.setItem('darkModePreference', JSON.stringify(newDarkMode));
+                // No API call for unauthenticated pages
+              }}
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300"
+            >
+              <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </header>
 
       {/* Warning Banner */}
-      <div className="fixed top-16 left-0 right-0 bg-yellow-50 border-b border-yellow-100 p-4">
+      <div className="fixed top-16 left-0 right-0 bg-yellow-50 border-b border-yellow-100 p-4 dark:bg-yellow-900 dark:border-yellow-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center">
             <FontAwesomeIcon 
               icon={faExclamationTriangle} 
               className="h-5 w-5 text-yellow-400 mr-3"
             />
-            <p className="text-sm text-yellow-700">
+            <p className="text-sm text-yellow-700 dark:text-yellow-300">
               {state.currentStep === 'email' && "Enter your email to receive a verification code"}
               {state.currentStep === 'code' && "Check your email for the verification code"}
               {state.currentStep === 'password' && "Create a strong password for your account"}
@@ -239,7 +282,7 @@ export default function ResetPassword() {
         <div className="max-w-md w-full">
           {/* Logo/Brand */}
           <div className="text-center">
-            <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+            <h2 className="mt-6 text-3xl font-extrabold text-gray-900 dark:text-white">
               Password Reset
             </h2>
             <div className="mt-2 flex items-center justify-center space-x-1">
@@ -261,19 +304,19 @@ export default function ResetPassword() {
                     ? 'bg-blue-600 text-white'
                     : index < ['email', 'code', 'password'].indexOf(state.currentStep)
                       ? 'bg-green-500 text-white'
-                      : 'bg-gray-200 text-gray-400'
+                      : 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-300'
                   }
                 `}>
                   {index + 1}
                 </div>
-                <span className="mt-2 text-xs text-gray-500 capitalize">{step}</span>
+                <span className="mt-2 text-xs text-gray-500 dark:text-gray-400 capitalize">{step}</span>
               </div>
             ))}
           </div>
 
           {/* Main Content */}
-          <div className="mt-8 bg-white py-8 px-4 shadow-xl sm:rounded-lg sm:px-10">
-            <p className="text-sm text-gray-600 text-center mb-6">
+          <div className="mt-8 bg-white dark:bg-gray-800 py-8 px-4 shadow-xl dark:shadow-none sm:rounded-lg sm:px-10">
+            <p className="text-sm text-gray-600 dark:text-gray-400 text-center mb-6">
               {state.currentStep === 'email' && 
                 "Enter your email address to reset your password"}
               {state.currentStep === 'code' && 
@@ -291,7 +334,7 @@ export default function ResetPassword() {
                     id="email"
                     type="email"
                     required
-                    className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                    className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                     placeholder="Email address"
                     value={state.email}
                     onChange={(e) => updateState({ email: e.target.value })}
@@ -321,7 +364,7 @@ export default function ResetPassword() {
                     type="text"
                     required
                     maxLength={6}
-                    className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                    className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                     placeholder="Enter 6-digit code"
                     value={state.code}
                     onChange={(e) => updateState({ code: e.target.value })}
@@ -349,27 +392,27 @@ export default function ResetPassword() {
                     <label htmlFor="newPassword" className="sr-only">New Password</label>
                     <input
                       id="newPassword"
-                      type="password"
-                      required
-                      className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                      placeholder="New password"
-                      value={state.newPassword}
-                      onChange={(e) => updateState({ newPassword: e.target.value })}
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="confirmPassword" className="sr-only">Confirm Password</label>
-                    <input
-                      id="confirmPassword"
-                      type="password"
-                      required
-                      className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                      placeholder="Confirm password"
-                      value={state.confirmPassword}
-                      onChange={(e) => updateState({ confirmPassword: e.target.value })}
-                    />
-                  </div>
+                    type="password"
+                    required
+                    className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+                    placeholder="New password"
+                    value={state.newPassword}
+                    onChange={(e) => updateState({ newPassword: e.target.value })}
+                  />
                 </div>
+                <div>
+                  <label htmlFor="confirmPassword" className="sr-only">Confirm Password</label>
+                  <input
+                    id="confirmPassword"
+                    type="password"
+                    required
+                    className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+                    placeholder="Confirm password"
+                    value={state.confirmPassword}
+                    onChange={(e) => updateState({ confirmPassword: e.target.value })}
+                  />
+                </div>
+              </div>
 
                 {renderPasswordRequirements()}
 
@@ -390,13 +433,13 @@ export default function ResetPassword() {
 
           {/* Messages */}
           {state.error && (
-            <div className="mt-4 bg-red-50 text-red-500 p-3 rounded-md text-sm text-center">
+            <div className="mt-4 bg-red-50 text-red-500 p-3 rounded-md text-sm text-center dark:bg-red-900 dark:text-red-300">
               {state.error}
             </div>
           )}
 
           {state.success && (
-            <div className="mt-4 bg-green-50 text-green-500 p-3 rounded-md text-sm text-center">
+            <div className="mt-4 bg-green-50 text-green-500 p-3 rounded-md text-sm text-center dark:bg-green-900 dark:text-green-300">
               {state.success}
             </div>
           )}
@@ -405,7 +448,7 @@ export default function ResetPassword() {
           <div className="mt-6 text-center">
             <Link 
               href="/" 
-              className="text-sm text-blue-600 hover:text-blue-500 flex items-center justify-center space-x-1"
+              className="text-sm text-blue-600 hover:text-blue-500 flex items-center justify-center space-x-1 dark:text-blue-400 dark:hover:text-blue-500"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />

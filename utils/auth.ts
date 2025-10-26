@@ -54,6 +54,7 @@ export interface UserData {
   addresses?: CryptoAddress[];
   tokens?: TokenData[];
   createdAt?: string; // Add createdAt property
+  darkMode?: boolean;
 }
 
 export interface AppData {
@@ -314,6 +315,19 @@ export const authApi = {
     return response.json();
   },
 
+  updateUserPreferences: async (darkMode: boolean) => {
+    try {
+      const response = await securedApi.callBackendFunction({
+        functionName: 'updateUserPreferences',
+        darkMode: darkMode // Pass as boolean, backend will handle
+      });
+      return response;
+    } catch (error) {
+      console.error('Failed to update user preferences:', error);
+      throw error;
+    }
+  },
+
   updateAppData: async (setAppDataFunc?: (state: AppState) => void) => {
     try {
       const token = document.cookie.match('(^|;)\\s*loggedInAdmin\\s*=\\s*([^;]+)')?.pop();
@@ -432,7 +446,33 @@ export const securedApi = {
         throw new Error(errorData.error || 'API request failed');
       }
 
-      return response.json();
+      const result = await response.json();
+
+      // Automatically update global appData if user or data is returned
+      if (result && result.success) {
+        const appState = getAppState();
+        if (appState && appState.setAppData) {
+          const updatedAppState = {
+            user: result.user || appState.appData?.user,
+            data: result.data || appState.appData?.data || {
+              transactions: [],
+              projects: [],
+              template: [],
+              hub: [],
+              redirect: [],
+              custom: [],
+              sender: [],
+              limits: [],
+              campaigns: [],
+              users: []
+            },
+            isAuthenticated: true
+          };
+          appState.setAppData(updatedAppState);
+        }
+      }
+
+      return result;
     } catch (error) {
       console.error('Secured API Error:', error);
       throw error;

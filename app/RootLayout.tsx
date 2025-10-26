@@ -43,7 +43,7 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
   const { appData, setAppData, clearAppData } = useAppState();
   const [isLoading, setIsLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(appData?.user?.darkMode || false);
   const [visibleLinks, setVisibleLinks] = useState({
     dashboard: false,
     emailCampaign: false,
@@ -95,6 +95,18 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
       }
     }
   }, [appData]);
+
+  useEffect(() => {
+    const newDarkMode = appData?.user?.darkMode || false;
+    setIsDarkMode(newDarkMode);
+    if (typeof document !== 'undefined') {
+      if (newDarkMode) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    }
+  }, [appData?.user?.darkMode]);
 
   useEffect(() => {
     let isMounted = true;
@@ -323,30 +335,51 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
     </div>
   );
 
-  const UserControls = () => (
-    <div className="p-4 border-t">
-      <div className="flex items-center justify-between mb-4">
-        <button 
-          onClick={() => setIsDarkMode(!isDarkMode)}
-          className="p-2 rounded-lg hover:bg-gray-100"
-        >
-          <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} className="w-5 h-5" />
-        </button>
-        <Link 
-          href={appData?.user?.role === 'ADMIN' ? "/root/settings" : "/settings"}
-          className="p-2 rounded-lg hover:bg-gray-100"
-          onClick={handleNavClick}
-        >
-          <FontAwesomeIcon icon={faCog} className="w-5 h-5" />
-        </Link>
+  const UserControls = () => {
+    const toggleDarkMode = async () => {
+      const newDarkMode = !isDarkMode;
+      setIsDarkMode(newDarkMode);
+      if (typeof document !== 'undefined') {
+        document.documentElement.classList.toggle('dark', newDarkMode);
+      }
+      try {
+        await authApi.updateUserPreferences(newDarkMode);
+        // The appData will be updated by securedApi.callBackendFunction
+      } catch (error) {
+        console.error('Failed to update dark mode preference:', error);
+        // Revert UI if API call fails
+        setIsDarkMode(!newDarkMode);
+        if (typeof document !== 'undefined') {
+          document.documentElement.classList.toggle('dark', !newDarkMode);
+        }
+      }
+    };
+
+    return (
+      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between mb-4">
+          <button 
+            onClick={toggleDarkMode}
+            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200"
+          >
+            <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} className="w-5 h-5" />
+          </button>
+          <Link 
+            href={appData?.user?.role === 'ADMIN' ? "/root/settings" : "/settings"}
+            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200"
+            onClick={handleNavClick}
+          >
+            <FontAwesomeIcon icon={faCog} className="w-5 h-5" />
+          </Link>
+        </div>
+        {appData?.user && (
+          <button onClick={handleLogout} className="btn-primary w-full">
+            Logout
+          </button>
+        )}
       </div>
-      {appData?.user && (
-        <button onClick={handleLogout} className="btn-primary w-full">
-          Logout
-        </button>
-      )}
-    </div>
-  );
+    );
+  };
 
   const closeSidebar = () => {
     setIsSidebarOpen(false);
@@ -366,7 +399,7 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
   }
 
   return (
-    <div className={`min-h-screen bg-gray-50 ${isDarkMode ? 'dark' : ''}`}>
+    <div className={`min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100`} suppressHydrationWarning>
       {isNavigating && (
         <LoadingSpinner 
           overlay 
@@ -386,35 +419,35 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
           )}
 
           {/* Mobile Header */}
-          <header className="lg:hidden fixed top-0 left-0 right-0 z-20 bg-white shadow-sm h-16">
+          <header className="lg:hidden fixed top-0 left-0 right-0 z-20 bg-white dark:bg-gray-800 shadow-sm dark:shadow-lg h-16">
             <div className="flex items-center justify-between px-4 h-full">
               <button 
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="p-2"
+                className="p-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
               >
                 <FontAwesomeIcon icon={isSidebarOpen ? faTimes : faBars} className="w-6 h-6" />
               </button>
-              <Link href="/" className="text-blue-600 font-bold text-xl">
+              <Link href="/" className="text-blue-600 dark:text-blue-400 font-bold text-xl">
                 WebFixx
               </Link>
               <div className="flex items-center">
                 <FontAwesomeIcon icon={faWallet} className="w-4 h-4 mr-1" />
-                <span className="text-sm font-medium">${userBalance}</span>
+                <span className="text-sm font-medium text-gray-800 dark:text-gray-200">${userBalance}</span>
               </div>
             </div>
           </header>
 
           {/* Sidebar */}
-          <aside className={`fixed top-0 left-0 z-40 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+          <aside className={`fixed top-0 left-0 z-40 h-full w-64 bg-white dark:bg-gray-800 shadow-lg dark:shadow-xl transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
             <div className="flex flex-col h-full">
               {/* Logo and Wallet Balance for Desktop */}
-              <div className="p-4 border-b flex justify-between items-center">
+              <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
                 <Link href="/" className="flex items-center">
-                  <span className="text-blue-600 font-bold text-2xl">WebFixx</span>
+                  <span className="text-blue-600 dark:text-blue-400 font-bold text-2xl">WebFixx</span>
                 </Link>
                 <div className="hidden lg:flex items-center">
                   <FontAwesomeIcon icon={faWallet} className="w-4 h-4 mr-1" />
-                  <span className="text-sm font-medium">${userBalance}</span>
+                  <span className="text-sm font-medium text-gray-800 dark:text-gray-200">${userBalance}</span>
                 </div>
               </div>
 
@@ -440,7 +473,7 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
 
       <style jsx>{`
         .nav-link {
-          @apply flex items-center px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-100 hover:text-blue-600 transition-colors w-full;
+          @apply flex items-center px-4 py-2 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 transition-colors w-full;
         }
         .btn-primary {
           @apply bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors;

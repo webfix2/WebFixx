@@ -127,66 +127,66 @@ export const ShootContactsModal = ({
       case 1:
         return (
           <div className="space-y-4">
-            <h3 className="text-lg font-medium">Choose Campaign</h3>
-            <p className="text-sm text-gray-500">
+            <h3 className="text-lg font-medium dark:text-white">Choose Campaign</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               Current item: {currentItem?.title} ({category})
             </p>
             <select 
               value={formData.campaign}
               onChange={(e) => setFormData(prev => ({ ...prev, campaign: e.target.value }))}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             >
-              <option value="">Select a campaign</option>
-              <option value="campaign1">Campaign 1</option>
-              <option value="campaign2">Campaign 2</option>
+              <option value="" className="dark:bg-gray-700 dark:text-white">Select a campaign</option>
+              <option value="campaign1" className="dark:bg-gray-700 dark:text-white">Campaign 1</option>
+              <option value="campaign2" className="dark:bg-gray-700 dark:text-white">Campaign 2</option>
             </select>
           </div>
         );
       case 2:
         return (
           <div className="space-y-4">
-            <h3 className="text-lg font-medium">Select Template</h3>
+            <h3 className="text-lg font-medium dark:text-white">Select Template</h3>
             <div className="grid grid-cols-2 gap-4">
               {category === 'WIRE' ? (
                 <>
                   <div 
-                    className={`p-4 border rounded cursor-pointer ${
-                      formData.emailTemplate === 'template1' ? 'border-blue-500 bg-blue-50' : ''
+                    className={`p-4 border rounded cursor-pointer dark:border-gray-600 dark:text-gray-200 ${
+                      formData.emailTemplate === 'template1' ? 'border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900' : ''
                     }`}
                     onClick={() => setFormData(prev => ({ ...prev, emailTemplate: 'template1' }))}
                   >
-                    <h4 className="font-medium">Professional Template</h4>
-                    <p className="text-sm text-gray-500">Formal communication style</p>
+                    <h4 className="font-medium dark:text-white">Professional Template</h4>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Formal communication style</p>
                   </div>
                   <div 
-                    className={`p-4 border rounded cursor-pointer ${
-                      formData.emailTemplate === 'template2' ? 'border-blue-500 bg-blue-50' : ''
+                    className={`p-4 border rounded cursor-pointer dark:border-gray-600 dark:text-gray-200 ${
+                      formData.emailTemplate === 'template2' ? 'border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900' : ''
                     }`}
                     onClick={() => setFormData(prev => ({ ...prev, emailTemplate: 'template2' }))}
                   >
-                    <h4 className="font-medium">Casual Template</h4>
-                    <p className="text-sm text-gray-500">Friendly communication style</p>
+                    <h4 className="font-medium dark:text-white">Casual Template</h4>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Friendly communication style</p>
                   </div>
                 </>
               ) : (
                 <>
                   <div 
-                    className={`p-4 border rounded cursor-pointer ${
-                      formData.emailTemplate === 'social1' ? 'border-blue-500 bg-blue-50' : ''
+                    className={`p-4 border rounded cursor-pointer dark:border-gray-600 dark:text-gray-200 ${
+                      formData.emailTemplate === 'social1' ? 'border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900' : ''
                     }`}
                     onClick={() => setFormData(prev => ({ ...prev, emailTemplate: 'social1' }))}
                   >
-                    <h4 className="font-medium">DM Template</h4>
-                    <p className="text-sm text-gray-500">Direct message style</p>
+                    <h4 className="font-medium dark:text-white">DM Template</h4>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Direct message style</p>
                   </div>
                   <div 
-                    className={`p-4 border rounded cursor-pointer ${
-                      formData.emailTemplate === 'social2' ? 'border-blue-500 bg-blue-50' : ''
+                    className={`p-4 border rounded cursor-pointer dark:border-gray-600 dark:text-gray-200 ${
+                      formData.emailTemplate === 'social2' ? 'border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900' : ''
                     }`}
                     onClick={() => setFormData(prev => ({ ...prev, emailTemplate: 'social2' }))}
                   >
-                    <h4 className="font-medium">Comment Template</h4>
-                    <p className="text-sm text-gray-500">Public comment style</p>
+                    <h4 className="font-medium dark:text-white">Comment Template</h4>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Public comment style</p>
                   </div>
                 </>
               )}
@@ -196,13 +196,13 @@ export const ShootContactsModal = ({
       case 3:
         return (
           <div className="space-y-4">
-            <h3 className="text-lg font-medium">Customize Template Variables</h3>
+            <h3 className="text-lg font-medium dark:text-white">Customize Template Variables</h3>
             <div className="space-y-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700">Greeting</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Greeting</label>
                 <input
                   type="text"
-                  className="mt-1 w-full p-2 border rounded"
+                  className="mt-1 w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   placeholder="Enter greeting"
                   value={formData.templateVariables.greeting || ''}
                   onChange={(e) => setFormData(prev => ({
@@ -215,9 +215,9 @@ export const ShootContactsModal = ({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Message Body</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Message Body</label>
                 <textarea
-                  className="mt-1 w-full p-2 border rounded h-32"
+                  className="mt-1 w-full p-2 border rounded h-32 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   placeholder="Enter message body"
                   value={formData.templateVariables.body || ''}
                   onChange={(e) => setFormData(prev => ({
@@ -235,25 +235,25 @@ export const ShootContactsModal = ({
       case 4:
         return (
           <div className="space-y-4">
-            <h3 className="text-lg font-medium">Select Link Type</h3>
+            <h3 className="text-lg font-medium dark:text-white">Select Link Type</h3>
             <div className="grid grid-cols-2 gap-4">
               <div 
-                className={`p-4 border rounded cursor-pointer ${
-                  formData.selectedLink === 'tracking' ? 'border-blue-500 bg-blue-50' : ''
+                className={`p-4 border rounded cursor-pointer dark:border-gray-600 dark:text-gray-200 ${
+                  formData.selectedLink === 'tracking' ? 'border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900' : ''
                 }`}
                 onClick={() => setFormData(prev => ({ ...prev, selectedLink: 'tracking' }))}
               >
-                <h4 className="font-medium">Tracking Link</h4>
-                <p className="text-sm text-gray-500">Include click tracking</p>
+                <h4 className="font-medium dark:text-white">Tracking Link</h4>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Include click tracking</p>
               </div>
               <div 
-                className={`p-4 border rounded cursor-pointer ${
-                  formData.selectedLink === 'direct' ? 'border-blue-500 bg-blue-50' : ''
+                className={`p-4 border rounded cursor-pointer dark:border-gray-600 dark:text-gray-200 ${
+                  formData.selectedLink === 'direct' ? 'border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900' : ''
                 }`}
                 onClick={() => setFormData(prev => ({ ...prev, selectedLink: 'direct' }))}
               >
-                <h4 className="font-medium">Direct Link</h4>
-                <p className="text-sm text-gray-500">No tracking included</p>
+                <h4 className="font-medium dark:text-white">Direct Link</h4>
+                <p className="text-sm text-gray-500 dark:text-gray-400">No tracking included</p>
               </div>
             </div>
           </div>
@@ -261,8 +261,8 @@ export const ShootContactsModal = ({
       case 5:
         return (
           <div className="space-y-4">
-            <h3 className="text-lg font-medium">Review and Confirm</h3>
-            <div className="bg-gray-50 p-4 rounded space-y-3">
+            <h3 className="text-lg font-medium dark:text-white">Review and Confirm</h3>
+            <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded space-y-3 dark:text-white">
               <div>
                 <span className="font-medium">Campaign:</span> {formData.campaign}
               </div>
@@ -286,7 +286,7 @@ export const ShootContactsModal = ({
   const renderTable = () => {
     if (!canShoot) {
       return (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-gray-500 dark:text-gray-400">
           Please extract the {category === 'WIRE' ? 'box' : 'account'} to be able to shoot the contacts
         </div>
       );
@@ -294,27 +294,27 @@ export const ShootContactsModal = ({
 
     return (
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+        <table className="min-w-full divide-y divide-gray-700 dark:divide-gray-600">
+          <thead className="bg-gray-50 dark:bg-gray-700">
             <tr>
               {category === 'WIRE' ? (
                 <>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Recipient Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Recipient Email</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Send Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-300">Recipient Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-300">Recipient Email</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-300">Send Status</th>
                 </>
               ) : (
                 <>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Recipient Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Recipient Handle</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Send Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-300">Recipient Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-300">Recipient Handle</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-300">Send Status</th>
                 </>
               )}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
             {senderData.map((data: WireSenderData | SocialSenderData, index: number) => (
-              <tr key={index}>
+              <tr key={index} className="dark:text-gray-200">
                 <td className="px-6 py-4 whitespace-nowrap">{data.recipientName}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   {category === 'WIRE' 
@@ -335,13 +335,13 @@ export const ShootContactsModal = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={(e) => e.stopPropagation()}>
-      <div className="bg-white rounded-lg p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-75 flex items-center justify-center z-50" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">
+          <h2 className="text-xl font-bold dark:text-white">
             {showSetupFlow ? 'Setup Message Campaign' : 'Message Status'}
           </h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
             ×
           </button>
         </div>
@@ -354,7 +354,7 @@ export const ShootContactsModal = ({
                   <div
                     key={i}
                     className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                      stage > i ? 'bg-blue-500 text-white' : 'bg-gray-200'
+                      stage > i ? 'bg-blue-500 text-white dark:bg-blue-700' : 'bg-gray-200 dark:bg-gray-700 dark:text-gray-400'
                     }`}
                   >
                     {i + 1}
@@ -368,7 +368,7 @@ export const ShootContactsModal = ({
             <div className="mt-6 flex justify-between">
               <button
                 onClick={() => setShowSetupFlow(false)}
-                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white"
               >
                 Back to Status
               </button>

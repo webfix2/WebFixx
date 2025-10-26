@@ -525,34 +525,34 @@ export default function RedirectLinks() {
   };
 
   return (
-    <div className="">
+    <div className="dark:bg-gray-900 dark:text-gray-100 min-h-screen">
       {/* Create Redirect Section */}
       <div className="grid md:grid-cols-2 gap-8 mb-8">
         {/* Create Redirect Card */}
-        <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border dark:border-gray-700 shadow dark:shadow-none">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-xl font-bold text-gray-900">Create Redirect Link</h2>
-              <p className="text-sm text-gray-600 mt-1">Create a new protected redirect for $50</p>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Create Redirect Link</h2>
+              <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">Create a new protected redirect for $50</p>
             </div>
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-              <FontAwesomeIcon icon={faLink} className="w-6 h-6 text-blue-600" />
+            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center dark:bg-blue-900">
+              <FontAwesomeIcon icon={faLink} className="w-6 h-6 text-blue-600 dark:text-blue-400" />
             </div>
           </div>
           <div className="space-y-6">
             <div className="flex flex-col space-y-2">
-              <label className="text-sm font-medium text-gray-700">Redirect Title:</label>
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Redirect Title:</label>
               <input
                 type="text"
                 value={newRedirectTitle}
                 onChange={(e) => setNewRedirectTitle(e.target.value)}
                 placeholder="Enter a descriptive title"
-                className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm"
+                className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
               />
             </div>              <button
                 onClick={handleCreateRedirect}
                 disabled={isProcessing}
-                className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white rounded-lg transition-colors flex items-center justify-center shadow-sm"
+                className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 dark:disabled:bg-blue-800 text-white rounded-lg transition-colors flex items-center justify-center shadow-sm"
               >
                 {isProcessing ? (
                   <>
@@ -566,50 +566,50 @@ export default function RedirectLinks() {
                   </>
                 )}
               </button>
-              <p className="text-sm text-gray-500 mt-4 text-left">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-4 text-left">
                 Redirect links are valid for 30 days. Renewals will extend the duration from the last expiry date.
               </p>
             </div>
           </div>
 
         {/* Features/Status Card - Hidden on mobile */}
-        <div className="hidden md:block bg-gray-50 rounded-lg p-6 border border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Protection Features</h2>
+        <div className="hidden md:block bg-gray-50 rounded-lg p-6 border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+          <h2 className="text-xl font-bold text-gray-900 mb-4 dark:text-white">Protection Features</h2>
           <div className="space-y-6 mt-6">
             <div className="flex items-center space-x-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                <FontAwesomeIcon icon={faShield} className="w-4 h-4 text-green-600" />
+              <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center dark:bg-green-900">
+                <FontAwesomeIcon icon={faShield} className="w-4 h-4 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <h3 className="font-medium">Anti-Red</h3>
-                <p className="text-sm text-gray-500">Advanced protection against detection</p>
+                <h3 className="font-medium dark:text-white">Anti-Red</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Advanced protection against detection</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <FontAwesomeIcon icon={faRobot} className="w-4 h-4 text-blue-600" />
+              <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center dark:bg-blue-900">
+                <FontAwesomeIcon icon={faRobot} className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <h3 className="font-medium">Bot Detector/Killer</h3>
-                <p className="text-sm text-gray-500">Automatic bot detection and blocking</p>
+                <h3 className="font-medium dark:text-white">Bot Detector/Killer</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Automatic bot detection and blocking</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                <FontAwesomeIcon icon={faChartLine} className="w-4 h-4 text-purple-600" />
+              <div className="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center dark:bg-purple-900">
+                <FontAwesomeIcon icon={faChartLine} className="w-4 h-4 text-purple-600 dark:text-purple-400" />
               </div>
               <div>
-                <h3 className="font-medium">Analytics</h3>
-                <p className="text-sm text-gray-500">Traffic and health monitoring</p>
+                <h3 className="font-medium dark:text-white">Analytics</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Traffic and health monitoring</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
-                <FontAwesomeIcon icon={faFingerprint} className="w-4 h-4 text-yellow-600" />
+              <div className="flex-shrink-0 w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center dark:bg-yellow-900">
+                <FontAwesomeIcon icon={faFingerprint} className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
               </div>
               <div>
-                <h3 className="font-medium">Fingerprinting</h3>
-                <p className="text-sm text-gray-500">Visitor validation system</p>
+                <h3 className="font-medium dark:text-white">Fingerprinting</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Visitor validation system</p>
               </div>
             </div>
           </div>
@@ -618,37 +618,37 @@ export default function RedirectLinks() {
 
       {/* Redirect Links Table */}
       <div className="w-full">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">
+        <h2 className="text-xl font-bold text-gray-900 mb-4 dark:text-white">
           Redirect Links
         </h2>
         <div className="overflow-x-auto">
-          <table className="w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
                 {/* Desktop Columns */}
-                <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
                   Title
                 </th>
                 
                 {/* Mobile and Desktop Columns */}
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
                   Paths
                 </th>
-                <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
                   Clicks
                 </th>
-                <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
                   Blocked
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
                   Time Left
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
               {redirectLinks.length > 0 ? (
                 currentLinks.map((link: any, index: number) => {
                   // Parse paths
@@ -658,17 +658,17 @@ export default function RedirectLinks() {
                   const timeRemaining = calculateTimeRemaining(link.expiryDate);
                   
                   return (
-                    <tr key={index}>
+                    <tr key={index} className="dark:text-gray-200">
                       {/* Desktop Title Column */}
                       <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{link.title}</div>
+                        <div className="text-sm text-gray-900 dark:text-white">{link.title}</div>
                       </td>
                       
                       {/* Paths Column (Mobile and Desktop) */}
                       <td className="px-6 py-4 whitespace-nowrap">
                         <button 
                           onClick={() => handleOpenPathsModal(link.redirectId, link.paths)}
-                          className="text-blue-600 hover:underline"
+                          className="text-blue-600 hover:underline dark:text-blue-400 dark:hover:underline"
                         >
                           {paths.length} Paths
                         </button>
@@ -676,16 +676,16 @@ export default function RedirectLinks() {
                       
                       {/* Clicks Column (Desktop Only) */}
                       <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm text-gray-900">{link.clicks || '0'}</span>
+                        <span className="text-sm text-gray-900 dark:text-white">{link.clicks || '0'}</span>
                       </td>
                       
                       {/* Blocked Column (Desktop Only) */}
                       <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap">
                         <span className={`
                           text-sm font-medium px-2 py-1 rounded
-                          ${parseInt(link.blocked || '0') > 0 ? 'bg-red-100 text-red-800' : 
-                            link.blocked === '0' ? 'bg-green-100 text-green-800' : 
-                            'bg-gray-100 text-gray-800'}
+                          ${parseInt(link.blocked || '0') > 0 ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' : 
+                            link.blocked === '0' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 
+                            'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'}
                         `}>
                           {link.blocked || '0'}
                         </span>
@@ -695,10 +695,10 @@ export default function RedirectLinks() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`text-sm font-medium ${
                           timeRemaining === 'Expired' 
-                            ? 'text-red-600' 
+                            ? 'text-red-600 dark:text-red-400' 
                             : timeRemaining.includes('day') 
-                              ? 'text-green-600' 
-                              : 'text-yellow-600'
+                              ? 'text-green-600 dark:text-green-400' 
+                              : 'text-yellow-600 dark:text-yellow-400'
                         }`}>
                           {timeRemaining}
                         </span>
@@ -710,7 +710,7 @@ export default function RedirectLinks() {
                           <button
                             onClick={() => handleRenewRedirect(link.redirectId)}
                             disabled={processingLinkId === link.redirectId}
-                            className="text-blue-600 hover:text-blue-900 disabled:opacity-50"
+                            className="text-blue-600 hover:text-blue-900 disabled:opacity-50 dark:text-blue-400 dark:hover:text-blue-300"
                             title="Renew Redirect Link"
                           >
                             {processingLinkId === link.redirectId ? (
@@ -726,7 +726,7 @@ export default function RedirectLinks() {
                 })
               ) : (
                 <tr>
-                  <td colSpan={6} className="px-6 py-4 text-center text-sm text-gray-500">
+                  <td colSpan={6} className="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
                     No redirect links found
                   </td>
                 </tr>
@@ -737,13 +737,13 @@ export default function RedirectLinks() {
 
         {/* Pagination Controls */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between border-t border-gray-200 px-4 py-3 sm:px-6 mt-4">
+          <div className="flex items-center justify-between border-t border-gray-200 px-4 py-3 sm:px-6 mt-4 dark:border-gray-700">
             <div className="flex flex-1 justify-between sm:hidden">
               <button
                 onClick={goToPreviousPage}
                 disabled={currentPage === 1}
-                className={`relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium ${
-                  currentPage === 1 ? 'text-gray-300' : 'text-gray-700 hover:bg-gray-50'
+                className={`relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium dark:border-gray-600 dark:bg-gray-800 ${
+                  currentPage === 1 ? 'text-gray-300 dark:text-gray-600' : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700'
                 }`}
               >
                 Previous
@@ -751,8 +751,8 @@ export default function RedirectLinks() {
               <button
                 onClick={goToNextPage}
                 disabled={currentPage === totalPages}
-                className={`relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium ${
-                  currentPage === totalPages ? 'text-gray-300' : 'text-gray-700 hover:bg-gray-50'
+                className={`relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium dark:border-gray-600 dark:bg-gray-800 ${
+                  currentPage === totalPages ? 'text-gray-300 dark:text-gray-600' : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700'
                 }`}
               >
                 Next
@@ -760,7 +760,7 @@ export default function RedirectLinks() {
             </div>
             <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
               <div>
-                <p className="text-sm text-gray-700">
+                <p className="text-sm text-gray-700 dark:text-gray-300">
                   Showing <span className="font-medium">{indexOfFirstRow + 1}</span> to{' '}
                   <span className="font-medium">
                     {Math.min(indexOfLastRow, redirectLinks.length)}
@@ -774,7 +774,7 @@ export default function RedirectLinks() {
                     onClick={goToPreviousPage}
                     disabled={currentPage === 1}
                     className={`relative inline-flex items-center rounded-l-md px-2 py-2 ${
-                      currentPage === 1 ? 'text-gray-300' : 'text-gray-400 hover:bg-gray-50'
+                      currentPage === 1 ? 'text-gray-300 dark:text-gray-600' : 'text-gray-400 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700'
                     }`}
                   >
                     <span className="sr-only">Previous</span>
@@ -802,8 +802,8 @@ export default function RedirectLinks() {
                         onClick={() => goToPage(pageNumber)}
                         className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${
                           currentPage === pageNumber
-                            ? 'z-10 bg-blue-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600'
-                            : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0'
+                            ? 'z-10 bg-blue-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-700 dark:focus-visible:outline-blue-700'
+                            : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0 dark:bg-gray-800 dark:text-gray-100 dark:ring-gray-600 dark:hover:bg-gray-700'
                         }`}
                       >
                         {pageNumber}
@@ -815,7 +815,7 @@ export default function RedirectLinks() {
                     onClick={goToNextPage}
                     disabled={currentPage === totalPages}
                     className={`relative inline-flex items-center rounded-r-md px-2 py-2 ${
-                      currentPage === totalPages ? 'text-gray-300' : 'text-gray-400 hover:bg-gray-50'
+                      currentPage === totalPages ? 'text-gray-300 dark:text-gray-600' : 'text-gray-400 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700'
                     }`}
                   >
                     <span className="sr-only">Next</span>
@@ -832,14 +832,14 @@ export default function RedirectLinks() {
 
       {/* Paths Modal */}
       {showPathsModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none bg-black bg-opacity-50 dark:bg-opacity-70">
           <div className="relative w-auto max-w-3xl mx-auto my-6 w-full px-4">
-            <div className="relative flex flex-col w-full bg-white border-0 rounded-lg shadow-lg outline-none focus:outline-none">
+            <div className="relative flex flex-col w-full bg-white dark:bg-gray-800 border-0 rounded-lg shadow-lg dark:shadow-none outline-none focus:outline-none">
               {/* Modal Header */}
-              <div className="flex items-center justify-between p-5 border-b border-solid rounded-t">
-                <h3 className="text-2xl font-semibold">Redirect Paths</h3>
+              <div className="flex items-center justify-between p-5 border-b border-solid rounded-t dark:border-gray-700">
+                <h3 className="text-2xl font-semibold dark:text-white">Redirect Paths</h3>
                 <button
-                  className="text-red-500 hover:text-red-700 bg-transparent border-0 text-3xl font-semibold outline-none focus:outline-none"
+                  className="text-red-500 hover:text-red-700 bg-transparent border-0 text-3xl font-semibold outline-none focus:outline-none dark:text-red-400 dark:hover:text-red-600"
                   onClick={() => setShowPathsModal(false)}
                 >×</button>
               </div>
@@ -847,7 +847,7 @@ export default function RedirectLinks() {
               <div className="relative flex-auto p-6 overflow-y-auto max-h-[70vh]">
                 {(() => {
                   if (!userLimits) {
-                    return <div>No path limits found. Please refresh the page.</div>;
+                    return <div className="dark:text-gray-300">No path limits found. Please refresh the page.</div>;
                   }
 
                   const pathCount = currentPaths.length;
@@ -856,9 +856,9 @@ export default function RedirectLinks() {
                     <>
                       {/* Path Limits Header */}
                       <div className="mb-6 flex items-center justify-between">
-                        <h4 className="text-lg font-medium">Path Management</h4>
+                        <h4 className="text-lg font-medium dark:text-white">Path Management</h4>
                         <span className={`text-sm font-medium px-3 py-1 rounded-full ${
-                          pathCount >= pathLimit ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'
+                          pathCount >= pathLimit ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
                         }`}>
                           {pathCount} / {pathLimit} paths used
                         </span>
@@ -867,15 +867,15 @@ export default function RedirectLinks() {
                       {/* Paths Table (if any) */}
                       {pathCount > 0 && (
                         <div className="mb-4">
-                          <h4 className="text-lg font-medium mb-2">Existing Paths</h4>
+                          <h4 className="text-lg font-medium dark:text-white mb-2">Existing Paths</h4>
                           <div className="overflow-x-auto">
                             <table className="w-full border-collapse">
                               <thead>
-                                <tr className="bg-gray-100">
-                                  <th className="border p-2 text-left">Redirect URL</th>
-                                  <th className="hidden md:table-cell border p-2 text-left">Health</th>
-                                  <th className="hidden md:table-cell border p-2 text-left">Clicks</th>
-                                  <th className="border p-2 text-left">Actions</th>
+                                <tr className="bg-gray-100 dark:bg-gray-700">
+                                  <th className="border p-2 text-left dark:text-gray-300">Redirect URL</th>
+                                  <th className="hidden md:table-cell border p-2 text-left dark:text-gray-300">Health</th>
+                                  <th className="hidden md:table-cell border p-2 text-left dark:text-gray-300">Clicks</th>
+                                  <th className="border p-2 text-left dark:text-gray-300">Actions</th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -884,7 +884,7 @@ export default function RedirectLinks() {
                                   const baseLink = currentRedirect?.link || '';
                                   const fullPathURL = generateFullPathURL(baseLink, path.path);
                                   return (
-                                    <tr key={index} className="hover:bg-gray-50">
+                                    <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                                       <td className="border p-2">
                                         {editingPathIndex === index ? (
                                           <input
@@ -892,27 +892,27 @@ export default function RedirectLinks() {
                                             value={editedRedirectURL}
                                             onChange={(e) => setEditedRedirectURL(e.target.value)}
                                             placeholder="Enter Redirect URL"
-                                            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                                             ref={editingPathIndex === index ? editInputRef : null}
                                           />
                                         ) : (
                                           <div className="flex items-center">
-                                            <span className="text-sm text-gray-900 truncate max-w-[250px]">{path.redirectURL}</span>
+                                            <span className="text-sm text-gray-900 dark:text-white truncate max-w-[250px]">{path.redirectURL}</span>
                                           </div>
                                         )}
                                       </td>
                                       <td className="hidden md:table-cell border p-2">
                                         <span className={`px-2 py-1 rounded text-xs font-medium ${
-                                          path.linkHealth === 'ACTIVE' ? 'bg-green-100 text-green-800' :
-                                          path.linkHealth === 'RED' ? 'bg-red-100 text-red-800' :
-                                          path.linkHealth === 'ERROR' ? 'bg-yellow-100 text-yellow-800' :
-                                          'bg-gray-100 text-gray-800'
+                                          path.linkHealth === 'ACTIVE' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' :
+                                          path.linkHealth === 'RED' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' :
+                                          path.linkHealth === 'ERROR' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' :
+                                          'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
                                         }`}>
                                           {path.linkHealth}
                                         </span>
                                       </td>
                                       <td className="hidden md:table-cell border p-2">
-                                        <span className="text-sm text-gray-900">{path.clicks || '0'}</span>
+                                        <span className="text-sm text-gray-900 dark:text-white">{path.clicks || '0'}</span>
                                       </td>
                                       <td className="border p-2">
                                         <div className="flex items-center space-x-2">
@@ -920,7 +920,7 @@ export default function RedirectLinks() {
                                             <button
                                               onClick={(e) => handleSaveEditedPath(index, e)}
                                               disabled={!editedRedirectURL || isProcessing}
-                                              className={`text-blue-500 hover:text-blue-700 ${
+                                              className={`text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-600 ${
                                                 !editedRedirectURL || isProcessing ? 'cursor-not-allowed opacity-50' : ''
                                               }`}
                                               title="Save Path"
@@ -931,7 +931,7 @@ export default function RedirectLinks() {
                                           ) : (
                                             <button
                                               onClick={() => handleEditPath(index, path.redirectURL)}
-                                              className="text-blue-500 hover:text-blue-700"
+                                              className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-600"
                                               title="Edit Path"
                                             >
                                               <FontAwesomeIcon icon={faPencilAlt} className="w-4 h-4" />
@@ -942,7 +942,7 @@ export default function RedirectLinks() {
                                               const url = generateFullPathURL(baseLink, path.path);
                                               navigator.clipboard.writeText(url);
                                             }}
-                                            className="text-blue-500 hover:text-blue-700"
+                                            className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-600"
                                             title="Copy Full URL"
                                           >
                                             <FontAwesomeIcon icon={faCopy} className="w-4 h-4" />
@@ -951,7 +951,7 @@ export default function RedirectLinks() {
                                             href={generateFullPathURL(baseLink, path.path)}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="text-green-500 hover:text-green-700"
+                                            className="text-green-500 hover:text-green-700 dark:text-green-400 dark:hover:text-green-600"
                                             title="Open Full URL"
                                           >
                                             <FontAwesomeIcon icon={faExternalLinkAlt} className="w-4 h-4" />
@@ -969,14 +969,14 @@ export default function RedirectLinks() {
 
                       {/* Add Path or Upgrade Alert */}
                       {pathCount >= pathLimit ? (
-                        <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4 dark:bg-yellow-900 dark:border-yellow-800">
                           <div className="flex items-center mb-2">
                             <svg className="w-5 h-5 text-yellow-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 6a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 6zm0 9a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
                             </svg>
-                            <h4 className="text-lg font-medium text-yellow-800">Path Limit Reached</h4>
+                            <h4 className="text-lg font-medium text-yellow-800 dark:text-yellow-300">Path Limit Reached</h4>
                           </div>
-                          <p className="text-sm text-yellow-700 mb-3">
+                          <p className="text-sm text-yellow-700 dark:text-yellow-300 mb-3">
                             You have reached your maximum limit of {pathLimit} paths for this redirect link. 
                             Upgrade your plan to add more paths.
                           </p>
@@ -989,26 +989,26 @@ export default function RedirectLinks() {
                         </div>
                       ) : (
                         <div className="mt-6">
-                          <h4 className="text-lg font-medium mb-2">Add New Redirect Path</h4>
+                          <h4 className="text-lg font-medium dark:text-white mb-2">Add New Redirect Path</h4>
                           <div className="flex space-x-2">
                             <input
                               type="text"
                               value={newRedirectURL}
                               onChange={(e) => setNewRedirectURL(e.target.value)}
                               placeholder="Enter Redirect URL"
-                              className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                             />
                             <button
                               onClick={handleAddRedirectPath}
                               disabled={!newRedirectURL || isProcessing}
                               className={`px-4 py-2 rounded-md text-white font-medium ${
-                                !newRedirectURL || isProcessing ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+                                !newRedirectURL || isProcessing ? 'bg-gray-400 cursor-not-allowed dark:bg-gray-600' : 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800'
                               }`}
                             >
                               {isProcessing ? 'Adding...' : 'Add'}
                             </button>
                           </div>
-                          <p className="text-sm text-gray-500 mt-2">
+                          <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
                             {pathCount} of {pathLimit} paths used
                           </p>
                         </div>
