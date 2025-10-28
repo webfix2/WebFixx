@@ -51,7 +51,6 @@ export default function NotificationSettings({
 
       if (response.success) {
         setSuccess(true);
-        await authApi.updateAppData(setAppData);
         if (onSave) {
           onSave({ telegramGroupId: telegramId, email });
         }

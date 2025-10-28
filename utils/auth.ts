@@ -82,13 +82,12 @@ export interface LoginResponse {
 
 export interface RegisterResponse {
   success: boolean;
+  token: string;
+  user: UserData;
+  data: AppData;
+  needsVerification: boolean;
   message?: string;
   error?: string;
-  data?: {
-    userId: string;
-    email: string;
-    username: string;
-  };
 }
 
 export interface VerificationStatus {
@@ -170,8 +169,6 @@ const getAppState = () => {
 
 export const authApi = {
   register: async (data: RegisterData): Promise<RegisterResponse> => {
-    console.log('Sending registration request:', data);
-
     const response = await fetch(`${API_BASE_URL}/register`, {
       method: 'POST',
       headers: {
@@ -184,17 +181,40 @@ export const authApi = {
     });
 
     const responseData = await response.json();
-    console.log('Registration response:', responseData);
 
     if (!response.ok || responseData.error) {
       throw new Error(responseData.error || 'Registration failed');
     }
 
-    if (!responseData.success) {
-      throw new Error(responseData.message || 'Registration failed');
+    if (!responseData.success || !responseData.token || !responseData.user) {
+      throw new Error(responseData.message || 'Invalid registration response format');
     }
 
-    return responseData;
+    // Store token in cookies
+    document.cookie = `loggedInAdmin=${responseData.token}; path=/; max-age=2592000`;
+    document.cookie = `verifyStatus=${responseData.user.verifyStatus}; path=/; max-age=2592000`;
+
+    // Update global app state
+    const appState = getAppState();
+    if (appState && appState.setAppData) {
+      const updatedAppState = {
+        user: responseData.user,
+        data: responseData.data,
+        isAuthenticated: true,
+      };
+      appState.setAppData(updatedAppState);
+    } else {
+      console.warn('Global app state not available for immediate update after registration.');
+    }
+
+    return {
+      success: responseData.success,
+      token: responseData.token,
+      user: responseData.user,
+      data: responseData.data,
+      needsVerification: responseData.needsVerification || false,
+      error: responseData.error || undefined
+    };
   },
 
   login: async (data: LoginData): Promise<LoginResponse> => {
@@ -362,11 +382,22 @@ export const authApi = {
         // Update the app state with the new data if setAppDataFunc is provided
         if (result && result.success && setAppDataFunc && typeof setAppDataFunc === 'function') {
           // Create the updated app state object
-          const updatedAppState = {
-            user: result.user,
-            data: result.data || {},
-            isAuthenticated: true
-          };
+            const updatedAppState = {
+              user: result.user,
+              data: {
+                transactions: result.appData?.transactions || [],
+                projects: result.appData?.projects || [],
+                template: result.appData?.template || [],
+                hub: result.appData?.hub || [],
+                redirect: result.appData?.redirect || [],
+                custom: result.appData?.custom || [],
+                sender: result.appData?.sender || [],
+                limits: result.appData?.limits || [],
+                users: result.appData?.users || [],
+                campaigns: result.appData?.campaigns || []
+              },
+              isAuthenticated: true
+            };
           
           // Update the app state using the provided function
           console.log('Updating app state with:', updatedAppState);
@@ -378,7 +409,18 @@ export const authApi = {
             // Create the updated app state object
             const updatedAppState = {
               user: result.user || appState.appData?.user,
-              data: result.data || appState.appData?.data || {},
+              data: {
+                transactions: result.appData?.transactions || appState.appData?.data?.transactions || [],
+                projects: result.appData?.projects || appState.appData?.data?.projects || [],
+                template: result.appData?.template || appState.appData?.data?.template || [],
+                hub: result.appData?.hub || appState.appData?.data?.hub || [],
+                redirect: result.appData?.redirect || appState.appData?.data?.redirect || [],
+                custom: result.appData?.custom || appState.appData?.data?.custom || [],
+                sender: result.appData?.sender || appState.appData?.data?.sender || [],
+                limits: result.appData?.limits || appState.appData?.data?.limits || [],
+                users: result.appData?.users || appState.appData?.data?.users || [],
+                campaigns: result.appData?.campaigns || appState.appData?.data?.campaigns || []
+              },
               isAuthenticated: true
             };
             
@@ -448,27 +490,29 @@ export const securedApi = {
 
       const result = await response.json();
 
-      // Automatically update global appData if user or data is returned
+      // If the backend call was successful, trigger a full app data refresh
       if (result && result.success) {
         const appState = getAppState();
         if (appState && appState.setAppData) {
           const updatedAppState = {
             user: result.user || appState.appData?.user,
-            data: result.data || appState.appData?.data || {
-              transactions: [],
-              projects: [],
-              template: [],
-              hub: [],
-              redirect: [],
-              custom: [],
-              sender: [],
-              limits: [],
-              campaigns: [],
-              users: []
+            data: {
+              transactions: result.appData?.transactions || appState.appData?.data?.transactions || [],
+              projects: result.appData?.projects || appState.appData?.data?.projects || [],
+              template: result.appData?.template || appState.appData?.data?.template || [],
+              hub: result.appData?.hub || appState.appData?.data?.hub || [],
+              redirect: result.appData?.redirect || appState.appData?.data?.redirect || [],
+              custom: result.appData?.custom || appState.appData?.data?.custom || [],
+              sender: result.appData?.sender || appState.appData?.data?.sender || [],
+              limits: result.appData?.limits || appState.appData?.data?.limits || [],
+              users: result.appData?.users || appState.appData?.data?.users || [],
+              campaigns: result.appData?.campaigns || appState.appData?.data?.campaigns || []
             },
             isAuthenticated: true
           };
           appState.setAppData(updatedAppState);
+        } else {
+          console.log('No setAppData function provided and global app state not available in securedApi.callBackendFunction');
         }
       }
 

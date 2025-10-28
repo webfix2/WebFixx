@@ -328,7 +328,6 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
   
         const apiResponse = await securedApi.callBackendFunction(requestData);
         console.log('Payment Initialization Response:', apiResponse);
-        const appDataResult = await authApi.updateAppData(setAppData);
   
         if (!apiResponse || !apiResponse.data) {
           console.error('API response does not contain the expected data:', apiResponse);

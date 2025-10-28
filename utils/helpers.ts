@@ -62,11 +62,9 @@ export const getUserLimits = (appData: any): UserLimits | null => {
   try {
     // Get the user's plan, default to FREE if not set
     const userPlan = appData?.user?.plan || 'FREE';
-    console.log('User Plan:', userPlan);
 
     // Get the limits data from app state
     const limitsData = appData?.data?.limits?.data;
-    console.log('Limits Data:', limitsData);
     if (!limitsData || !Array.isArray(limitsData)) return null;
 
     // Get the headers and create column map

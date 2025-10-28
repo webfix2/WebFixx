@@ -25,7 +25,7 @@ import {
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { useEffect, useState } from 'react';
 import { useAppState } from './context/AppContext';
-import { securedApi, authApi } from '../utils/auth';
+import { securedApi, authApi, setAppState as setAuthAppState } from '../utils/auth';
 import LoadingSpinner from './components/LoadingSpinner';
 import { useLoading } from './context/LoadingContext';
 import ChatBot from './components/ChatBot';
@@ -41,6 +41,10 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
   const pathname = usePathname();
   const router = useRouter();
   const { appData, setAppData, clearAppData } = useAppState();
+
+  useEffect(() => {
+    setAuthAppState({ appData, setAppData });
+  }, [appData, setAppData]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(appData?.user?.darkMode || false);
@@ -122,13 +126,10 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
         }
 
         if (isMounted) {
-          console.log('Validating session...');
           const response = await securedApi.callBackendFunction({
             functionName: 'validateUserToken',
             token
           });
-
-          console.log('Session validation response:', response);
 
           if (response.success && response.data?.user && isMounted) {
             // Only update if we have valid user data
@@ -150,15 +151,10 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
 
             // Update verification status cookie
             document.cookie = `verifyStatus=${response.data.user.verifyStatus}; path=/; max-age=2592000`;
-            
-            console.log('Session restored successfully');
           } else {
             // Only logout if the token is actually invalid
             if (response.error === 'Token expired' || response.error === 'Invalid token') {
-              console.log('Token invalid, logging out:', response.error);
               handleLogout();
-            } else {
-              console.log('Session validation failed but token might be valid:', response.error);
             }
           }
         }

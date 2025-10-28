@@ -111,8 +111,6 @@ export default function DomainManagementSettings({ project, onSave }: DomainMana
                 projectId: project.projectId
               });
               if (response.success) {
-                // Update global appData
-                await authApi.updateAppData(setAppData);
                 setShowDomainConfirmation(false);
                 if (onSave) {
                   onSave({ domainId: response.data.domainId, domainURL: response.data.domainURL });

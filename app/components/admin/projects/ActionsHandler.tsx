@@ -89,8 +89,6 @@ export default function ActionsHandler({
         functionName: 'deleteProject',
         projectId: project.projectId
       });
-      // Update app data
-      await authApi.updateAppData(setAppData);
       onDelete(project.projectId);
       setShowDeleteConfirmation(false);
     } catch (error) {
@@ -109,8 +107,6 @@ export default function ActionsHandler({
         functionName: 'renewProject',
         projectId: project.projectId
       });
-      // Update app data
-      await authApi.updateAppData(setAppData);
       onRefresh(project.projectId);
       setShowRenewConfirmation(false);
     } catch (error) {

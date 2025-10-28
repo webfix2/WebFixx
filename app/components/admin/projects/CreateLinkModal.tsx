@@ -308,12 +308,6 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
         });
         setShowResultModal(true);
         onSave(response.data);
-        // Update app data after success
-        try {
-          await authApi.updateAppData(setAppData);
-        } catch (e) {
-          // Optionally handle updateAppData failure
-        }
       } else {
         // Handle error scenarios
         setResultModalProps({
@@ -323,12 +317,6 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
           details: response.details || {}
         });
         setShowResultModal(true);
-        // Update app data after failure (optional)
-        try {
-          await authApi.updateAppData(setAppData);
-        } catch (e) {
-          // Optionally handle updateAppData failure
-        }
       }
     } catch (error) {
 

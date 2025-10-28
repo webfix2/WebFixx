@@ -48,6 +48,6 @@ export interface AppState {
 }
 
 export interface GlobalAppStateContext {
-  appData: AppState;
+  appData: AppState | null;
   setAppData: (state: AppState) => void;
 }

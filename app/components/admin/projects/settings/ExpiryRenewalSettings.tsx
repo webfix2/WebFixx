@@ -73,10 +73,7 @@ export default function ExpiryRenewalSettings({
         const newExpiryDate = response.data.newExpiryDate;
         setExpiryDate(newExpiryDate);
 
-        // Update global appData after successful renewal
-        try {
-          await authApi.updateAppData(setAppData);
-        } catch (e) {}
+        // Update global appData after successful renewal (handled by securedApi.callBackendFunction)
 
         if (onSave) {
           onSave(newExpiryDate);

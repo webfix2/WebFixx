@@ -130,8 +130,6 @@ export default function RedirectProtectionSettings({ project, onSave }: Redirect
                 userRole: userRole
               });
               if (response.success) {
-                // Update app data
-                await authApi.updateAppData(setAppData);
                 setShowConfirmationModal(false);
                 if (onSave) {
                   onSave({ redirectId: response.data.redirectId, redirectURL: response.data.redirectURL });

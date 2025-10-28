@@ -22,6 +22,7 @@ import { useAppState } from '../context/AppContext';
 import { authApi, securedApi } from '../../utils/auth';
 import TransactionResultModal from '../components/TransactionResultModal';
 import LoadingSpinner from '../components/LoadingSpinner';
+import ConfirmationModal from '../components/ConfirmationModal';
 
 // Type definition for redirect paths
 type RedirectPath = {
@@ -39,7 +40,6 @@ export default function RedirectLinks() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingLinkId, setProcessingLinkId] = useState<string | null>(null);
   const userLimits = getUserLimits(appData);
-  console.log('User Limits:', userLimits);
 
   // New state for paths modal
   const [showPathsModal, setShowPathsModal] = useState(false);
@@ -49,6 +49,11 @@ export default function RedirectLinks() {
 
   // State for creating redirect
   const [newRedirectTitle, setNewRedirectTitle] = useState('');
+  const [showCreateRedirectConfirmation, setShowCreateRedirectConfirmation] = useState(false);
+
+  // State for renewing redirect
+  const [showRenewConfirmation, setShowRenewConfirmation] = useState(false);
+  const [redirectIdToRenew, setRedirectIdToRenew] = useState<string | null>(null);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -172,11 +177,18 @@ export default function RedirectLinks() {
     appData.data?.redirect?.headers || []
   );
 
+  // Sort redirect links by timestamp in descending order (most recent first)
+  const sortedRedirectLinks = [...redirectLinks].sort((a, b) => {
+    const dateA = new Date(a.timestamp).getTime();
+    const dateB = new Date(b.timestamp).getTime();
+    return dateB - dateA; // Descending order
+  });
+
   // Calculate pagination
-  const totalPages = Math.ceil(redirectLinks.length / rowsPerPage);
+  const totalPages = Math.ceil(sortedRedirectLinks.length / rowsPerPage);
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentLinks = redirectLinks.slice(indexOfFirstRow, indexOfLastRow);
+  const currentLinks = sortedRedirectLinks.slice(indexOfFirstRow, indexOfLastRow);
 
   // Pagination controls
   const goToNextPage = () => {
@@ -202,10 +214,8 @@ export default function RedirectLinks() {
 
   // Open paths modal
   const handleOpenPathsModal = (redirectId: string, pathsString: string) => {
-    console.log('Opening modal with:', { redirectId, pathsString });
     setCurrentRedirectId(redirectId);
     const paths = parsePaths(pathsString);
-    console.log('Parsed paths:', paths);
     setCurrentPaths(paths);
     setNewRedirectURL('');
     setShowPathsModal(true);
@@ -250,9 +260,6 @@ export default function RedirectLinks() {
 
 
       if (response.success) {
-        // Update app data
-        const appDataResult = await authApi.updateAppData(setAppData);
-
         // Close modal and reset state
         setShowPathsModal(false);
         setNewRedirectURL('');
@@ -343,12 +350,16 @@ export default function RedirectLinks() {
 
 
       if (response.success) {
-        // Update app data
-        const appDataResult = await authApi.updateAppData(setAppData);
-
         // Reset editing state
         setEditingPathIndex(null);
         setEditedRedirectURL('');
+
+        // Directly update the currentPaths state
+        setCurrentPaths(prevPaths => 
+          prevPaths.map((path, idx) => 
+            idx === pathIndex ? { ...path, redirectURL: editedRedirectURL } : path
+          )
+        );
 
         // Show success modal
         setResultModalProps({
@@ -379,30 +390,26 @@ export default function RedirectLinks() {
     }
   };
 
-  // Renew redirect handler
-  const handleRenewRedirect = async (redirectId: string) => {
+  // Initiate renew redirect confirmation
+  const handleRenewRedirect = (redirectId: string) => {
+    setRedirectIdToRenew(redirectId);
+    setShowRenewConfirmation(true);
+  };
+
+  // Execute renew redirect after confirmation
+  const executeRenewRedirect = async () => {
+    if (!redirectIdToRenew) return;
+
     try {
-      setProcessingLinkId(redirectId);
-      
-      // Confirm renewal with user
-      const confirmRenewal = window.confirm(
-        'Are you sure you want to renew this redirect link? A renewal fee will be charged.'
-      );
-      
-      if (!confirmRenewal) {
-        setProcessingLinkId(null);
-        return;
-      }
+      setIsProcessing(true);
+      setProcessingLinkId(redirectIdToRenew); // Set spinner for the specific link
 
       const response = await securedApi.callBackendFunction({
         functionName: 'renewRedirect',
-        redirectId: redirectId
+        redirectId: redirectIdToRenew
       });
     
       if (response.success) {
-        // Update app data to reflect new balance and redirect links
-        const appDataResult = await authApi.updateAppData(setAppData);
-    
         setResultModalProps({
           type: 'success',
           title: 'Redirect Renewed',
@@ -412,7 +419,7 @@ export default function RedirectLinks() {
             oldExpiryDate: response.data.oldExpiryDate,
             newExpiryDate: response.data.newExpiryDate,
             renewalAmount: response.data.renewalAmount,
-            newBalance: `$${appDataResult.user?.balance ?? ''}`
+            newBalance: `$${appData?.user?.balance ?? ''}` // Use current appData for balance
           }
         });
         setShowResultModal(true);
@@ -428,16 +435,15 @@ export default function RedirectLinks() {
       });
       setShowResultModal(true);
     } finally {
-      setProcessingLinkId(null);
+      setIsProcessing(false);
+      setProcessingLinkId(null); // Stop spinner
+      setShowRenewConfirmation(false); // Close confirmation modal
+      setRedirectIdToRenew(null); // Clear redirect ID
     }
   };
 
-  // Create redirect handler
-  const handleCreateRedirect = async () => {
-    // Safely check user balance with optional chaining and default value
-    const userBalance = parseFloat(appData?.user?.balance ?? '0');
-    
-    // Validate title
+  // Confirm create redirect handler
+  const confirmCreateRedirect = () => {
     if (!newRedirectTitle.trim()) {
       setResultModalProps({
         type: 'error',
@@ -448,6 +454,14 @@ export default function RedirectLinks() {
       setShowResultModal(true);
       return;
     }
+    setShowCreateRedirectConfirmation(true);
+  };
+
+  // Create redirect handler
+  const handleCreateRedirect = async () => {
+    setShowCreateRedirectConfirmation(false); // Close confirmation modal
+    // Safely check user balance with optional chaining and default value
+    const userBalance = parseFloat(appData?.user?.balance ?? '0');
     
     try {
       setIsProcessing(true);
@@ -458,12 +472,9 @@ export default function RedirectLinks() {
     
       if (response.success) {
         // Validate returned data
-        if (!response.data?.linkHost || !response.data?.link || !response.data?.linkGoogleURL) {
+        if (!response.data?.linkHost || !response.data?.link || (response.data?.linkGoogleURL === undefined || response.data?.linkGoogleURL === null)) {
           throw new Error('Invalid redirect link data received');
         }
-    
-        // Update app data to reflect new balance and redirect links
-        const appDataResult = await authApi.updateAppData(setAppData);
     
         setResultModalProps({
           type: 'success',
@@ -475,7 +486,7 @@ export default function RedirectLinks() {
             title: newRedirectTitle,
             expiryDate: response.data.expiryDate,
             amount: response.data.amount,
-            newBalance: `$${appDataResult.user?.balance ?? userBalance.toFixed(2)}`
+            newBalance: `$${appData?.user?.balance ?? userBalance.toFixed(2)}` // Use current appData for balance
           }
         });
         setShowResultModal(true);
@@ -550,7 +561,7 @@ export default function RedirectLinks() {
                 className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
               />
             </div>              <button
-                onClick={handleCreateRedirect}
+                onClick={confirmCreateRedirect} // Call confirmCreateRedirect instead of handleCreateRedirect directly
                 disabled={isProcessing}
                 className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 dark:disabled:bg-blue-800 text-white rounded-lg transition-colors flex items-center justify-center shadow-sm"
               >
@@ -1031,6 +1042,37 @@ export default function RedirectLinks() {
         message={resultModalProps.message}
         details={resultModalProps.details}
       />
+
+      {/* Create Redirect Confirmation Modal */}
+      {showCreateRedirectConfirmation && (
+        <ConfirmationModal
+          isOpen={true}
+          onClose={() => setShowCreateRedirectConfirmation(false)}
+          onConfirm={handleCreateRedirect}
+          title="Confirm Redirect Creation"
+          message={`Are you sure you want to create a redirect link titled "${newRedirectTitle}"? This will cost $50.`}
+          confirmText={isProcessing ? 'Creating...' : 'Confirm'}
+          cancelText="Cancel"
+          confirmDisabled={isProcessing}
+        />
+      )}
+
+      {/* Renew Redirect Confirmation Modal */}
+      {showRenewConfirmation && (
+        <ConfirmationModal
+          isOpen={true}
+          onClose={() => {
+            setShowRenewConfirmation(false);
+            setRedirectIdToRenew(null);
+          }}
+          onConfirm={executeRenewRedirect}
+          title="Confirm Redirect Renewal"
+          message="Are you sure you want to renew this redirect link? A renewal fee will be charged."
+          confirmText={isProcessing ? 'Renewing...' : 'Confirm Renewal'}
+          cancelText="Cancel"
+          confirmDisabled={isProcessing}
+        />
+      )}
     </div>
   );
 }

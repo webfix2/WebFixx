@@ -15,12 +15,14 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import FundWalletModal from '../components/admin/wallet/FundWalletModal';
 import { securedApi, authApi } from '../../utils/auth';
 import TransactionResultModal from '../components/TransactionResultModal';
+import ConfirmationModal from '../components/ConfirmationModal'; // Import ConfirmationModal
 
 export default function Wallet() {
   const { appData, setAppData } = useAppState();
   const [showFundModal, setShowFundModal] = useState(false);
   const [drinkAmount, setDrinkAmount] = useState('5');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showBuyDrinkConfirmation, setShowBuyDrinkConfirmation] = useState(false); // New state for confirmation modal
   
   // Transaction result modal state
   const [showResultModal, setShowResultModal] = useState(false);
@@ -159,25 +161,30 @@ export default function Wallet() {
     };
   };
 
+  const confirmBuyDrink = () => {
+    const amount = parseFloat(drinkAmount);
+    if (amount < 5) {
+      setResultModalProps({
+        type: 'error',
+        title: 'Invalid Amount',
+        message: 'Minimum amount is $5.00',
+        details: {
+          providedAmount: `$${amount.toFixed(2)}`,
+          minimumAmount: '$5.00'
+        }
+      });
+      setShowResultModal(true);
+      return;
+    }
+    setShowBuyDrinkConfirmation(true);
+  };
+
   const handleBuyDrink = async () => {
+    setShowBuyDrinkConfirmation(false); // Close confirmation modal
     try {
       setIsProcessing(true);
       const amount = parseFloat(drinkAmount);
       
-      if (amount < 5) {
-        setResultModalProps({
-          type: 'error',
-          title: 'Invalid Amount',
-          message: 'Minimum amount is $5.00',
-          details: {
-            providedAmount: `$${amount.toFixed(2)}`,
-            minimumAmount: '$5.00'
-          }
-        });
-        setShowResultModal(true);
-        return;
-      }
-
       const response = await securedApi.callBackendFunction({
         functionName: 'debit',
         amount: drinkAmount,
@@ -185,23 +192,6 @@ export default function Wallet() {
       });
 
       if (response.success) {
-        // Update app data to get latest transactions and balance BEFORE showing the modal
-        try {
-          const appDataResult = await authApi.updateAppData(setAppData);
-          
-          // Manually update app state if needed
-          if (appDataResult && appDataResult.success) {
-            const updatedAppState = {
-              user: appDataResult.user || appData?.user,
-              data: appDataResult.data || {},
-              isAuthenticated: true
-            };
-            setAppData(updatedAppState);
-          }
-        } catch (updateError) {
-          // Error handling
-        }
-        
         setDrinkAmount('5'); // Reset to minimum
         
         // Show success modal
@@ -216,23 +206,6 @@ export default function Wallet() {
           }
         });
         setShowResultModal(true);
-        
-        // Update app data again to ensure we have the latest data
-        try {
-          const appDataResult2 = await authApi.updateAppData(setAppData);
-          
-          // Manually update app state if needed
-          if (appDataResult2 && appDataResult2.success) {
-            const updatedAppState = {
-              user: appDataResult2.user || appData?.user,
-              data: appDataResult2.data || {},
-              isAuthenticated: true
-            };
-            setAppData(updatedAppState);
-          }
-        } catch (updateError) {
-          // Error handling
-        }
       } else {
         // Handle insufficient balance specifically
         if (response.details?.message?.includes('sufficient funds')) {
@@ -337,7 +310,7 @@ export default function Wallet() {
                 </div>
               </div>
               <button
-                onClick={handleBuyDrink}
+                onClick={confirmBuyDrink} // Call confirmBuyDrink instead of handleBuyDrink directly
                 disabled={isProcessing || parseFloat(drinkAmount) < 5}
                 className="w-full py-2 px-4 bg-amber-500 hover:bg-amber-600 disabled:bg-amber-300 text-white rounded-lg transition-colors flex items-center justify-center"
               >
@@ -533,6 +506,20 @@ export default function Wallet() {
           } : undefined
         }
       />
+
+      {/* Buy Drink Confirmation Modal */}
+      {showBuyDrinkConfirmation && (
+        <ConfirmationModal
+          isOpen={true}
+          onClose={() => setShowBuyDrinkConfirmation(false)}
+          onConfirm={handleBuyDrink}
+          title="Confirm Purchase"
+          message={`Are you sure you want to buy a drink for $${parseFloat(drinkAmount).toFixed(2)}?`}
+          confirmText={isProcessing ? 'Processing...' : 'Confirm'}
+          cancelText="Cancel"
+          confirmDisabled={isProcessing}
+        />
+      )}
     </div>
   );
 }

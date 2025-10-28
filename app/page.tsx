@@ -26,7 +26,6 @@ export default function Home() {
     email: "",
     password: "",
     confirmPassword: "",
-    username: "",
     referralCode: "",
   });
   const [isCheckingAuth, setIsCheckingAuth] = useState(true); // Add this state
@@ -108,11 +107,32 @@ export default function Home() {
           document.cookie = `loggedInAdmin=${response.token}; path=/; max-age=2592000`;
           document.cookie = `verifyStatus=${response.user.verifyStatus}; path=/; max-age=2592000`;
 
-          // The securedApi.callBackendFunction will handle appData update
-          // The useEffect will handle redirection based on updated appData
+          // Update global app state immediately after successful login
+          setAppData({
+            user: response.user,
+            data: response.data,
+            isAuthenticated: true,
+          });
         }
       } else {
-        console.log('Starting registration with:', formData);
+        // Automatically extract username from email
+        const username = formData.email.split('@')[0];
+
+        // Robust email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/; // Ensures at least 2 characters in TLD
+        if (!emailRegex.test(formData.email)) {
+          setError("Please enter a valid email address (e.g., user@example.com)");
+          setIsSubmitting(false);
+          return;
+        }
+
+        // Password validation: must contain letters and a number
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).+$/;
+        if (!passwordRegex.test(formData.password)) {
+          setError("Password must contain at least one letter and one number");
+          setIsSubmitting(false);
+          return;
+        }
 
         // Validate passwords match
         if (formData.password !== formData.confirmPassword) {
@@ -122,34 +142,15 @@ export default function Home() {
         }
 
         const registerResponse = await authApi.register({
-          username: formData.username,
+          username: username, // Use extracted username
           email: formData.email,
           password: formData.password,
           referralCode: formData.referralCode,
         });
 
-        console.log('Register response:', registerResponse);
-
         if (registerResponse.success) {
-          console.log('Registration successful, attempting login');
-          const loginResponse: LoginResponse = await authApi.login({
-            email: formData.email,
-            password: formData.password,
-            deviceInfo: {
-              userAgent: navigator.userAgent,
-              platform: navigator.platform,
-              language: navigator.language
-            }
-          });
-
-          console.log('Auto-login response:', loginResponse);
-
-          // Store token in document.cookie
-          document.cookie = `loggedInAdmin=${loginResponse.token}; path=/; max-age=2592000`;
-
-          sessionStorage.setItem("loggedInAdmin", loginResponse.token);
-          // The securedApi.callBackendFunction will handle appData update
-          // The useEffect will handle redirection based on updated appData
+          // Directly navigate to the verify page after successful registration
+          router.replace("/verify");
         } else {
           setError(registerResponse.error || registerResponse.message || 'Registration failed');
           console.error('Registration failed:', registerResponse);
@@ -225,27 +226,6 @@ export default function Home() {
 
             {/* Form */}
             <form className="space-y-6" onSubmit={handleSubmit}>
-              {!isLogin && (
-                <div>
-                  <div className="relative">
-                    <FontAwesomeIcon 
-                      icon={faUser} 
-                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"
-                    />
-                    <input
-                      id="username"
-                      name="username"
-                      type="text"
-                      required
-                      className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                      placeholder="Username"
-                      value={formData.username}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-              )}
-
               <div className="relative">
                 <FontAwesomeIcon 
                   icon={faEnvelope} 

@@ -135,8 +135,6 @@ export default function TemplateVariablesSettings({
 
       if (response.success) {
         setSuccess(true);
-        // Update app data
-        await authApi.updateAppData(setAppData);
         if (onSave) {
           onSave(resultString);
         }

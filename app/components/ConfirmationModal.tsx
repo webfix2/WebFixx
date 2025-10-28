@@ -8,6 +8,7 @@ interface ConfirmationModalProps {
   message?: string;
   confirmText?: string;
   cancelText?: string;
+  confirmDisabled?: boolean;
   children?: React.ReactNode;
 }
 
@@ -19,7 +20,8 @@ export default function ConfirmationModal({
   message,
   children,
   confirmText = 'Confirm',
-  cancelText = 'Cancel'
+  cancelText = 'Cancel',
+  confirmDisabled = false
 }: ConfirmationModalProps) {
   if (!isOpen) return null;
 
@@ -40,7 +42,8 @@ export default function ConfirmationModal({
           </button>
           <button 
             onClick={onConfirm}
-            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 dark:hover:bg-red-700"
+            disabled={confirmDisabled}
+            className={`px-4 py-2 bg-red-500 text-white rounded ${confirmDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-600 dark:hover:bg-red-700'}`}
           >
             {confirmText}
           </button>
