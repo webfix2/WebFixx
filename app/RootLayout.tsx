@@ -47,6 +47,7 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
   }, [appData, setAppData]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false); // New state for logout in progress
   const [isDarkMode, setIsDarkMode] = useState(appData?.user?.darkMode || false);
   const [visibleLinks, setVisibleLinks] = useState({
     dashboard: false,
@@ -206,6 +207,7 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
   }, [pathname, setIsNavigating]);
 
   const handleLogout = async () => {
+    setIsLoggingOut(true); // Set logging out state to true
     try {
       const token = document.cookie.match('(^|;)\\s*loggedInAdmin\\s*=\\s*([^;]+)')?.pop();
       if (token) {
@@ -238,7 +240,8 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
     }
   };
 
-  const shouldShowSidebar = pathname !== '/' && 
+  const shouldShowSidebar = !isLoggingOut && // Hide sidebar if logging out
+                           pathname !== '/' && 
                            pathname !== '/account' && 
                            pathname !== '/invalid' && 
                            pathname !== '/root' && 
@@ -381,14 +384,14 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
     setIsSidebarOpen(false);
   };
 
-  // Show full-screen loading state during initial load
-  if (isLoading) {
+  // Show full-screen loading state during initial load or logout
+  if (isLoading || isLoggingOut) {
     return (
       <div className="min-h-screen">
         <LoadingSpinner 
           fullScreen 
           size="large" 
-          text="Loading WebFixx..." 
+          text={isLoggingOut ? "Logging out..." : "Loading WebFixx..."} 
         />
       </div>
     );

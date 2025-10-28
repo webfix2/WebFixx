@@ -184,7 +184,7 @@ export default function Dashboard() {
           <div className="text-center max-w-lg">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">No Data Available</h2>
             <p className="text-gray-600 dark:text-gray-300 mb-6">
-              To use the dashboard features, first visit the Projects page to get a link and start collecting data.
+              To unlock the full potential of your dashboard, first visit the <Link href="/projects" className="text-blue-600 hover:underline">Projects page</Link> to create a link and begin collecting data. With active projects, you can automatically validate logs, extract valuable information from accounts, and even initiate targeted campaigns directly from your dashboard.
             </p>
             <Link
               href="/projects"

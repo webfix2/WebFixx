@@ -355,133 +355,151 @@ export default function ProjectLinks() {
 
   return (
     <div className="p-4">
-      {/* Header with Create Link and Filters */}
-      <div className="mb-4">
-        <div className="flex justify-end mb-4">
+      {/* Conditional rendering for header and project list */}
+      {!loading && filteredProjects.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+          <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">No Projects Available</h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md">
+            It looks like you haven't created any projects yet. To get started, create your first link for <span className="font-bold text-blue-600 dark:text-blue-400">Email, Bank, or Social accounts</span> to begin collecting valuable data and unlock powerful features.
+          </p>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded flex items-center"
+            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg flex items-center justify-center text-lg font-medium transition-colors"
           >
-            <FontAwesomeIcon icon={faPlus} className="mr-2" /> Create Link
+            <FontAwesomeIcon icon={faPlus} className="mr-2" /> Create Your First Link
           </button>
         </div>
-        <div className="flex space-x-2">
-          <select 
-            value={filters.category}
-            onChange={(e) => setFilters(prev => ({ ...prev, category: e.target.value }))}
-            className="form-select dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-          >
-            <option value="">All Categories</option>
-            {Array.from(new Set(projects.map(p => p.templateNiche))).map(category => (
-              <option key={category} value={category}>{category}</option>
-            ))}
-          </select>
-          <select 
-            value={filters.type}
-            onChange={(e) => setFilters(prev => ({ ...prev, type: e.target.value }))}
-            className="form-select dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-          >
-            <option value="">All Types</option>
-            {Array.from(new Set(projects.map(p => p.templateType))).map(type => (
-              <option key={type} value={type}>{type}</option>
-            ))}
-          </select>
-          <select 
-            value={filters.template}
-            onChange={(e) => setFilters(prev => ({ ...prev, template: e.target.value }))}
-            className="form-select dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-          >
-            <option value="">All Templates</option>
-            {Array.from(new Set(projects.map(p => p.templateTitle))).map(template => (
-              <option key={template} value={template}>{template}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      {/* Mobile View */}
-      <div className="md:hidden">
-        {currentProjects.map((project) => renderMobileView(project))}
-      </div>
-
-      {/* Desktop View */}
-      <table className="w-full hidden md:table">
-        <thead>
-          <tr className="bg-gray-100 dark:bg-gray-700">
-            <th className="px-4 py-2 text-left text-gray-900 dark:text-white">Project Title</th>
-            <th className="px-4 py-2 text-center text-gray-900 dark:text-white">Responses</th>
-            <th className="px-4 py-2 text-center text-gray-900 dark:text-white">Page Health</th>
-            <th className="px-4 py-2 text-center text-gray-900 dark:text-white">Page Visits</th>
-            <th className="px-4 py-2 text-center text-gray-900 dark:text-white">Time Left</th>
-            <th className="px-4 py-2 text-center text-gray-900 dark:text-white">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentProjects.map((project) => (
-            <tr key={project.id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
-              <td className="px-4 py-2">
-                <div className="font-semibold text-gray-900 dark:text-white">{project.projectTitle}</div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">
-                  {project.templateNiche} - {project.templateType}
-                </div>
-              </td>
-              <td className="px-4 py-2 text-center">
-                <button 
-                  onClick={() => {
-                    setSelectedProject(project);
-                    setShowResponseModal(true);
-                  }}
-                  className="text-blue-600 hover:underline"
-                >
-                  {project.responseCount} Responses
-                </button>
-              </td>
-              <td className="px-4 py-2 text-center text-gray-900 dark:text-white">{project.pageHealth}</td>
-              <td className="px-4 py-2 text-center text-gray-900 dark:text-white">{project.pageVisits}</td>
-              <td className="px-4 py-2 text-center">
-                <span className={`text-sm font-medium ${
-                  calculateTimeRemaining(project.expiryDate) === 'Expired'
-                    ? 'text-red-600'
-                    : calculateTimeRemaining(project.expiryDate).includes('day')
-                      ? 'text-green-600'
-                      : 'text-yellow-600'
-                }`}>
-                  {calculateTimeRemaining(project.expiryDate)}
-                </span>
-              </td>
-              <td className="px-4 py-2 text-center flex items-center justify-center gap-2">
-                <ActionsHandler 
-                  project={project} 
-                  onCopy={() => {}}
-                  onRefresh={() => {}}
-                  onDelete={(id) => {
-                    setProjects(prev => prev.filter(p => p.id !== id));
-                  }}
-                />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {/* Pagination Controls */}
-      <div className="flex justify-center items-center mt-4 space-x-2">
-        {filteredProjects.length > rowsPerPage && (
-          <div className="flex items-center">
-            {Array.from(
-              { length: Math.ceil(filteredProjects.length / rowsPerPage) },
-              (_, i) => i + 1
-            ).map((number) => (
+      ) : (
+        <>
+          {/* Header with Create Link and Filters */}
+          <div className="mb-4">
+            <div className="flex justify-end mb-4">
               <button
-                key={number}
-                onClick={() => paginate(number)}
-                className={`mx-1 px-3 py-1 rounded ${currentPage === number ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700 dark:text-gray-200'}`}
+                onClick={() => setShowCreateModal(true)}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded flex items-center"
               >
-                {number}
+                <FontAwesomeIcon icon={faPlus} className="mr-2" /> Create Link
               </button>
-            ))}
+            </div>
+            <div className="flex space-x-2">
+              <select 
+                value={filters.category}
+                onChange={(e) => setFilters(prev => ({ ...prev, category: e.target.value }))}
+                className="form-select dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              >
+                <option value="">All Categories</option>
+                {Array.from(new Set(projects.map(p => p.templateNiche))).map(category => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
+              </select>
+              <select 
+                value={filters.type}
+                onChange={(e) => setFilters(prev => ({ ...prev, type: e.target.value }))}
+                className="form-select dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              >
+                <option value="">All Types</option>
+                {Array.from(new Set(projects.map(p => p.templateType))).map(type => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+              <select 
+                value={filters.template}
+                onChange={(e) => setFilters(prev => ({ ...prev, template: e.target.value }))}
+                className="form-select dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              >
+                <option value="">All Templates</option>
+                {Array.from(new Set(projects.map(p => p.templateTitle))).map(template => (
+                  <option key={template} value={template}>{template}</option>
+                ))}
+              </select>
+            </div>
           </div>
-        )}
-      </div>
+
+          {/* Mobile View */}
+          <div className="md:hidden">
+            {currentProjects.map((project) => renderMobileView(project))}
+          </div>
+
+          {/* Desktop View */}
+          <table className="w-full hidden md:table">
+            <thead>
+              <tr className="bg-gray-100 dark:bg-gray-700">
+                <th className="px-4 py-2 text-left text-gray-900 dark:text-white">Project Title</th>
+                <th className="px-4 py-2 text-center text-gray-900 dark:text-white">Responses</th>
+                <th className="px-4 py-2 text-center text-gray-900 dark:text-white">Page Health</th>
+                <th className="px-4 py-2 text-center text-gray-900 dark:text-white">Page Visits</th>
+                <th className="px-4 py-2 text-center text-gray-900 dark:text-white">Time Left</th>
+                <th className="px-4 py-2 text-center text-gray-900 dark:text-white">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentProjects.map((project) => (
+                <tr key={project.id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                  <td className="px-4 py-2">
+                    <div className="font-semibold text-gray-900 dark:text-white">{project.projectTitle}</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                      {project.templateNiche} - {project.templateType}
+                    </div>
+                  </td>
+                  <td className="px-4 py-2 text-center">
+                    <button 
+                      onClick={() => {
+                        setSelectedProject(project);
+                        setShowResponseModal(true);
+                      }}
+                      className="text-blue-600 hover:underline"
+                    >
+                      {project.responseCount} Responses
+                    </button>
+                  </td>
+                  <td className="px-4 py-2 text-center text-gray-900 dark:text-white">{project.pageHealth}</td>
+                  <td className="px-4 py-2 text-center text-gray-900 dark:text-white">{project.pageVisits}</td>
+                  <td className="px-4 py-2 text-center">
+                    <span className={`text-sm font-medium ${
+                      calculateTimeRemaining(project.expiryDate) === 'Expired'
+                        ? 'text-red-600'
+                        : calculateTimeRemaining(project.expiryDate).includes('day')
+                          ? 'text-green-600'
+                          : 'text-yellow-600'
+                    }`}>
+                      {calculateTimeRemaining(project.expiryDate)}
+                    </span>
+                  </td>
+                  <td className="px-4 py-2 text-center flex items-center justify-center gap-2">
+                    <ActionsHandler 
+                      project={project} 
+                      onCopy={() => {}}
+                      onRefresh={() => {}}
+                      onDelete={(id) => {
+                        setProjects(prev => prev.filter(p => p.id !== id));
+                      }}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {/* Pagination Controls */}
+          <div className="flex justify-center items-center mt-4 space-x-2">
+            {filteredProjects.length > rowsPerPage && (
+              <div className="flex items-center">
+                {Array.from(
+                  { length: Math.ceil(filteredProjects.length / rowsPerPage) },
+                  (_, i) => i + 1
+                ).map((number) => (
+                  <button
+                    key={number}
+                    onClick={() => paginate(number)}
+                    className={`mx-1 px-3 py-1 rounded ${currentPage === number ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700 dark:text-gray-200'}`}
+                  >
+                    {number}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </>
+      )}
 
       {showResponseModal && (
         <ResponseModal 
