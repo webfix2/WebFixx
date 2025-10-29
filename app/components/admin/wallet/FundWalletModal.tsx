@@ -117,18 +117,14 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
     shouldCheckStatusRef.current = (currentStep === 'payment' && paymentStatus === 'pending');
   }, [currentStep, paymentStatus]);
 
+  // Removed the 2-minute interval for checkPaymentStatus in FundWalletModal.
+  // The global AppContext now handles periodic updates for pending transactions.
+  // The initial check on mount for payment & pending status remains.
   useEffect(() => {
-    // Initial check immediately if on payment & pending
     if (currentStep === 'payment' && paymentStatus === 'pending') {
       checkPaymentStatus();
     }
-    const interval = setInterval(() => {
-      if (shouldCheckStatusRef.current) {
-        checkPaymentStatus();
-      }
-    }, 2 * 60 * 1000); // 2 minutes
-    return () => clearInterval(interval);
-  }, []);
+  }, [currentStep, paymentStatus, checkPaymentStatus]);
 
   // Payment prompt logic (unchanged, still shows every 5 min)
   useEffect(() => {
@@ -375,14 +371,67 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
     }
   };
 
-  const getWalletUri = (method: PaymentMethod, address: string, amount: string) => {
+  const getWalletUri = (method: PaymentMethod, address: string, amount: string, walletType: 'metamask' | 'trustwallet' | 'other' = 'other') => {
+    // Convert ETH/USDT to wei for deep links, assuming 18 decimal places for ETH/ERC-20
+    // Convert ETH/USDT to smallest unit (wei for ETH, token decimals for ERC-20)
+    // Assuming 18 decimal places for ETH and USDT (ERC-20) for simplicity.
+    // In a real-world scenario, you'd fetch token decimals.
+    const amountInSmallestUnit = (parseFloat(amount) * (10 ** 18)).toLocaleString('fullwide', { useGrouping: false });
+
+    // Common Chain IDs
+    const chainIds = {
+      ETH: '1', // Ethereum Mainnet
+      USDT: '1' // USDT ERC-20 on Ethereum Mainnet
+      // BTC doesn't use EVM chain IDs for deep linking in this context
+    };
+
+    // Trust Wallet UAI asset identifiers
+    const trustWalletAssets = {
+      BTC: 'c0_t0x0000000000000000000000000000000000000000', // Native BTC on chain 0
+      ETH: 'c60_t0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', // Native ETH on chain 60 (Ethereum)
+      USDT: 'c60_t0xdAC17F958D2ee523a2206206994597C13D831ec7' // USDT (ERC-20) contract address on Ethereum
+    };
+
+    // ERC-20 Token Contract Addresses
+    const tokenContractAddresses = {
+      USDT: '0xdAC17F958D2ee523a2206206994597C13D831ec7' // USDT (ERC-20)
+    };
+
+    if (walletType === 'trustwallet') {
+      const asset = trustWalletAssets[method];
+      if (asset) {
+        return `https://link.trustwallet.com/send?asset=${asset}&address=${address}&amount=${amount}`;
+      }
+      return '';
+    } else if (walletType === 'metamask') {
+      switch (method) {
+        case 'BTC':
+          // MetaMask primarily supports EVM chains. Bitcoin deep linking via MetaMask is not standard.
+          // Fallback to generic bitcoin scheme or indicate not supported.
+          return `bitcoin:${address}?amount=${amount}`;
+        case 'ETH':
+          // MetaMask deep link for native ETH
+          return `https://link.metamask.io/send/${address}@${chainIds.ETH}?value=${amountInSmallestUnit}`;
+        case 'USDT':
+          // MetaMask deep link for ERC-20 token transfer
+          const usdtContractAddress = tokenContractAddresses.USDT;
+          const chainId = chainIds.USDT;
+          // For ERC-20, amount is in token's smallest unit (e.g., 1e6 for 1 USDC with 6 decimals)
+          // Assuming USDT also has 18 decimals for consistency with ETH for now.
+          return `https://link.metamask.io/send/${usdtContractAddress}@${chainId}/transfer?address=${address}&uint256=${amountInSmallestUnit}`;
+        default:
+          return '';
+      }
+    }
+
+    // Default for 'other' wallets or if specific wallet type not handled
     switch (method) {
       case 'BTC':
         return `bitcoin:${address}?amount=${amount}`;
       case 'ETH':
-        return `ethereum:${address}?amount=${amount}`;
+        return `ethereum:${address}?value=${amountInSmallestUnit}`;
       case 'USDT':
-        return `ethereum:${address}?amount=${amount}`;
+        return `ethereum:${address}?value=${amountInSmallestUnit}`; // Generic ethereum link for ERC-20
       default:
         return '';
     }
@@ -680,20 +729,43 @@ export default function FundWalletModal({ onClose, addresses }: FundWalletModalP
           </div>
         </div>
 
-        <div className="flex justify-center">
-          <a
-            href={walletUri}
-            target=""
-            rel="noopener noreferrer"
-            className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+        <div className="flex flex-col space-y-3">
+          <button
+            onClick={() => window.open(getWalletUri(selectedMethod!, paymentDetails?.address || '', getCryptoAmount(), 'trustwallet'), '_blank')}
+            className="inline-flex items-center justify-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+            disabled={!paymentDetails?.address}
           >
-            {renderIcon('wallet')}
-            <span className="mx-2">Open in Wallet</span>
+            <img src="/trustwallet-icon.svg" alt="Trust Wallet" className="h-5 w-5 mr-2" />
+            <span className="mx-2">Pay with Trust Wallet</span>
             <FontAwesomeIcon 
               icon={faArrowUpRightFromSquare} 
               className="h-4 w-4"
             />
-          </a>
+          </button>
+          <button
+            onClick={() => window.open(getWalletUri(selectedMethod!, paymentDetails?.address || '', getCryptoAmount(), 'metamask'), '_blank')}
+            className="inline-flex items-center justify-center px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors"
+            disabled={!paymentDetails?.address}
+          >
+            <img src="/metamask-icon.svg" alt="MetaMask" className="h-5 w-5 mr-2" />
+            <span className="mx-2">Pay with MetaMask</span>
+            <FontAwesomeIcon 
+              icon={faArrowUpRightFromSquare} 
+              className="h-4 w-4"
+            />
+          </button>
+          <button
+            onClick={() => window.open(getWalletUri(selectedMethod!, paymentDetails?.address || '', getCryptoAmount(), 'other'), '_blank')}
+            className="inline-flex items-center justify-center px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors"
+            disabled={!paymentDetails?.address}
+          >
+            {renderIcon('wallet')}
+            <span className="mx-2">Pay with Other Wallet</span>
+            <FontAwesomeIcon 
+              icon={faArrowUpRightFromSquare} 
+              className="h-4 w-4"
+            />
+          </button>
         </div>
 
         <div className="text-xs text-gray-500 text-center dark:text-gray-400">

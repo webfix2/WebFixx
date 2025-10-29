@@ -69,6 +69,7 @@ export default function ProjectLinks() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [showResponseModal, setShowResponseModal] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false); // New state for refresh
   const [projects, setProjects] = useState<Project[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showResultModal, setShowResultModal] = useState(false);
@@ -84,6 +85,17 @@ export default function ProjectLinks() {
 
   const handleCreateLink = () => {
     setShowCreateModal(true);
+  };
+
+  const handleRefreshData = async () => {
+    setRefreshing(true);
+    try {
+      await authApi.updateAppData(setAppData);
+    } catch (error) {
+      console.error('Error refreshing application data:', error);
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   useEffect(() => {
@@ -371,9 +383,17 @@ export default function ProjectLinks() {
         </div>
       ) : (
         <>
-          {/* Header with Create Link and Filters */}
-          <div className="mb-4">
-            <div className="flex justify-end mb-4">
+      {/* Header with Create Link, Refresh, and Filters */}
+      <div className="mb-4">
+            <div className="flex justify-between items-center mb-4">
+              <button
+                onClick={handleRefreshData}
+                className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white px-4 py-2 rounded flex items-center hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200"
+                title="Refresh Data"
+                disabled={refreshing}
+              >
+                <FontAwesomeIcon icon={faSync} className={`mr-2 text-lg ${refreshing ? 'animate-spin' : ''}`} /> Get Update
+              </button>
               <button
                 onClick={() => setShowCreateModal(true)}
                 className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded flex items-center"
@@ -532,7 +552,14 @@ export default function ProjectLinks() {
       />
 
       {/* Loading State */}
+      {/* Loading State for initial fetch */}
       {loading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <LoadingSpinner size="large" />
+        </div>
+      )}
+      {/* Loading State for refresh action */}
+      {refreshing && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <LoadingSpinner size="large" />
         </div>

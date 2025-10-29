@@ -10,12 +10,13 @@ import {
   faArrowLeft, 
   faArrowRight, 
   faTimes, 
-  faCheck 
+  faCheck,
+  faRedo 
 } from '@fortawesome/free-solid-svg-icons';
 
 // Types for form state
 interface LinkFormState {
-  stage: 'template' | 'notification-setup' | 'telegram-verification' | 'confirmation';
+  stage: 'template' | 'template-details' | 'notification-setup' | 'telegram-verification' | 'confirmation';
   title: string;
   category: string;
   pageType: string;
@@ -38,7 +39,10 @@ interface CreateLinkModalProps {
 export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLinkModalProps) {
 
   const { appData, setAppData } = useAppState();
-  const [formState, setFormState] = useState<LinkFormState>({
+  const userId = appData?.data?.users?.data?.[appData.data.users.headers.indexOf('userId')];
+  const localStorageKey = userId ? `createProjectForm-${userId}` : 'createProjectForm-guest';
+
+  const initialFormState: LinkFormState = {
     stage: 'template',
     title: '',
     category: '',
@@ -51,7 +55,41 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
     telegramVerified: false,
     price: 0,
     renewal: 0
+  };
+
+  const [formState, setFormState] = useState<LinkFormState>(() => {
+    if (typeof window !== 'undefined') {
+      const savedState = localStorage.getItem(localStorageKey);
+      if (savedState) {
+        try {
+          const parsedState = JSON.parse(savedState);
+          // Ensure stage is valid, default to 'template' if not
+          if (!['template', 'template-details', 'notification-setup', 'telegram-verification', 'confirmation'].includes(parsedState.stage)) {
+            parsedState.stage = 'template';
+          }
+          return { ...initialFormState, ...parsedState };
+        } catch (e) {
+          console.error("Failed to parse form state from localStorage", e);
+          return initialFormState;
+        }
+      }
+    }
+    return initialFormState;
   });
+
+  // Save form state to local storage whenever it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(localStorageKey, JSON.stringify(formState));
+    }
+  }, [formState, localStorageKey]);
+
+  const resetForm = () => {
+    setFormState(initialFormState);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(localStorageKey);
+    }
+  };
 
   const [selectedTemplatePreview, setSelectedTemplatePreview] = useState<{
     images?: string;
@@ -204,6 +242,9 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
           alert('Please fill in all required fields');
           return;
         }
+        setFormState(prev => ({ ...prev, stage: 'template-details' }));
+        break;
+      case 'template-details':
         // Validate template variables
         const hasEmptyRequiredVariables = Object.entries(formState.templateVariables)
           .filter(([key]) => !['FormId','formId','PostURL','postURL','Token','token'].includes(key))
@@ -234,8 +275,11 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
 
   const prevStage = () => {
     switch (formState.stage) {
-      case 'notification-setup':
+      case 'template-details':
         setFormState(prev => ({ ...prev, stage: 'template' }));
+        break;
+      case 'notification-setup':
+        setFormState(prev => ({ ...prev, stage: 'template-details' }));
         break;
       case 'telegram-verification':
         setFormState(prev => ({ ...prev, stage: 'notification-setup' }));
@@ -300,14 +344,21 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
       const response = await securedApi.callBackendFunction(payload);
 
       if (response.success) {
+        const projectDetails = {
+          Title: response.data?.title || formState.title, // Use formState.title as fallback
+          LinkURL: response.data?.pageURL || 'N/A', // Corrected to use 'pageURL'
+          Expiry: response.data?.expiryDate || 'N/A', // Assuming 'expiryDate'
+        };
+
         setResultModalProps({
           type: 'success',
           title: 'Project Created',
           message: 'Your project has been successfully created!',
-          details: response.data
+          details: projectDetails
         });
         setShowResultModal(true);
         onSave(response.data);
+        resetForm(); // Reset the form after successful creation
       } else {
         // Handle error scenarios
         setResultModalProps({
@@ -485,14 +536,11 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
                       })
                     }
                   </select>
-                  <div className="mt-4">
-                    {renderTemplatePreview()}
-                  </div>
                 </div>
                 {/* Show selected template price and renewal price */}
                 {formState.template && formState.price && formState.price > 0 && (
                   <div className="mt-2 p-2 bg-blue-50 dark:bg-blue-900 rounded text-sm dark:text-blue-200">
-                    <span className="font-semibold">Template Price:</span> ${formState.price?.toFixed(2)}
+                    <span className="font-semibold">Setup Cost:</span> ${formState.price?.toFixed(2)}
                     {formState.renewal !== undefined && formState.renewal > 0 && (
                       <span className="ml-4 font-semibold">Renewal Price:</span>
                     )}
@@ -503,6 +551,23 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
                 )}
               </div>
             )}
+          </div>
+        );
+
+      case 'template-details':
+        return (
+          <div>
+            <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Template Details</h2>
+            {/* Media Viewer */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Template Media Preview</label>
+              {renderTemplatePreview()}
+            </div>
+
+            <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4 dark:bg-blue-900 dark:border-blue-700 dark:text-blue-200" role="alert">
+              <p className="font-bold">Template Details Guide:</p>
+              <p className="mt-2">Watch the media above to understand how the page works and the requirements needed. Then, fill out the variables below if needed. You can also come back to modify your variable values.</p>
+            </div>
 
             {/* Dynamic Template Variables */}
             {formState.template && renderTemplateVariables()}
@@ -518,9 +583,9 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
               <p className="font-bold">Telegram Setup Steps:</p>
               <ol className="list-decimal list-inside mt-2">
                 <li>Create a Telegram group</li>
+                <li>Add @WebFixxBot to the group chat</li>
                 <li>Add @getidsbot to the group</li>
                 <li>Copy the chat ID shown in the automatic message</li>
-                <li>Add @WebFixxBot to the group chat</li>
                 <li>Enter the chat ID below</li>
               </ol>
             </div>
@@ -624,7 +689,7 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
                     <div className="flex justify-between py-1 border-b border-dashed border-gray-200 dark:border-gray-600"><dt className="font-medium dark:text-gray-300">Template Name:</dt><dd className="dark:text-gray-200">{selectedTemplateName}</dd></div>
                   )}
                   {formState.price && formState.price > 0 && (
-                    <div className="flex justify-between py-1 border-b border-dashed border-gray-200 dark:border-gray-600"><dt className="font-medium dark:text-gray-300">Template Price:</dt><dd className="dark:text-gray-200">${formState.price?.toFixed(2)}</dd></div>
+                    <div className="flex justify-between py-1 border-b border-dashed border-gray-200 dark:border-gray-600"><dt className="font-medium dark:text-gray-300">Setup Cost:</dt><dd className="dark:text-gray-200">${formState.price?.toFixed(2)}</dd></div>
                   )}
                   {formState.renewal !== undefined && formState.renewal > 0 && (
                     <div className="flex justify-between py-1"><dt className="font-medium dark:text-gray-300">Renewal Price:</dt><dd className="dark:text-gray-200">${formState.renewal?.toFixed(2) || '0.00'}</dd></div>
@@ -675,12 +740,21 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
         {/* Modal Header */}
         <div className="flex justify-between items-center p-4 border-b dark:border-gray-700">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Create New Link</h2>
-          <button 
-            onClick={onClose} 
-            className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
-          >
-            <FontAwesomeIcon icon={faTimes} />
-          </button>
+          <div className="flex items-center space-x-4">
+            <button 
+              onClick={resetForm} 
+              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+              title="Reset Form"
+            >
+              <FontAwesomeIcon icon={faRedo} />
+            </button>
+            <button 
+              onClick={onClose} 
+              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+            >
+              <FontAwesomeIcon icon={faTimes} />
+            </button>
+          </div>
         </div>
 
         {/* Modal Content */}
@@ -690,7 +764,7 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
 
         {/* Modal Footer with Navigation */}
         <div className="flex justify-between p-4 border-t dark:border-gray-700">
-          {formState.stage !== 'template' && formState.stage !== 'telegram-verification' && (
+          {formState.stage !== 'template' && (
             <button 
               onClick={prevStage}
               className="btn-secondary flex items-center"
@@ -705,7 +779,7 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
             <button 
               onClick={nextStage}
               className="btn-primary ml-auto flex items-center"
-              disabled={isProcessing || (formState.stage === 'notification-setup' && !formState.telegramId)}
+              disabled={isProcessing || (formState.stage === 'notification-setup' && !formState.telegramId) || (formState.stage === 'template-details' && Object.keys(formState.templateVariables).filter(key => !['FormId','formId','PostURL','postURL','Token','token'].includes(key)).some(key => !formState.templateVariables[key]))}
             >
               {isProcessing ? (
                 <>

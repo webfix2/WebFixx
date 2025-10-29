@@ -117,7 +117,16 @@ const TransactionResultModal: React.FC<TransactionResultModalProps> = ({
                         <div key={key} className="flex flex-col text-sm mb-1">
                           <span className="text-gray-500 dark:text-gray-400 font-medium">{key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}:</span>
                           <span className="font-medium dark:text-gray-200">
-                            {isJsonString && typeof parsedValue === 'object' && parsedValue !== null ? (
+                            {key === 'LinkURL' && typeof parsedValue === 'string' ? (
+                              <a 
+                                href={parsedValue} 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className="text-blue-500 hover:underline break-all"
+                              >
+                                {parsedValue}
+                              </a>
+                            ) : isJsonString && typeof parsedValue === 'object' && parsedValue !== null ? (
                               <div className="ml-2 border-l border-gray-200 dark:border-gray-600 pl-2">
                                 {Object.entries(parsedValue).map(([k, v]) => (
                                   <div key={k} className="flex justify-between">

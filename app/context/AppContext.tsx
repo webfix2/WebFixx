@@ -2,6 +2,8 @@
 
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { AppState } from '../../utils/authTypes';
+import { authApi } from '../../utils/auth'; // Import authApi
+import { WalletTransaction } from '../types/wallet'; // Import WalletTransaction
 
 interface AppContextType {
   appData: AppState | null;
@@ -34,6 +36,37 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem('appState', JSON.stringify(appData));
     }
   }, [appData]);
+
+  // Global transaction status checker
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout | null = null;
+
+    const checkPendingTransactions = async () => {
+      if (appData?.data?.transactions?.data) {
+        const transactionsObj = appData.data.transactions;
+        const headers = transactionsObj.headers;
+        const data = transactionsObj.data;
+        // Assuming data is an array of WalletTransaction objects
+        const hasPending = data.some((tx: WalletTransaction) => tx.status === 'pending');
+
+        if (hasPending) {
+          console.log('Pending transactions detected, updating app data...');
+          await authApi.updateAppData(setAppData);
+        }
+      }
+    };
+
+    // Start checking only if appData is loaded and there's a user
+    if (appData?.user) {
+      intervalId = setInterval(checkPendingTransactions, 60 * 1000); // Every minute
+    }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [appData?.data?.transactions, appData?.user, setAppData]); // Re-run if transactions or user changes
 
   const handleSetAppData = (data: AppState) => {
     setAppData(data);

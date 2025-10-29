@@ -4,9 +4,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCopy, 
   faChevronRight,
-  faCog
+  faCog,
+  faSync // Import faSync
 } from '@fortawesome/free-solid-svg-icons';
 import ProjectSettingsModal from './ProjectSettingsModal';
+import { useAppState } from '../../../context/AppContext'; // Corrected Import useAppState
+import { authApi } from '../../../../utils/auth'; // Corrected Import authApi
+import LoadingSpinner from '../../LoadingSpinner'; // Import LoadingSpinner
 
 // Define a type for the response structure
 type ResponseData = {
@@ -82,7 +86,20 @@ interface ResponseModalProps {
 }
 
 export default function ResponseModal({ selectedProject, onClose }: ResponseModalProps) {
+  const { setAppData } = useAppState(); // Destructure setAppData
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [refreshing, setRefreshing] = useState(false); // New state for refresh
+
+  const handleRefreshData = async () => {
+    setRefreshing(true);
+    try {
+      await authApi.updateAppData(setAppData);
+    } catch (error) {
+      console.error('Error refreshing application data:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   // Parse responses, handling potential parsing errors
   const parsedResponses: ResponseData[] = useMemo(() => {
@@ -280,53 +297,34 @@ export default function ResponseModal({ selectedProject, onClose }: ResponseModa
       )}
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-auto">
         <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 p-4 rounded-lg mb-4 shadow-sm dark:shadow-none">
-          <div className="flex justify-between items-center mb-2">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2">
+            <div className="flex flex-col items-start mb-4 sm:mb-0">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
                 {selectedProject.projectTitle}
               </h2>
-              <p className="text-sm text-gray-600 dark:text-gray-300">{selectedProject.templateNiche} - {selectedProject.templateType}</p>
-              {/* URLs Section */}
-              <div className="flex flex-wrap gap-4 mt-2">
-                {selectedProject.pageURL && (
-                  <span className="flex items-center text-xs bg-blue-50 dark:bg-blue-900 px-2 py-1 rounded dark:text-blue-200">
-                    <span className="font-semibold mr-1">Page URL:</span>
-                    <span className="mr-1 truncate max-w-[160px]" title={selectedProject.pageURL}>{selectedProject.pageURL}</span>
-                    <FontAwesomeIcon
-                      icon={faCopy}
-                      onClick={() => copyToClipboard(selectedProject.pageURL || '', 'Page URL copied')}
-                      className="ml-1 text-gray-500 dark:text-gray-400 cursor-pointer hover:text-blue-600 dark:hover:text-blue-300"
-                      title="Copy Page URL"
-                    />
-                  </span>
-                )}
-                {selectedProject.domainURL && (
-                  <span className="flex items-center text-xs bg-green-50 dark:bg-green-900 px-2 py-1 rounded dark:text-green-200">
-                    <span className="font-semibold mr-1">Domain URL:</span>
-                    <span className="mr-1 truncate max-w-[160px]" title={selectedProject.domainURL}>{selectedProject.domainURL}</span>
-                    <FontAwesomeIcon
-                      icon={faCopy}
-                      onClick={() => copyToClipboard(selectedProject.domainURL || '', 'Domain URL copied')}
-                      className="ml-1 text-gray-500 dark:text-gray-400 cursor-pointer hover:text-green-600 dark:hover:text-green-300"
-                      title="Copy Domain URL"
-                    />
-                  </span>
-                )}
-                {selectedProject.redirectURL && (
-                  <span className="flex items-center text-xs bg-yellow-50 dark:bg-yellow-900 px-2 py-1 rounded dark:text-yellow-200">
-                    <span className="font-semibold mr-1">Redirect URL:</span>
-                    <span className="mr-1 truncate max-w-[160px]" title={selectedProject.redirectURL}>{selectedProject.redirectURL}</span>
-                    <FontAwesomeIcon
-                      icon={faCopy}
-                      onClick={() => copyToClipboard(selectedProject.redirectURL || '', 'Redirect URL copied')}
-                      className="ml-1 text-gray-500 dark:text-gray-400 cursor-pointer hover:text-yellow-600 dark:hover:text-yellow-300"
-                      title="Copy Redirect URL"
-                    />
-                  </span>
-                )}
-              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">{selectedProject.templateNiche} - {selectedProject.templateType}</p>
+              {selectedProject.pageURL && (
+                <div className="flex items-center text-xs bg-blue-50 dark:bg-blue-900 px-2 py-1 rounded dark:text-blue-200">
+                  <span className="font-semibold mr-1">Page URL:</span>
+                  <span className="mr-1 truncate max-w-[200px]" title={selectedProject.pageURL}>{selectedProject.pageURL}</span>
+                  <FontAwesomeIcon
+                    icon={faCopy}
+                    onClick={() => copyToClipboard(selectedProject.pageURL || '', 'Page URL copied')}
+                    className="ml-1 text-gray-500 dark:text-gray-400 cursor-pointer hover:text-blue-600 dark:hover:text-blue-300"
+                    title="Copy Page URL"
+                  />
+                </div>
+              )}
             </div>
             <div className="flex items-center space-x-2">
+              <button
+                onClick={handleRefreshData}
+                className="text-gray-600 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-200 bg-white dark:bg-gray-700 rounded-full p-2 shadow-sm dark:shadow-none"
+                title="Refresh Data"
+                disabled={refreshing}
+              >
+                <FontAwesomeIcon icon={faSync} className={`text-xl ${refreshing ? 'animate-spin' : ''}`} />
+              </button>
               <button
                 className="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-300 bg-white dark:bg-gray-700 rounded-full p-2 shadow-sm dark:shadow-none"
                 title="Settings"
@@ -342,29 +340,29 @@ export default function ResponseModal({ selectedProject, onClose }: ResponseModa
               </button>
             </div>
           </div>
-          <div className="mt-2 grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
-            <div>
-              <span className="font-semibold text-gray-700 dark:text-gray-300">Page Health:</span> 
+          <div className="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 text-sm border-t pt-4 border-gray-200 dark:border-gray-700">
+            <div className="flex flex-col">
+              <span className="font-semibold text-gray-700 dark:text-gray-300">Health:</span> 
               <span className={`
                 ${selectedProject.pageHealth === 'healthy' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}
               `}>
                 {selectedProject.pageHealth}
               </span>
             </div>
-            <div>
-              <span className="font-semibold text-gray-700 dark:text-gray-300">Page Visits:</span> <span className="dark:text-gray-200">{selectedProject.pageVisits}</span>
+            <div className="flex flex-col">
+              <span className="font-semibold text-gray-700 dark:text-gray-300">Visits:</span> <span className="dark:text-gray-200">{selectedProject.pageVisits}</span>
             </div>
-            <div>
-              <span className="font-semibold text-gray-700 dark:text-gray-300">Bot Visits:</span> <span className="dark:text-gray-200">{selectedProject.botVisits}</span>
+            <div className="flex flex-col">
+              <span className="font-semibold text-gray-700 dark:text-gray-300">Bot:</span> <span className="dark:text-gray-200">{selectedProject.botVisits}</span>
             </div>
-            <div>
-              <span className="font-semibold text-gray-700 dark:text-gray-300">Expiry Date:</span> <span className="dark:text-gray-200">{new Date(selectedProject.expiryDate).toLocaleDateString()}</span>
+            <div className="flex flex-col">
+              <span className="font-semibold text-gray-700 dark:text-gray-300">Expires:</span> <span className="dark:text-gray-200">{new Date(selectedProject.expiryDate).toLocaleDateString()}</span>
             </div>
-            <div>
-              <span className="font-semibold text-gray-700 dark:text-gray-300">Total Responses:</span> <span className="dark:text-gray-200">{selectedProject.responseCount}</span>
+            <div className="flex flex-col">
+              <span className="font-semibold text-gray-700 dark:text-gray-300">Responses:</span> <span className="dark:text-gray-200">{selectedProject.responseCount}</span>
             </div>
-            <div>
-              <span className="font-semibold text-gray-700 dark:text-gray-300">System Status:</span> 
+            <div className="flex flex-col">
+              <span className="font-semibold text-gray-700 dark:text-gray-300">Status:</span> 
               <span className={`
                 ${selectedProject.systemStatus === 'active' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}
               `}>
@@ -485,6 +483,13 @@ export default function ResponseModal({ selectedProject, onClose }: ResponseModa
           )}
         </div>
       </div>
+
+      {/* Loading State for refresh action */}
+      {refreshing && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <LoadingSpinner size="large" />
+        </div>
+      )}
     </div>
   );
 }

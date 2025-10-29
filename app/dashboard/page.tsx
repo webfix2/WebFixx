@@ -8,10 +8,15 @@ import { ItemDetailsModal } from '../components/admin/dashboard/ItemDetailsModal
 import { WireTable } from '../components/admin/dashboard/wire/WireTable';
 import { BankTable } from '../components/admin/dashboard/bank/BankTable';
 import { SocialTable } from '../components/admin/dashboard/social/SocialTable';
+import LoadingSpinner from '../components/LoadingSpinner'; // Import LoadingSpinner
+import { authApi } from '../../utils/auth'; // Import authApi
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Import FontAwesomeIcon
+import { faSync } from '@fortawesome/free-solid-svg-icons'; // Import faSync
 
 export default function Dashboard() {
-  const { appData } = useAppState();
+  const { appData, setAppData } = useAppState(); // Destructure setAppData
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false); // New state for refresh
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<'WIRE' | 'BANK' | 'SOCIAL' | null>(null);
   const [memoInput, setMemoInput] = useState<{ id: string; text: string } | null>(null);
@@ -77,6 +82,17 @@ export default function Dashboard() {
       setActiveCategory(availableCategories[0] as 'WIRE' | 'BANK' | 'SOCIAL');
     }
   }, [availableCategories, activeCategory]);
+
+  const handleRefreshData = async () => {
+    setRefreshing(true);
+    try {
+      await authApi.updateAppData(setAppData);
+    } catch (error) {
+      console.error('Error refreshing application data:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   // Common handlers
   const handleVerify = async (id: string) => {
@@ -196,8 +212,15 @@ export default function Dashboard() {
         </div>
       ) : (
         <div className="p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+          <div className="flex justify-start items-center mb-6">
+            <button
+              onClick={handleRefreshData}
+              className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white px-4 py-2 rounded flex items-center hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200"
+              title="Refresh Data"
+              disabled={refreshing}
+            >
+              <FontAwesomeIcon icon={faSync} className={`mr-2 text-lg ${refreshing ? 'animate-spin' : ''}`} /> Get Update
+            </button>
           </div>
 
           <DashboardTabs
@@ -222,6 +245,13 @@ export default function Dashboard() {
             onMemoSave={handleMemoSave}
             loading={loading}
           />
+        </div>
+      )}
+
+      {/* Loading State for refresh action */}
+      {refreshing && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <LoadingSpinner size="large" />
         </div>
       )}
     </>
