@@ -13,6 +13,7 @@ import {
   faCheck,
   faRedo 
 } from '@fortawesome/free-solid-svg-icons';
+import FundAccountModal from '../wallet/FundAccountModal'; // Import the new FundAccountModal
 
 // Types for form state
 interface LinkFormState {
@@ -106,6 +107,14 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
     details: {}
   });
 
+  const [showFundAccountModal, setShowFundAccountModal] = useState(false);
+  const [fundAccountModalProps, setFundAccountModalProps] = useState({
+    requiredAmount: '0.00',
+    currentBalance: '0.00',
+    shortfall: '0.00',
+    message: '',
+  });
+
   // Fetch available templates from appData
   const availableTemplates = appData?.data?.template?.data || [];
   const templateHeaders = appData?.data?.template?.headers || [];
@@ -156,7 +165,6 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
         }
       } catch {}
     }
-    console.log('Template Variables on select:', templateVariables);
     setFormState(prev => ({
       ...prev,
       template: template[templateIndex('templateId')],
@@ -360,21 +368,34 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
         onSave(response.data);
         resetForm(); // Reset the form after successful creation
       } else {
-        // Handle error scenarios
-        setResultModalProps({
-          type: 'error',
-          title: 'Project Creation Failed',
-          message: response.error || 'Failed to create project',
-          details: response.details || {}
-        });
-        setShowResultModal(true);
+        // Check for insufficient balance error here, as backend returns 200 OK with success: false
+        if (response.details?.error?.includes('Insufficient balance')) {
+          const currentBalance = parseFloat(appData?.user?.balance ?? '0');
+          const requiredAmount = formState.price || 0;
+          const shortfall = requiredAmount - currentBalance;
+          setFundAccountModalProps({
+            requiredAmount: requiredAmount.toFixed(2),
+            currentBalance: currentBalance.toFixed(2),
+            shortfall: shortfall.toFixed(2),
+            message: response.details.details?.Message || 'Insufficient balance to create project.',
+          });
+          setShowFundAccountModal(true);
+        } else {
+          // Handle other error scenarios returned with success: false
+          setResultModalProps({
+            type: 'error',
+            title: 'Project Creation Failed',
+            message: response.error || 'Failed to create project',
+            details: response.details || {}
+          });
+          setShowResultModal(true);
+        }
       }
     } catch (error) {
-
       setResultModalProps({
         type: 'error',
         title: 'Unexpected Error',
-        message: 'An unexpected error occurred',
+        message: error instanceof Error ? error.message : 'An unexpected error occurred',
         details: {}
       });
       setShowResultModal(true);
@@ -814,6 +835,16 @@ export default function CreateLinkModal({ onClose, onSave, addresses }: CreateLi
           title={resultModalProps.title}
           message={resultModalProps.message}
           details={resultModalProps.details}
+        />
+
+        {/* Fund Account Modal */}
+        <FundAccountModal
+          isOpen={showFundAccountModal}
+          onClose={() => setShowFundAccountModal(false)}
+          requiredAmount={fundAccountModalProps.requiredAmount}
+          currentBalance={fundAccountModalProps.currentBalance}
+          shortfall={fundAccountModalProps.shortfall}
+          message={fundAccountModalProps.message}
         />
       </div>
     </div>

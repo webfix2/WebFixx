@@ -19,8 +19,8 @@ export default function VerifyPage() {
   const [verificationCode, setVerificationCode] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [sendingEmail, setSendingEmail] = useState(true);
-  const [emailSent, setEmailSent] = useState(false);
+  const [sendingEmail, setSendingEmail] = useState(false); // Assume email is not being sent initially
+  const [emailSent, setEmailSent] = useState(true); // Assume email has already been sent by backend
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [countdown, setCountdown] = useState<number>(0);
   const [canResend, setCanResend] = useState(false);
@@ -107,76 +107,27 @@ export default function VerifyPage() {
     }
   };
 
+  // Effect to initialize countdown and resend state
   useEffect(() => {
-    const sendVerificationEmail = async () => {
-      console.log('Starting verification email process...');
+    const initializeResendTimer = () => {
       const storedTimestamp = localStorage.getItem('verifyEmailTimestamp');
-      
       if (storedTimestamp) {
-        console.log('Found stored timestamp:', storedTimestamp);
         const timeLeft = Math.floor((parseInt(storedTimestamp) - Date.now()) / 1000);
-        console.log('Time left:', timeLeft);
-
         if (timeLeft > 0) {
-          console.log('Using existing timestamp, not sending new email');
           setCountdown(timeLeft);
-          setEmailSent(true);
-          setSendingEmail(false);
-          return;
+          setCanResend(false);
         } else {
-          console.log('Timestamp expired, removing...');
+          // Timestamp expired, allow resend
           localStorage.removeItem('verifyEmailTimestamp');
+          setCanResend(true);
         }
-      }
-
-      const token = document.cookie.match('(^|;)\\s*loggedInAdmin\\s*=\\s*([^;]+)')?.pop();
-      console.log('Authentication token:', token ? 'Found' : 'Not found');
-      console.log('User email:', appData?.user?.email);
-
-      if (!token || !appData?.user?.email) {
-        console.log('Missing token or email, redirecting to home');
-        router.replace("/");
-        return;
-      }
-
-      try {
-        console.log('Sending verification email request with:', {
-          functionName: 'sendVerificationEmail',
-          userEmail: appData.user.email
-        });
-
-        const response = await securedApi.callBackendFunction({
-          functionName: 'sendVerificationEmail',
-          userEmail: appData.user.email
-        });
-
-        console.log('Verification email response:', response);
-
-        if (response.success) {
-          console.log('Email sent successfully');
-          setEmailSent(true);
-          const timestamp = Date.now() + 300000;
-          localStorage.setItem('verifyEmailTimestamp', timestamp.toString());
-          setCountdown(300);
-        } else {
-          console.error('Email sending failed:', response.error);
-          setError("Failed to send verification email. Please try again.");
-        }
-      } catch (err) {
-        console.error("Email sending error details:", {
-          error: err,
-          message: err instanceof Error ? err.message : 'Unknown error',
-          stack: err instanceof Error ? err.stack : undefined
-        });
-        setError("Failed to send verification email");
-      } finally {
-        setSendingEmail(false);
+      } else {
+        // No timestamp, allow resend immediately (or after a short initial delay if desired)
+        setCanResend(true);
       }
     };
-
-    console.log('Initializing verification process...');
-    sendVerificationEmail();
-  }, [appData?.user?.email, router]);
+    initializeResendTimer();
+  }, []); // Run only once on mount
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -279,13 +230,13 @@ export default function VerifyPage() {
     }
   };
 
-  if (!appData || sendingEmail) {
+  if (!appData) { // Removed sendingEmail from loading condition
     return (
       <div className="min-h-screen">
         <LoadingSpinner 
           fullScreen 
           size="large"
-          text="Preparing verification..." 
+          text="Loading user data..." 
         />
       </div>
     );

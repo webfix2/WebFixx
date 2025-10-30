@@ -17,6 +17,7 @@ import { authApi } from "../utils/auth";
 import { useAppState } from "./context/AppContext";
 import type { LoginResponse } from "../utils/auth";
 import LoadingSpinner from './components/LoadingSpinner';
+import type { IpData, DeviceInfo } from '../utils/auth'; // Import IpData and DeviceInfo
 
 export default function Home() {
   const [isLogin, setIsLogin] = useState(true);
@@ -28,7 +29,9 @@ export default function Home() {
     confirmPassword: "",
     referralCode: "",
   });
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true); // Add this state
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [ipData, setIpData] = useState<IpData | null>(null); // State for IP data
+  const [deviceInfo, setDeviceInfo] = useState<DeviceInfo | null>(null); // State for device info
   const router = useRouter();
   const { appData, setAppData } = useAppState();
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
@@ -61,6 +64,66 @@ export default function Home() {
     }
   }, [appData?.user?.darkMode, appData?.isAuthenticated]);
 
+  // Effect to fetch IP data and determine device info
+  useEffect(() => {
+    const getGeoInfo = async () => {
+      try {
+        const response = await fetch('https://ipapi.co/json/');
+        const data = await response.json();
+        setIpData({
+          ipAddress: data.ip,
+          country: data.country_name,
+          city: data.city,
+        });
+      } catch (error) {
+        console.error("Error fetching IP data:", error);
+        // Set default IP data or handle error gracefully
+        setIpData({
+          ipAddress: 'unknown',
+          country: 'unknown',
+          city: 'unknown',
+        });
+      }
+    };
+
+    const getDeviceInfo = () => {
+      const userAgent = navigator.userAgent;
+      let deviceType = 'unknown';
+      let os = 'unknown';
+
+      if (/Mobi|Android/i.test(userAgent)) {
+        deviceType = 'mobile';
+      } else if (/Tablet|iPad/i.test(userAgent)) {
+        deviceType = 'tablet';
+      } else {
+        deviceType = 'desktop';
+      }
+
+      if (/Windows/i.test(userAgent)) {
+        os = 'Windows';
+      } else if (/Mac/i.test(userAgent)) {
+        os = 'macOS';
+      } else if (/Linux/i.test(userAgent)) {
+        os = 'Linux';
+      } else if (/Android/i.test(userAgent)) {
+        os = 'Android';
+      } else if (/iOS/i.test(userAgent)) {
+        os = 'iOS';
+      }
+
+      setDeviceInfo({
+        userAgent: userAgent,
+        platform: navigator.platform,
+        language: navigator.language,
+        deviceType: deviceType,
+        os: os,
+      });
+    };
+
+    getGeoInfo();
+    getDeviceInfo();
+  }, []);
+
   const handleRedirect = (user: LoginResponse['user']) => {
     if (user.role === "ADMIN") {
       router.replace("/root");
@@ -90,16 +153,19 @@ export default function Home() {
     setError("");
     setIsSubmitting(true);
 
+    if (!ipData || !deviceInfo) {
+      setError("Collecting device information. Please try again in a moment.");
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       if (isLogin) {
         const response = await authApi.login({
           email: formData.email,
           password: formData.password,
-          deviceInfo: {
-            userAgent: navigator.userAgent,
-            platform: navigator.platform,
-            language: navigator.language
-          }
+          ipData: ipData,
+          deviceInfo: deviceInfo,
         });
 
         if (response.success && response.token) {
@@ -112,6 +178,7 @@ export default function Home() {
             user: response.user,
             data: response.data,
             isAuthenticated: true,
+            isOffline: false, // Ensure isOffline is explicitly set to false
           });
         }
       } else {
@@ -146,6 +213,8 @@ export default function Home() {
           email: formData.email,
           password: formData.password,
           referralCode: formData.referralCode,
+          ipData: ipData,
+          deviceInfo: deviceInfo,
         });
 
         if (registerResponse.success) {
@@ -165,7 +234,7 @@ export default function Home() {
   };
 
   // Show loading state while checking auth
-  if (isCheckingAuth) {
+  if (isCheckingAuth || !ipData || !deviceInfo) { // Added ipData and deviceInfo to loading condition
     return (
       <div className="min-h-screen">
         <LoadingSpinner 

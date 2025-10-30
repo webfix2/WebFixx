@@ -4,25 +4,23 @@ import { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getUserLimits } from '../../utils/helpers';
 import { 
-  faLink, 
-  faPlus,
-  faSpinner,
   faRedo,
   faPencilAlt,
   faCopy,
   faExternalLinkAlt,
   faEdit, 
   faSave, 
-  faShield,
-  faRobot,
-  faChartLine,
-  faFingerprint
 } from '@fortawesome/free-solid-svg-icons';
 import { useAppState } from '../context/AppContext';
 import { authApi, securedApi } from '../../utils/auth';
 import TransactionResultModal from '../components/TransactionResultModal';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ConfirmationModal from '../components/ConfirmationModal';
+import FundAccountModal from '../components/admin/wallet/FundAccountModal'; // Import the new FundAccountModal
+import NoRedirectsView from '../components/admin/redirect/NoRedirectsView';
+import CreateRedirectCard from '../components/admin/redirect/CreateRedirectCard';
+import ProtectionFeaturesCard from '../components/admin/redirect/ProtectionFeaturesCard';
+import RedirectTable from '../components/admin/redirect/RedirectTable';
 
 // Type definition for redirect paths
 type RedirectPath = {
@@ -67,6 +65,37 @@ export default function RedirectLinks() {
     message: '',
     details: {}
   });
+
+  const [showFundAccountModal, setShowFundAccountModal] = useState(false);
+  const [fundAccountModalProps, setFundAccountModalProps] = useState({
+    requiredAmount: '0.00',
+    currentBalance: '0.00',
+    shortfall: '0.00',
+    message: '',
+  });
+
+  const [redirectPrice, setRedirectPrice] = useState<number>(0);
+  const [redirectRenewalPrice, setRedirectRenewalPrice] = useState<number>(0);
+
+  useEffect(() => {
+    if (appData?.data?.template?.data && appData?.data?.template?.headers) {
+      const templateHeaders = appData.data.template.headers;
+      const templateData = appData.data.template.data;
+
+      const getTemplateIndex = (header: string) => templateHeaders.indexOf(header);
+
+      const webFixxRedirectTemplate = templateData.find(
+        (template: any) => template[getTemplateIndex('name')] === 'WebFixx Redirect'
+      );
+
+      if (webFixxRedirectTemplate) {
+        const price = parseFloat(webFixxRedirectTemplate[getTemplateIndex('price')] || '0');
+        const renewal = parseFloat(webFixxRedirectTemplate[getTemplateIndex('renewal')] || '0');
+        setRedirectPrice(price);
+        setRedirectRenewalPrice(renewal);
+      }
+    }
+  }, [appData?.data?.template?.data, appData?.data?.template?.headers]);
 
   // Add new state for editing paths
   const [editingPathIndex, setEditingPathIndex] = useState<number | null>(null);
@@ -424,12 +453,33 @@ export default function RedirectLinks() {
         });
         setShowResultModal(true);
       } else {
-        throw new Error(response.error || 'Failed to renew redirect link');
+        // Handle errors returned with success: false
+        if (response.details?.error?.includes('Insufficient balance')) {
+          const currentBalance = parseFloat(appData?.user?.balance ?? '0');
+          const requiredAmount = redirectRenewalPrice || 0;
+          const shortfall = requiredAmount - currentBalance;
+          setFundAccountModalProps({
+            requiredAmount: requiredAmount.toFixed(2),
+            currentBalance: currentBalance.toFixed(2),
+            shortfall: shortfall.toFixed(2),
+            message: response.details.details?.Message || 'Insufficient balance to renew redirect link.',
+          });
+          setShowFundAccountModal(true);
+        } else {
+          setResultModalProps({
+            type: 'error',
+            title: 'Renewal Failed',
+            message: response.error || 'Failed to renew redirect link',
+            details: response.details || {}
+          });
+          setShowResultModal(true);
+        }
       }
     } catch (error) {
+      // This catch block now only handles truly unexpected errors
       setResultModalProps({
         type: 'error',
-        title: 'Renewal Failed',
+        title: 'Unexpected Error',
         message: error instanceof Error ? error.message : 'An unexpected error occurred',
         details: {}
       });
@@ -494,12 +544,35 @@ export default function RedirectLinks() {
         // Reset title input
         setNewRedirectTitle('');
       } else {
-        throw new Error(response.error || 'Failed to create redirect link');
+        // Handle errors returned with success: false
+        if (response.details?.error?.includes('Insufficient balance')) {
+          const debitDetails = response.details.details;
+          const requiredAmount = redirectPrice || 0;
+          const currentBalance = parseFloat(appData?.user?.balance ?? '0');
+          const shortfall = Math.max(0, requiredAmount - currentBalance);
+
+          setFundAccountModalProps({
+            requiredAmount: requiredAmount.toFixed(2),
+            currentBalance: currentBalance.toFixed(2),
+            shortfall: shortfall.toFixed(2),
+            message: debitDetails?.Message || 'Insufficient balance to create redirect link.',
+          });
+          setShowFundAccountModal(true);
+        } else {
+          setResultModalProps({
+            type: 'error',
+            title: 'Creation Failed',
+            message: response.error || 'Failed to create redirect link',
+            details: response.details || {}
+          });
+          setShowResultModal(true);
+        }
       }
     } catch (error) {
+      // This catch block now only handles truly unexpected errors (e.g., network issues)
       setResultModalProps({
         type: 'error',
-        title: 'Creation Failed',
+        title: 'Unexpected Error',
         message: error instanceof Error ? error.message : 'An unexpected error occurred',
         details: {}
       });
@@ -536,310 +609,46 @@ export default function RedirectLinks() {
   };
 
   return (
-    <div className="dark:bg-gray-900 dark:text-gray-100 min-h-screen">
-      {/* Create Redirect Section */}
-      <div className="grid md:grid-cols-2 gap-8 mb-8">
-        {/* Create Redirect Card */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border dark:border-gray-700 shadow dark:shadow-none">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Create Redirect Link</h2>
-              <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">Create a new protected redirect for $50</p>
-            </div>
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center dark:bg-blue-900">
-              <FontAwesomeIcon icon={faLink} className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-            </div>
-          </div>
-          <div className="space-y-6">
-            <div className="flex flex-col space-y-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Redirect Title:</label>
-              <input
-                type="text"
-                value={newRedirectTitle}
-                onChange={(e) => setNewRedirectTitle(e.target.value)}
-                placeholder="Enter a descriptive title"
-                className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
-              />
-            </div>              <button
-                onClick={confirmCreateRedirect} // Call confirmCreateRedirect instead of handleCreateRedirect directly
-                disabled={isProcessing}
-                className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 dark:disabled:bg-blue-800 text-white rounded-lg transition-colors flex items-center justify-center shadow-sm"
-              >
-                {isProcessing ? (
-                  <>
-                    <FontAwesomeIcon icon={faSpinner} className="w-4 h-4 mr-2 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <FontAwesomeIcon icon={faPlus} className="w-4 h-4 mr-2" />
-                    Create Redirect
-                  </>
-                )}
-              </button>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-4 text-left">
-                Redirect links are valid for 30 days. Renewals will extend the duration from the last expiry date.
-              </p>
-            </div>
+    <div className="dark:bg-gray-900 dark:text-gray-100 min-h-screen p-4 md:p-8">
+      {redirectLinks.length === 0 ? (
+        <NoRedirectsView
+          redirectPrice={redirectPrice}
+          newRedirectTitle={newRedirectTitle}
+          setNewRedirectTitle={setNewRedirectTitle}
+          confirmCreateRedirect={confirmCreateRedirect}
+          isProcessing={isProcessing}
+        />
+      ) : (
+        <>
+          <div className="grid md:grid-cols-2 gap-8 mb-8">
+            <CreateRedirectCard
+              redirectPrice={redirectPrice}
+              newRedirectTitle={newRedirectTitle}
+              setNewRedirectTitle={setNewRedirectTitle}
+              confirmCreateRedirect={confirmCreateRedirect}
+              isProcessing={isProcessing}
+            />
+            <ProtectionFeaturesCard />
           </div>
 
-        {/* Features/Status Card - Hidden on mobile */}
-        <div className="hidden md:block bg-gray-50 rounded-lg p-6 border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-          <h2 className="text-xl font-bold text-gray-900 mb-4 dark:text-white">Protection Features</h2>
-          <div className="space-y-6 mt-6">
-            <div className="flex items-center space-x-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center dark:bg-green-900">
-                <FontAwesomeIcon icon={faShield} className="w-4 h-4 text-green-600 dark:text-green-400" />
-              </div>
-              <div>
-                <h3 className="font-medium dark:text-white">Anti-Red</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Advanced protection against detection</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center dark:bg-blue-900">
-                <FontAwesomeIcon icon={faRobot} className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-              </div>
-              <div>
-                <h3 className="font-medium dark:text-white">Bot Detector/Killer</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Automatic bot detection and blocking</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center dark:bg-purple-900">
-                <FontAwesomeIcon icon={faChartLine} className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-              </div>
-              <div>
-                <h3 className="font-medium dark:text-white">Analytics</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Traffic and health monitoring</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center dark:bg-yellow-900">
-                <FontAwesomeIcon icon={faFingerprint} className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
-              </div>
-              <div>
-                <h3 className="font-medium dark:text-white">Fingerprinting</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Visitor validation system</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Redirect Links Table */}
-      <div className="w-full">
-        <h2 className="text-xl font-bold text-gray-900 mb-4 dark:text-white">
-          Redirect Links
-        </h2>
-        <div className="overflow-x-auto">
-          <table className="w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-700">
-              <tr>
-                {/* Desktop Columns */}
-                <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
-                  Title
-                </th>
-                
-                {/* Mobile and Desktop Columns */}
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
-                  Paths
-                </th>
-                <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
-                  Clicks
-                </th>
-                <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
-                  Blocked
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
-                  Time Left
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-              {redirectLinks.length > 0 ? (
-                currentLinks.map((link: any, index: number) => {
-                  // Parse paths
-                  const paths = parsePaths(link.paths);
-                  
-                  // Calculate time remaining
-                  const timeRemaining = calculateTimeRemaining(link.expiryDate);
-                  
-                  return (
-                    <tr key={index} className="dark:text-gray-200">
-                      {/* Desktop Title Column */}
-                      <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900 dark:text-white">{link.title}</div>
-                      </td>
-                      
-                      {/* Paths Column (Mobile and Desktop) */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <button 
-                          onClick={() => handleOpenPathsModal(link.redirectId, link.paths)}
-                          className="text-blue-600 hover:underline dark:text-blue-400 dark:hover:underline"
-                        >
-                          {paths.length} Paths
-                        </button>
-                      </td>
-                      
-                      {/* Clicks Column (Desktop Only) */}
-                      <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm text-gray-900 dark:text-white">{link.clicks || '0'}</span>
-                      </td>
-                      
-                      {/* Blocked Column (Desktop Only) */}
-                      <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap">
-                        <span className={`
-                          text-sm font-medium px-2 py-1 rounded
-                          ${parseInt(link.blocked || '0') > 0 ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' : 
-                            link.blocked === '0' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 
-                            'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'}
-                        `}>
-                          {link.blocked || '0'}
-                        </span>
-                      </td>
-                      
-                      {/* Time Left Column (Mobile and Desktop) */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`text-sm font-medium ${
-                          timeRemaining === 'Expired' 
-                            ? 'text-red-600 dark:text-red-400' 
-                            : timeRemaining.includes('day') 
-                              ? 'text-green-600 dark:text-green-400' 
-                              : 'text-yellow-600 dark:text-yellow-400'
-                        }`}>
-                          {timeRemaining}
-                        </span>
-                      </td>
-                      
-                      {/* Actions Column (Mobile and Desktop) */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {link.status !== 'EXPIRED' && (
-                          <button
-                            onClick={() => handleRenewRedirect(link.redirectId)}
-                            disabled={processingLinkId === link.redirectId}
-                            className="text-blue-600 hover:text-blue-900 disabled:opacity-50 dark:text-blue-400 dark:hover:text-blue-300"
-                            title="Renew Redirect Link"
-                          >
-                            {processingLinkId === link.redirectId ? (
-                              <FontAwesomeIcon icon={faSpinner} className="animate-spin" />
-                            ) : (
-                              <FontAwesomeIcon icon={faRedo} />
-                            )}
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td colSpan={6} className="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
-                    No redirect links found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Pagination Controls */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between border-t border-gray-200 px-4 py-3 sm:px-6 mt-4 dark:border-gray-700">
-            <div className="flex flex-1 justify-between sm:hidden">
-              <button
-                onClick={goToPreviousPage}
-                disabled={currentPage === 1}
-                className={`relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium dark:border-gray-600 dark:bg-gray-800 ${
-                  currentPage === 1 ? 'text-gray-300 dark:text-gray-600' : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700'
-                }`}
-              >
-                Previous
-              </button>
-              <button
-                onClick={goToNextPage}
-                disabled={currentPage === totalPages}
-                className={`relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium dark:border-gray-600 dark:bg-gray-800 ${
-                  currentPage === totalPages ? 'text-gray-300 dark:text-gray-600' : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700'
-                }`}
-              >
-                Next
-              </button>
-            </div>
-            <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-              <div>
-                <p className="text-sm text-gray-700 dark:text-gray-300">
-                  Showing <span className="font-medium">{indexOfFirstRow + 1}</span> to{' '}
-                  <span className="font-medium">
-                    {Math.min(indexOfLastRow, redirectLinks.length)}
-                  </span>{' '}
-                  of <span className="font-medium">{redirectLinks.length}</span> results
-                </p>
-              </div>
-              <div>
-                <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-                  <button
-                    onClick={goToPreviousPage}
-                    disabled={currentPage === 1}
-                    className={`relative inline-flex items-center rounded-l-md px-2 py-2 ${
-                      currentPage === 1 ? 'text-gray-300 dark:text-gray-600' : 'text-gray-400 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700'
-                    }`}
-                  >
-                    <span className="sr-only">Previous</span>
-                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                      <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 01.02-1.06z" clipRule="evenodd" />
-                    </svg>
-                  </button>
-                  
-                  {/* Page numbers */}
-                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                    let pageNumber: number; // Explicitly type as number
-                    if (totalPages <= 5) {
-                      pageNumber = i + 1;
-                    } else if (currentPage <= 3) {
-                      pageNumber = i + 1;
-                    } else if (currentPage >= totalPages - 2) {
-                      pageNumber = totalPages - 4 + i;
-                    } else {
-                      pageNumber = currentPage - 2 + i;
-                    }
-                    
-                    return (
-                      <button
-                        key={pageNumber}
-                        onClick={() => goToPage(pageNumber)}
-                        className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${
-                          currentPage === pageNumber
-                            ? 'z-10 bg-blue-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-700 dark:focus-visible:outline-blue-700'
-                            : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0 dark:bg-gray-800 dark:text-gray-100 dark:ring-gray-600 dark:hover:bg-gray-700'
-                        }`}
-                      >
-                        {pageNumber}
-                      </button>
-                    );
-                  })}
-                  
-                  <button
-                    onClick={goToNextPage}
-                    disabled={currentPage === totalPages}
-                    className={`relative inline-flex items-center rounded-r-md px-2 py-2 ${
-                      currentPage === totalPages ? 'text-gray-300 dark:text-gray-600' : 'text-gray-400 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700'
-                    }`}
-                  >
-                    <span className="sr-only">Next</span>
-                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                      <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06.02z" clipRule="evenodd" />
-                    </svg>
-                  </button>
-                </nav>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+          <RedirectTable
+            redirectLinks={redirectLinks}
+            currentLinks={currentLinks}
+            parsePaths={parsePaths}
+            handleOpenPathsModal={handleOpenPathsModal}
+            calculateTimeRemaining={calculateTimeRemaining}
+            handleRenewRedirect={handleRenewRedirect}
+            processingLinkId={processingLinkId}
+            totalPages={totalPages}
+            currentPage={currentPage}
+            goToNextPage={goToNextPage}
+            goToPreviousPage={goToPreviousPage}
+            goToPage={goToPage}
+            indexOfFirstRow={indexOfFirstRow}
+            indexOfLastRow={indexOfLastRow}
+          />
+        </>
+      )}
 
       {/* Paths Modal */}
       {showPathsModal && (
@@ -875,7 +684,7 @@ export default function RedirectLinks() {
                         </span>
                       </div>
 
-                      {/* Paths Table (if any) */}
+                      {/* Existing Paths Table (if any) */}
                       {pathCount > 0 && (
                         <div className="mb-4">
                           <h4 className="text-lg font-medium dark:text-white mb-2">Existing Paths</h4>
@@ -1050,7 +859,7 @@ export default function RedirectLinks() {
           onClose={() => setShowCreateRedirectConfirmation(false)}
           onConfirm={handleCreateRedirect}
           title="Confirm Redirect Creation"
-          message={`Are you sure you want to create a redirect link titled "${newRedirectTitle}"? This will cost $50.`}
+          message={`Are you sure you want to create a redirect link titled "${newRedirectTitle}"? This will cost $${redirectPrice.toFixed(2)}.`}
           confirmText={isProcessing ? 'Creating...' : 'Confirm'}
           cancelText="Cancel"
           confirmDisabled={isProcessing}
@@ -1067,12 +876,22 @@ export default function RedirectLinks() {
           }}
           onConfirm={executeRenewRedirect}
           title="Confirm Redirect Renewal"
-          message="Are you sure you want to renew this redirect link? A renewal fee will be charged."
+          message={`Are you sure you want to renew this redirect link? This will cost $${redirectRenewalPrice.toFixed(2)}.`}
           confirmText={isProcessing ? 'Renewing...' : 'Confirm Renewal'}
           cancelText="Cancel"
           confirmDisabled={isProcessing}
         />
       )}
+
+      {/* Fund Account Modal */}
+      <FundAccountModal
+        isOpen={showFundAccountModal}
+        onClose={() => setShowFundAccountModal(false)}
+        requiredAmount={fundAccountModalProps.requiredAmount}
+        currentBalance={fundAccountModalProps.currentBalance}
+        shortfall={fundAccountModalProps.shortfall}
+        message={fundAccountModalProps.message}
+      />
     </div>
   );
 }

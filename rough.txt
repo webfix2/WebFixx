@@ -1,13 +1,24 @@
-https://github.com/Govind783/next-crypto-tracker
+Okay it works now. The pages i want to work on now are the /wallet, /rediect and /settimgs page. After completely imple,enting this i want you to give me a solid description so my backend will easily know how to create the methods and what to return. Give me a soluid description.
 
-https://github.com/dewasemadi/Crypto-Market-Nextjs
-
-
+1. Rediect page; Just like the /dashboard and /projects page. I also want it to have a view of when there is no redirect available to view in the table hide the page and viea No Redirect Available view and prompt the user to Create Redirect Link. Also make sure the view shows the protexction features as well.
 
 
-business template
+2. Wallet page; if the user do not have any transaction also show an action Add Funds view that prompts the user to add funds to their account.
 
-https://github.com/fidellim/Business-Landing-Page-NextJs
+b. Also the buy us a drink directly calls the debit method in my backend which i do not want so create a new functionName that sends the required data  to the backend so the backend will then call the debit method. You can name it buyUsAdrink function. i will create it in the backend. 
 
 
-https://github.com/moinbukhari/NextJS-landing-page-template
+3. The settings page has to be functional as well because i see all the functionalities are not work so;
+
+- The user must niot be able to edit profile settigs so remove the edit profile button and functionality
+
+- The upgrade Plan button must be able to show a view that details the plans we have in the limits data in the app data. And based on the user choice send a api call with functionName changePlan that will automatically handle the debit and it should be able to show the Fund Account Modal if there is payment error just like i imple,ented in the projects and redirect creation logics after the api call.
+
+- The advance securety 2-fa enabling will work with the twoFactorAuth key have just added to my user type just like the darkMode. 
+
+- The change password will open a view that will prompt user to enmter old password and new password twice for confirmation and then send to the backend.
+
+
+- the Generate New API Key button will call a backend function that will handle the regenration of the api key that is also found as apiKey in the user type just like darkMode.
+
+- the destroy account will show a warning with the confirmation modal and send api call with functionName destroyAccount that will handle to termination of the account. The user should be logged out automatically after this.

@@ -32,6 +32,7 @@ export interface SecuredApiResponse<T = any> {
 
 export interface AppState {
     user: UserData | null; // Use UserData here
+    isOffline: boolean; // Added isOffline state
     data: {
       transactions: ApiResponseData<WalletTransaction>;
       projects: ApiResponseData<Project>; // Use Project type
@@ -50,4 +51,9 @@ export interface AppState {
 export interface GlobalAppStateContext {
   appData: AppState | null;
   setAppData: (state: AppState) => void;
+  clearAppData: () => void; // Added clearAppData function
+  isOffline: boolean; // Added isOffline state
+  setIsOffline: (isOffline: boolean) => void; // Added setIsOffline function
+  attemptReconnect: () => Promise<boolean>; // Added attemptReconnect function
+  isReconnecting: boolean; // Added isReconnecting state
 }

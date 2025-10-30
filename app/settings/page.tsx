@@ -10,51 +10,138 @@ import {
   faTrash,
   faCrown,
   faEdit,
-  faSync
+  faSync,
+  faSpinner // Added faSpinner
 } from '@fortawesome/free-solid-svg-icons';
 import { useAppState } from '../context/AppContext';
+import type { AppState } from '../../utils/authTypes'; // Import AppState from authTypes
 import LoadingSpinner from '../components/LoadingSpinner';
+import { securedApi } from '../../utils/auth';
+import TransactionResultModal from '../components/TransactionResultModal';
+import ConfirmationModal from '../components/ConfirmationModal';
+import FundAccountModal from '../components/admin/wallet/FundAccountModal';
+import { getUserLimits } from '../../utils/helpers';
 
 // Modal components (to be implemented)
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
+  // Add other props as needed for specific modals
+  appData?: any; // For UpgradePlanModal
+  userLimits?: any; // For UpgradePlanModal
+  onConfirm?: () => void; // For confirmation modals
+  title?: string; // For confirmation modals
+  message?: string; // For confirmation modals
+  confirmText?: string; // For confirmation modals
+  cancelText?: string; // For confirmation modals
+  confirmDisabled?: boolean; // For confirmation modals
+  currentApiKey?: string; // For ApiKeyModal
+  onGenerateNewApiKey?: () => void; // For ApiKeyModal
+  onTwoFactorToggle?: (enable: boolean) => void; // For TwoFactorModal
+  isTwoFactorEnabled?: boolean; // For TwoFactorModal
+  onChangePassword?: (oldPass: string, newPass: string) => void; // For ChangePasswordModal
+  onDestroyAccount?: () => void; // For DestroyAccountModal
+  selectedPlan?: string | null; // Added for UpgradePlanModal
+  setSelectedPlan?: React.Dispatch<React.SetStateAction<string | null>>; // Added for UpgradePlanModal
 }
 
-const EditProfileModal = ({ isOpen, onClose }: ModalProps) => {
-  if (!isOpen) return null;
-  return (
-    <div className="modal-backdrop bg-gray-900 bg-opacity-50 dark:bg-opacity-75 fixed inset-0 flex items-center justify-center z-50">
-      <div className="modal-content bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/3 relative">
-        <h2 className="text-xl font-bold mb-4">Edit Profile</h2>
-        {/* Form fields will go here */}
-        <button onClick={onClose} className="mt-4 btn-secondary">Close</button>
-      </div>
-    </div>
-  );
-};
 
-const UpgradePlanModal = ({ isOpen, onClose }: ModalProps) => {
+const UpgradePlanModal = ({ isOpen, onClose, appData, userLimits, onConfirm, selectedPlan, setSelectedPlan, confirmDisabled }: ModalProps) => {
   if (!isOpen) return null;
+
+  const availablePlans = appData?.data?.limits?.data || [];
+  const planHeaders = appData?.data?.limits?.headers || [];
+
+  const getPlanIndex = (header: string) => planHeaders.indexOf(header);
+
+  const currentPlan = appData?.user?.plan?.toLowerCase() || 'free'; // Assuming 'free' is the default plan
+
   return (
     <div className="modal-backdrop bg-gray-900 bg-opacity-50 dark:bg-opacity-75 fixed inset-0 flex items-center justify-center z-50">
-      <div className="modal-content bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/3 relative">
+      <div className="modal-content bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-6 rounded-lg shadow-lg w-11/12 md:w-2/3 lg:w-1/2 relative">
         <h2 className="text-xl font-bold mb-4">Upgrade Plan</h2>
-        {/* Plan options will go here */}
-        <button onClick={onClose} className="mt-4 btn-secondary">Close</button>
+        <p className="text-gray-700 dark:text-gray-200 mb-6">Select a plan to upgrade your account and unlock more features.</p>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          {availablePlans.map((plan: any, index: number) => {
+            const planName = plan[getPlanIndex('plan')]?.toLowerCase();
+            const isCurrentPlan = currentPlan === planName;
+            const price = parseFloat(plan[getPlanIndex('price')] || '0');
+
+            return (
+              <div
+                key={index}
+                className={`
+                  p-4 border rounded-lg cursor-pointer
+                  ${isCurrentPlan ? 'border-blue-500 ring-2 ring-blue-500' : 'border-gray-300 dark:border-gray-600'}
+                  ${selectedPlan === planName ? 'bg-blue-50 dark:bg-blue-900' : 'bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600'}
+                `}
+                onClick={() => setSelectedPlan && setSelectedPlan(planName)}
+              >
+                <h3 className="font-semibold text-lg mb-2 capitalize dark:text-white">{planName}</h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-2">
+                  Price: ${price.toFixed(2)} / month
+                </p>
+                <ul className="text-sm text-gray-500 dark:text-gray-400 list-disc list-inside">
+                  <li>Redirect Limit: {plan[getPlanIndex('redirectLimit')]}</li>
+                  <li>Project Limit: {plan[getPlanIndex('projectLimit')]}</li>
+                  <li>Path Limit: {plan[getPlanIndex('pathLimit')]}</li>
+                  <li>Team Members: {plan[getPlanIndex('teamMembers')]}</li>
+                  <li>Custom Domains: {plan[getPlanIndex('customDomains')]}</li>
+                </ul>
+                {isCurrentPlan && (
+                  <span className="mt-2 inline-block bg-blue-500 text-white text-xs px-2 py-1 rounded-full">Current Plan</span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="flex justify-end space-x-4">
+          <button onClick={onClose} className="btn-secondary">Cancel</button>
+          <button
+            onClick={onConfirm}
+            disabled={confirmDisabled || !selectedPlan || selectedPlan === currentPlan}
+            className="btn-primary"
+          >
+            {confirmDisabled ? <FontAwesomeIcon icon={faSpinner} className="animate-spin mr-2" /> : null}
+            {selectedPlan === currentPlan ? 'Current Plan' : 'Upgrade'}
+          </button>
+        </div>
       </div>
     </div>
   );
 };
 
-const TwoFactorModal = ({ isOpen, onClose }: ModalProps) => {
+const TwoFactorModal = ({ isOpen, onClose, appData, onTwoFactorToggle, isTwoFactorEnabled }: ModalProps) => {
   if (!isOpen) return null;
+
+  const isEnabled = appData?.user?.twoFactorAuth || false;
+
   return (
     <div className="modal-backdrop bg-gray-900 bg-opacity-50 dark:bg-opacity-75 fixed inset-0 flex items-center justify-center z-50">
       <div className="modal-content bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/3 relative">
         <h2 className="text-xl font-bold mb-4">Two-Factor Authentication</h2>
-        {/* 2FA setup will go here */}
-        <button onClick={onClose} className="mt-4 btn-secondary">Close</button>
+        <p className="mb-4">
+          Two-factor authentication is currently: <span className={`font-semibold ${isEnabled ? 'text-green-500' : 'text-red-500'}`}>
+            {isEnabled ? 'Enabled' : 'Disabled'}
+          </span>
+        </p>
+        <p className="mb-6">
+          {isEnabled
+            ? 'Disabling 2FA will remove an extra layer of security from your account.'
+            : 'Enabling 2FA will add an extra layer of security to your account, requiring a code from your authenticator app.'
+          }
+        </p>
+        <div className="flex justify-end space-x-4">
+          <button onClick={onClose} className="btn-secondary">Cancel</button>
+          <button
+            onClick={() => onTwoFactorToggle && onTwoFactorToggle(!isEnabled)}
+            className={`${isEnabled ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'} text-white py-2 px-4 rounded-lg`}
+          >
+            {isEnabled ? 'Disable 2FA' : 'Enable 2FA'}
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -103,15 +190,104 @@ const DestroyAccountModal = ({ isOpen, onClose }: ModalProps) => {
 };
 
 export default function UserSettings() {
-  const { appData } = useAppState();
+  const { appData, setAppData } = useAppState();
+  const userLimits = getUserLimits(appData);
   
   // Modal states
-  const [showEditProfileModal, setShowEditProfileModal] = useState(false);
   const [showUpgradePlanModal, setShowUpgradePlanModal] = useState(false);
   const [showTwoFactorModal, setShowTwoFactorModal] = useState(false);
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const [showDestroyAccountModal, setShowDestroyAccountModal] = useState(false);
+
+  // Transaction result modal state
+  const [showResultModal, setShowResultModal] = useState(false);
+  const [resultModalProps, setResultModalProps] = useState({
+    type: 'success' as 'success' | 'error' | 'warning',
+    title: '',
+    message: '',
+    details: {}
+  });
+
+  const [showFundAccountModal, setShowFundAccountModal] = useState(false);
+  const [fundAccountModalProps, setFundAccountModalProps] = useState({
+    requiredAmount: '0.00',
+    currentBalance: '0.00',
+    shortfall: '0.00',
+    message: '',
+  });
+
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [showPlanConfirmation, setShowPlanConfirmation] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  // Function to handle plan change
+  const handleChangePlan = async () => {
+    if (!selectedPlan) return;
+
+    setIsProcessing(true);
+    setShowPlanConfirmation(false); // Close confirmation modal
+
+    try {
+      const limitsHeaders = appData?.data?.limits?.headers;
+      if (!limitsHeaders) {
+        throw new Error('Limits data headers are not available.');
+      }
+
+      const getLimitIndex = (header: string) => limitsHeaders.indexOf(header);
+
+      const selectedPlanData = appData?.data?.limits?.data?.find(
+        (plan: any) => plan[getLimitIndex('plan')]?.toLowerCase() === selectedPlan
+      );
+      const requiredAmount = parseFloat(selectedPlanData?.[getLimitIndex('price')] || '0');
+      const currentBalance = parseFloat(appData?.user?.balance ?? '0');
+      const shortfall = requiredAmount - currentBalance;
+
+      const response = await securedApi.callBackendFunction({
+        functionName: 'changePlan',
+        plan: selectedPlan,
+      });
+
+      if (response.success) {
+        setResultModalProps({
+          type: 'success',
+          title: 'Plan Upgraded',
+          message: `You have successfully upgraded to the ${selectedPlan} plan!`,
+          details: response.data || {}
+        });
+        // appData will be globally updated in auth.ts, no need to set AppData here
+      } else {
+        if (response.details?.error?.includes('Insufficient balance')) {
+          setFundAccountModalProps({
+            requiredAmount: requiredAmount.toFixed(2),
+            currentBalance: currentBalance.toFixed(2),
+            shortfall: shortfall.toFixed(2),
+            message: response.details.details?.Message || `Insufficient balance to upgrade to ${selectedPlan} plan.`,
+          });
+          setShowFundAccountModal(true);
+        } else {
+          setResultModalProps({
+            type: 'error',
+            title: 'Upgrade Failed',
+            message: response.error || `Failed to upgrade to ${selectedPlan} plan.`,
+            details: response.details || {}
+          });
+        }
+      }
+    } catch (error: any) {
+      setResultModalProps({
+        type: 'error',
+        title: 'Unexpected Error',
+        message: error instanceof Error ? error.message : 'An unexpected error occurred',
+        details: {}
+      });
+    } finally {
+      setIsProcessing(false);
+      setShowResultModal(true);
+      setShowUpgradePlanModal(false); // Close the upgrade modal
+      setSelectedPlan(null); // Reset selected plan
+    }
+  };
 
   if (!appData?.user) {
     return (
@@ -120,6 +296,46 @@ export default function UserSettings() {
       </div>
     );
   }
+
+  // Function to handle 2FA toggle
+  const handleTwoFactorToggle = async (enable: boolean) => {
+    setIsProcessing(true);
+    setShowTwoFactorModal(false); // Close the modal
+
+    try {
+      const response = await securedApi.callBackendFunction({
+        functionName: 'toggleTwoFactorAuth',
+        enable: enable,
+      });
+
+      if (response.success) {
+        setResultModalProps({
+          type: 'success',
+          title: `2FA ${enable ? 'Enabled' : 'Disabled'}`,
+          message: `Two-factor authentication has been successfully ${enable ? 'enabled' : 'disabled'}.`,
+          details: response.data || {}
+        });
+        // appData will be globally updated in auth.ts
+      } else {
+        setResultModalProps({
+          type: 'error',
+          title: `2FA ${enable ? 'Enable' : 'Disable'} Failed`,
+          message: response.error || `Failed to ${enable ? 'enable' : 'disable'} two-factor authentication.`,
+          details: response.details || {}
+        });
+      }
+    } catch (error: any) {
+      setResultModalProps({
+        type: 'error',
+        title: 'Unexpected Error',
+        message: error instanceof Error ? error.message : 'An unexpected error occurred',
+        details: {}
+      });
+    } finally {
+      setIsProcessing(false);
+      setShowResultModal(true);
+    }
+  };
 
   // Format the creation date
   const formatDate = (dateString: string) => {
@@ -134,47 +350,24 @@ export default function UserSettings() {
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      {/* Profile Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-none p-6 h-full">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Profile</h2>
-            <FontAwesomeIcon icon={faUser} className="w-6 h-6 text-blue-500" />
-          </div>
-          <div className="space-y-2">
-            <p className="text-gray-700 dark:text-gray-200">{appData.user.email}</p>
-            <p className="text-gray-500 dark:text-gray-400 text-sm">Signed up {formatDate(appData.user.createdAt || '')}</p>
-          </div>
-          <div className="mt-6">
-            <button
-              onClick={() => setShowEditProfileModal(true)}
-              className="w-full btn-primary flex items-center justify-center"
-            >
-              <FontAwesomeIcon icon={faEdit} className="w-4 h-4 mr-2" />
-              Edit Profile
-            </button>
-          </div>
+      {/* Upgrade Plan Card */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-none p-6 h-full mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Upgrade Plan</h2>
+          <FontAwesomeIcon icon={faCrown} className="w-6 h-6 text-amber-500" />
         </div>
-
-        {/* Upgrade Plan Card */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-none p-6 h-full">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Upgrade Plan</h2>
-            <FontAwesomeIcon icon={faCrown} className="w-6 h-6 text-amber-500" />
-          </div>
-          <div className="space-y-2">
-            <p className="text-gray-700 dark:text-gray-200">Current Plan: <span className="font-semibold">Free</span></p>
-            <p className="text-gray-500 dark:text-gray-400 text-sm">Upgrade to access premium features</p>
-          </div>
-          <div className="mt-6">
-            <button
-              onClick={() => setShowUpgradePlanModal(true)}
-              className="w-full bg-amber-500 hover:bg-amber-600 text-white py-2 px-4 rounded-lg flex items-center justify-center"
-            >
-              <FontAwesomeIcon icon={faCrown} className="w-4 h-4 mr-2" />
-              Upgrade Plan
-            </button>
-          </div>
+        <div className="space-y-2">
+          <p className="text-gray-700 dark:text-gray-200">Current Plan: <span className="font-semibold">Free</span></p>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">Upgrade to access premium features</p>
+        </div>
+        <div className="mt-6">
+          <button
+            onClick={() => setShowUpgradePlanModal(true)}
+            className="w-full bg-amber-500 hover:bg-amber-600 text-white py-2 px-4 rounded-lg flex items-center justify-center"
+          >
+            <FontAwesomeIcon icon={faCrown} className="w-4 h-4 mr-2" />
+            Upgrade Plan
+          </button>
         </div>
       </div>
 
@@ -259,12 +452,71 @@ export default function UserSettings() {
       </div>
 
       {/* Modals */}
-      <EditProfileModal isOpen={showEditProfileModal} onClose={() => setShowEditProfileModal(false)} />
-      <UpgradePlanModal isOpen={showUpgradePlanModal} onClose={() => setShowUpgradePlanModal(false)} />
-      <TwoFactorModal isOpen={showTwoFactorModal} onClose={() => setShowTwoFactorModal(false)} />
+      <UpgradePlanModal 
+        isOpen={showUpgradePlanModal} 
+        onClose={() => setShowUpgradePlanModal(false)} 
+        appData={appData}
+        userLimits={userLimits}
+        onConfirm={() => setShowPlanConfirmation(true)}
+        selectedPlan={selectedPlan}
+        setSelectedPlan={setSelectedPlan}
+        confirmDisabled={isProcessing}
+      />
+      <TwoFactorModal 
+        isOpen={showTwoFactorModal} 
+        onClose={() => setShowTwoFactorModal(false)} 
+        appData={appData}
+        onTwoFactorToggle={handleTwoFactorToggle}
+        isTwoFactorEnabled={appData?.user?.twoFactorAuth || false}
+      />
       <ChangePasswordModal isOpen={showChangePasswordModal} onClose={() => setShowChangePasswordModal(false)} />
       <ApiKeyModal isOpen={showApiKeyModal} onClose={() => setShowApiKeyModal(false)} />
       <DestroyAccountModal isOpen={showDestroyAccountModal} onClose={() => setShowDestroyAccountModal(false)} />
+
+      {/* Transaction Result Modal */}
+      <TransactionResultModal
+        isOpen={showResultModal}
+        onClose={() => setShowResultModal(false)}
+        type={resultModalProps.type}
+        title={resultModalProps.title}
+        message={resultModalProps.message}
+        details={resultModalProps.details}
+        actionButton={
+          resultModalProps.type === 'error' && 
+          resultModalProps.title === 'Insufficient Balance' ? 
+          {
+            text: 'Add Funds',
+            onClick: () => {
+              setShowResultModal(false);
+              setShowFundAccountModal(true);
+            }
+          } : undefined
+        }
+      />
+
+      {/* Fund Account Modal */}
+      <FundAccountModal
+        isOpen={showFundAccountModal}
+        onClose={() => setShowFundAccountModal(false)}
+        requiredAmount={fundAccountModalProps.requiredAmount}
+        currentBalance={fundAccountModalProps.currentBalance}
+        shortfall={fundAccountModalProps.shortfall}
+        message={fundAccountModalProps.message}
+      />
+
+      {/* Plan Confirmation Modal */}
+      {showPlanConfirmation && (
+        <ConfirmationModal
+          isOpen={true}
+          onClose={() => setShowPlanConfirmation(false)}
+          onConfirm={handleChangePlan}
+          title="Confirm Plan Upgrade"
+          message={`Are you sure you want to upgrade to the ${selectedPlan} plan? This action will incur a charge.`}
+          confirmText={isProcessing ? 'Upgrading...' : 'Confirm Upgrade'}
+          cancelText="Cancel"
+          confirmDisabled={isProcessing}
+        />
+      )}
     </div>
   );
 }

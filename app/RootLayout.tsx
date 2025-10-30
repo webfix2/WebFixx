@@ -29,6 +29,7 @@ import { securedApi, authApi, setAppState as setAuthAppState } from '../utils/au
 import LoadingSpinner from './components/LoadingSpinner';
 import { useLoading } from './context/LoadingContext';
 import ChatBot from './components/ChatBot';
+import OfflineView from './components/OfflineView'; // Import OfflineView
 
 library.add(faUser, faSearch, faDashboard, faEnvelope, faLink, faCode, faBars, faTimes, faWallet, faRandom, faTools, faCog, faMoon, faUsers, faMoneyBill, faSun, faComments, faTimes);
 
@@ -40,11 +41,11 @@ interface RootLayoutProps {
 export default function RootLayout({ children, inter }: RootLayoutProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { appData, setAppData, clearAppData } = useAppState();
+  const { appData, setAppData, clearAppData, isOffline, setIsOffline, attemptReconnect, isReconnecting } = useAppState(); // Updated destructuring
 
   useEffect(() => {
-    setAuthAppState({ appData, setAppData });
-  }, [appData, setAppData]);
+    setAuthAppState({ appData, setAppData, clearAppData, isOffline, setIsOffline, attemptReconnect, isReconnecting }); // Updated setAuthAppState call
+  }, [appData, setAppData, clearAppData, isOffline, setIsOffline, attemptReconnect, isReconnecting]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false); // New state for logout in progress
@@ -136,6 +137,7 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
             // Only update if we have valid user data
             setAppData({
               user: response.data.user,
+              isOffline: false, // Ensure isOffline is false on successful session restore
               data: {
                 transactions: response.data.transactions || [],
                 projects: response.data.projects || [],
@@ -160,7 +162,7 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
           }
         }
       } catch (error) {
-        console.error('Session validation error:', error);
+        // console.error('Session validation error:', error); // Removed console.error
         // Only logout on specific errors
         if (error instanceof Error && 
             (error.message.includes('token') || error.message.includes('auth'))) {
@@ -186,6 +188,25 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
       }
     };
   }, []);
+
+  // Automatic reconnection attempt when offline
+  useEffect(() => {
+    let reconnectInterval: NodeJS.Timeout | null = null;
+    if (isOffline) {
+      reconnectInterval = setInterval(async () => {
+        const reconnected = await attemptReconnect();
+        if (reconnected && reconnectInterval) {
+          clearInterval(reconnectInterval);
+        }
+      }, 10000); // Attempt to reconnect every 10 seconds
+    }
+
+    return () => {
+      if (reconnectInterval) {
+        clearInterval(reconnectInterval);
+      }
+    };
+  }, [isOffline, attemptReconnect]);
 
   useEffect(() => {
     const handleRouteChange = () => {
@@ -399,6 +420,7 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
 
   return (
     <div className={`min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100`} suppressHydrationWarning>
+      {isOffline && <OfflineView onReconnect={attemptReconnect} isReconnecting={isReconnecting} />} {/* Conditionally render OfflineView */}
       {isNavigating && (
         <LoadingSpinner 
           overlay 

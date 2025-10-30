@@ -21,6 +21,7 @@
     ],
     "baseUrl": ".",  // Set baseUrl to the root of the project
     "paths": {
+      "@/*": ["./*"], // Map @/ to the project root
       "@utils/*": ["utils/*"]  // Map @utils/* to the utils directory
     }
   },

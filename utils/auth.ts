@@ -11,22 +11,34 @@ import type { Campaign } from '../app/types'; // Add this import
 
 const API_BASE_URL = process.env.API_BASE_URL || 'https://web-fixx-hoo.vercel.app/api';
 
+export interface IpData {
+  ipAddress: string;
+  country: string;
+  city: string;
+  // Add other relevant IP data fields as needed
+}
+
 export interface RegisterData {
   username: string;
   email: string;
   password: string;
   referralCode?: string;
+  ipData: IpData; // Added ipData
+  deviceInfo: DeviceInfo; // Added deviceInfo
 }
 
 export interface DeviceInfo {
   userAgent: string;
   platform: string;
   language: string;
+  deviceType: string; // Added deviceType
+  os: string; // Added os
 }
 
 export interface LoginData {
   email: string;
   password: string;
+  ipData: IpData; // Added ipData
   deviceInfo: DeviceInfo;
 }
 
@@ -55,6 +67,7 @@ export interface UserData {
   tokens?: TokenData[];
   createdAt?: string; // Add createdAt property
   darkMode?: boolean;
+  twoFactorAuth?: boolean; // Added twoFactorAuth property
 }
 
 export interface AppData {
@@ -131,6 +144,17 @@ export interface ResetPasswordData {
 
 export interface ErrorResponse {
   error: string;
+  details?: any; // Add details to the error response
+}
+
+// Custom error type for structured backend errors
+export class BackendError extends Error {
+  details?: any;
+  constructor(message: string, details?: any) {
+    super(message);
+    this.name = 'BackendError';
+    this.details = details;
+  }
 }
 
 export interface VerifyResetCodeData {
@@ -199,12 +223,13 @@ export const authApi = {
     if (appState && appState.setAppData) {
       const updatedAppState = {
         user: responseData.user,
+        isOffline: false, // Added isOffline
         data: responseData.data,
         isAuthenticated: true,
       };
       appState.setAppData(updatedAppState);
     } else {
-      console.warn('Global app state not available for immediate update after registration.');
+      // console.warn('Global app state not available for immediate update after registration.'); // Removed console.warn
     }
 
     return {
@@ -256,7 +281,9 @@ export const authApi = {
         balance: responseData.user.balance || '0.00',
         pendingBalance: responseData.user.pendingBalance || '0.00',
         addresses: responseData.user.addresses || [],
-        tokens: responseData.user.tokens || []
+        tokens: responseData.user.tokens || [],
+        darkMode: responseData.user.darkMode, // Include darkMode
+        twoFactorAuth: responseData.user.twoFactorAuth // Include twoFactorAuth
       },
       data: {
         user: responseData.data?.user || null,
@@ -384,6 +411,7 @@ export const authApi = {
           // Create the updated app state object
             const updatedAppState = {
               user: result.user,
+              isOffline: false, // Added isOffline
               data: {
                 transactions: result.appData?.transactions || [],
                 projects: result.appData?.projects || [],
@@ -400,7 +428,6 @@ export const authApi = {
             };
           
           // Update the app state using the provided function
-          console.log('Updating app state with:', updatedAppState);
           setAppDataFunc(updatedAppState);
         } else if (result && result.success) {
           // Try to use the global app state if available
@@ -409,6 +436,7 @@ export const authApi = {
             // Create the updated app state object
             const updatedAppState = {
               user: result.user || appState.appData?.user,
+              isOffline: false, // Added isOffline
               data: {
                 transactions: result.appData?.transactions || appState.appData?.data?.transactions || [],
                 projects: result.appData?.projects || appState.appData?.data?.projects || [],
@@ -425,20 +453,19 @@ export const authApi = {
             };
             
             // Update the app state
-            console.log('Updating app state with global context:', updatedAppState);
             appState.setAppData(updatedAppState);
           } else {
-            console.log('No setAppData function provided and global app state not available');
+            // console.log('No setAppData function provided and global app state not available'); // Removed console.log
           }
         }
         
         return result;
       } catch (e) {
-        console.error('Failed to parse response:', text);
+        // console.error('Failed to parse response:', text); // Removed console.error
         throw new Error(`Invalid JSON response: ${text.substring(0, 100)}`);
       }
     } catch (error) {
-      console.error('Failed to update app data:', error);
+      // console.error('Failed to update app data:', error); // Removed console.error
       throw error;
     }
   },
@@ -485,7 +512,8 @@ export const securedApi = {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'API request failed');
+        // Throw a custom error with details
+        throw new BackendError(errorData.error || 'API request failed', errorData.details);
       }
 
       const result = await response.json();
@@ -496,6 +524,7 @@ export const securedApi = {
         if (appState && appState.setAppData) {
           const updatedAppState = {
             user: result.user || appState.appData?.user,
+            isOffline: false, // Added isOffline
             data: {
               transactions: result.appData?.transactions || appState.appData?.data?.transactions || [],
               projects: result.appData?.projects || appState.appData?.data?.projects || [],
@@ -512,13 +541,20 @@ export const securedApi = {
           };
           appState.setAppData(updatedAppState);
         } else {
-          console.log('No setAppData function provided and global app state not available in securedApi.callBackendFunction');
+          // console.log('No setAppData function provided and global app state not available in securedApi.callBackendFunction'); // Removed console.log
         }
       }
 
       return result;
     } catch (error) {
-      console.error('Secured API Error:', error);
+      // Check for network errors (e.g., 'Failed to fetch')
+      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        const appState = getAppState();
+        if (appState && appState.setIsOffline) {
+          appState.setIsOffline(true);
+        }
+      }
+      // console.error('Secured API Error:', error); // Removed console.error
       throw error;
     }
   }
