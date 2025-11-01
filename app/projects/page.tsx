@@ -14,7 +14,8 @@ import {
   faSync, 
   faCog, 
   faTrash,
-  faPlus
+  faPlus,
+  faFolderOpen // Added faFolderOpen
 } from '@fortawesome/free-solid-svg-icons';
 import ActionsHandler from '../components/admin/projects/ActionsHandler';
 
@@ -369,9 +370,10 @@ export default function ProjectLinks() {
     <div className="p-4">
       {/* Conditional rendering for header and project list */}
       {!loading && filteredProjects.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
-          <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">No Projects Available</h3>
-          <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md">
+        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-64px)] text-center">
+          <FontAwesomeIcon icon={faFolderOpen} className="w-20 h-20 text-blue-500 mb-6" />
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">No Projects Available</h2>
+          <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-md">
             It looks like you haven't created any projects yet. To get started, create your first link for <span className="font-bold text-blue-600 dark:text-blue-400">Email, Bank, or Social accounts</span> to begin collecting valuable data and unlock powerful features.
           </p>
           <button

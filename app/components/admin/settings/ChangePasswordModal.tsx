@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { useAppState } from '@/app/context/AppContext';
 import { securedApi } from '@/utils/auth';
 import TransactionResultModal from '@/app/components/TransactionResultModal';
-import ConfirmationModal from '@/app/components/ConfirmationModal';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 interface ChangePasswordModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onChangePassword: (oldPass: string, newPass: string) => Promise<void>;
 }
 
-const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClose }) => {
+const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClose, onChangePassword }) => {
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
@@ -17,8 +19,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClo
   const [showResultModal, setShowResultModal] = useState(false);
   const [resultTitle, setResultTitle] = useState('');
   const [resultMessage, setResultMessage] = useState('');
-  const [resultStatus, setResultStatus] = useState<'success' | 'error' | 'warning'>('warning'); // Changed 'info' to 'warning'
-  const { appData } = useAppState(); // Removed setAppData
+  const [resultStatus, setResultStatus] = useState<'success' | 'error' | 'warning'>('warning');
 
   const handleSubmit = async () => {
     if (newPassword !== confirmNewPassword) {
@@ -28,32 +29,28 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClo
       setShowResultModal(true);
       return;
     }
+    if (!oldPassword || !newPassword || !confirmNewPassword) {
+      setResultTitle('Error');
+      setResultMessage('All password fields are required.');
+      setResultStatus('error');
+      setShowResultModal(true);
+      return;
+    }
 
     setIsSubmitting(true);
     try {
-      const response = await securedApi.callBackendFunction({
-        functionName: 'changePassword',
-        oldPassword,
-        newPassword,
-      });
-
-      if (response.success) {
-        setResultTitle('Success');
-        setResultMessage('Your password has been changed successfully.');
-        setResultStatus('success');
-        onClose(); // Close the change password modal
-      } else {
-        setResultTitle('Error');
-        setResultMessage(response.error || 'Failed to change password.');
-        setResultStatus('error');
-      }
+      await onChangePassword(oldPassword, newPassword);
+      onClose(); // Close the change password modal on successful submission
     } catch (error: any) {
       setResultTitle('Error');
       setResultMessage(error.message || 'An unexpected error occurred.');
       setResultStatus('error');
+      setShowResultModal(true);
     } finally {
       setIsSubmitting(false);
-      setShowResultModal(true);
+      setOldPassword('');
+      setNewPassword('');
+      setConfirmNewPassword('');
     }
   };
 
@@ -61,17 +58,14 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClo
 
   return (
     <>
-      <ConfirmationModal
-        isOpen={isOpen}
-        onClose={onClose}
-        onConfirm={handleSubmit}
-        title="Change Password"
-        children={ // Changed message to children
+      <div className="modal-backdrop bg-gray-900 bg-opacity-50 dark:bg-opacity-75 fixed inset-0 flex items-center justify-center z-50">
+        <div className="modal-content bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/3 relative">
+          <h2 className="text-xl font-bold mb-4">Change Password</h2>
           <div className="space-y-4">
             <input
               type="password"
               placeholder="Old Password"
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
               value={oldPassword}
               onChange={(e) => setOldPassword(e.target.value)}
               disabled={isSubmitting}
@@ -79,7 +73,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClo
             <input
               type="password"
               placeholder="New Password"
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               disabled={isSubmitting}
@@ -87,22 +81,31 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClo
             <input
               type="password"
               placeholder="Confirm New Password"
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
               value={confirmNewPassword}
               onChange={(e) => setConfirmNewPassword(e.target.value)}
               disabled={isSubmitting}
             />
           </div>
-        }
-        confirmText="Change Password"
-        confirmDisabled={isSubmitting} // Changed isConfirming to confirmDisabled
-      />
+          <div className="flex justify-end space-x-4 mt-6">
+            <button onClick={onClose} className="btn-secondary">Cancel</button>
+            <button
+              onClick={handleSubmit}
+              disabled={isSubmitting || !oldPassword || !newPassword || !confirmNewPassword || newPassword !== confirmNewPassword}
+              className="btn-primary"
+            >
+              {isSubmitting ? <FontAwesomeIcon icon={faSpinner} className="animate-spin mr-2" /> : null}
+              Change Password
+            </button>
+          </div>
+        </div>
+      </div>
       <TransactionResultModal
         isOpen={showResultModal}
         onClose={() => setShowResultModal(false)}
         title={resultTitle}
         message={resultMessage}
-        type={resultStatus} // Changed status to type
+        type={resultStatus}
       />
     </>
   );

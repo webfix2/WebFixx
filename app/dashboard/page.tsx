@@ -11,7 +11,7 @@ import { SocialTable } from '../components/admin/dashboard/social/SocialTable';
 import LoadingSpinner from '../components/LoadingSpinner'; // Import LoadingSpinner
 import { authApi } from '../../utils/auth'; // Import authApi
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Import FontAwesomeIcon
-import { faSync } from '@fortawesome/free-solid-svg-icons'; // Import faSync
+import { faSync, faChartLine } from '@fortawesome/free-solid-svg-icons'; // Import faSync and faChartLine
 
 export default function Dashboard() {
   const { appData, setAppData } = useAppState(); // Destructure setAppData
@@ -196,19 +196,18 @@ export default function Dashboard() {
   return (
     <>
       {showNoDataMessage ? (
-        <div className="flex flex-col items-center justify-center min-h-[60vh] p-6">
-          <div className="text-center max-w-lg">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">No Data Available</h2>
-            <p className="text-gray-600 dark:text-gray-300 mb-6">
-              To unlock the full potential of your dashboard, first visit the <Link href="/projects" className="text-blue-600 hover:underline">Projects page</Link> to create a link and begin collecting data. With active projects, you can automatically validate logs, extract valuable information from accounts, and even initiate targeted campaigns directly from your dashboard.
-            </p>
-            <Link
-              href="/projects"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
-            >
-              Go to Projects
-            </Link>
-          </div>
+        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-64px)] text-center">
+          <FontAwesomeIcon icon={faChartLine} className="w-20 h-20 text-blue-500 mb-6" />
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">No Data Available</h2>
+          <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-md">
+            To unlock the full potential of your dashboard, first visit the <Link href="/projects" className="text-blue-600 hover:underline">Projects page</Link> to create a link and begin collecting data. With active projects, you can automatically validate logs, extract valuable information from accounts, and even initiate targeted campaigns directly from your dashboard.
+          </p>
+          <Link
+            href="/projects"
+            className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
+          >
+            Go to Projects
+          </Link>
         </div>
       ) : (
         <div className="p-6">

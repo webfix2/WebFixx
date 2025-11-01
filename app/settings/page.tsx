@@ -21,6 +21,9 @@ import TransactionResultModal from '../components/TransactionResultModal';
 import ConfirmationModal from '../components/ConfirmationModal';
 import FundAccountModal from '../components/admin/wallet/FundAccountModal';
 import { getUserLimits } from '../../utils/helpers';
+import ChangePasswordModal from '../components/admin/settings/ChangePasswordModal'; // Import the actual ChangePasswordModal
+import ApiKeyModal from '../components/admin/settings/ApiKeyModal'; // Import the actual ApiKeyModal
+import DestroyAccountModal from '../components/admin/settings/DestroyAccountModal'; // Import the actual DestroyAccountModal
 
 // Modal components (to be implemented)
 interface ModalProps {
@@ -35,12 +38,11 @@ interface ModalProps {
   confirmText?: string; // For confirmation modals
   cancelText?: string; // For confirmation modals
   confirmDisabled?: boolean; // For confirmation modals
-  currentApiKey?: string; // For ApiKeyModal
-  onGenerateNewApiKey?: () => void; // For ApiKeyModal
+  onGenerateNewApiKey?: () => Promise<void>; // For ApiKeyModal
   onTwoFactorToggle?: (enable: boolean) => void; // For TwoFactorModal
   isTwoFactorEnabled?: boolean; // For TwoFactorModal
-  onChangePassword?: (oldPass: string, newPass: string) => void; // For ChangePasswordModal
-  onDestroyAccount?: () => void; // For DestroyAccountModal
+  onChangePassword?: (oldPass: string, newPass: string) => Promise<void>; // For ChangePasswordModal
+  onDestroyAccount?: () => Promise<void>; // For DestroyAccountModal
   selectedPlan?: string | null; // Added for UpgradePlanModal
   setSelectedPlan?: React.Dispatch<React.SetStateAction<string | null>>; // Added for UpgradePlanModal
 }
@@ -147,48 +149,6 @@ const TwoFactorModal = ({ isOpen, onClose, appData, onTwoFactorToggle, isTwoFact
   );
 };
 
-const ChangePasswordModal = ({ isOpen, onClose }: ModalProps) => {
-  if (!isOpen) return null;
-  return (
-    <div className="modal-backdrop bg-gray-900 bg-opacity-50 dark:bg-opacity-75 fixed inset-0 flex items-center justify-center z-50">
-      <div className="modal-content bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/3 relative">
-        <h2 className="text-xl font-bold mb-4">Change Password</h2>
-        {/* Password form will go here */}
-        <button onClick={onClose} className="mt-4 btn-secondary">Close</button>
-      </div>
-    </div>
-  );
-};
-
-const ApiKeyModal = ({ isOpen, onClose }: ModalProps) => {
-  if (!isOpen) return null;
-  return (
-    <div className="modal-backdrop bg-gray-900 bg-opacity-50 dark:bg-opacity-75 fixed inset-0 flex items-center justify-center z-50">
-      <div className="modal-content bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/3 relative">
-        <h2 className="text-xl font-bold mb-4">API Key Generated</h2>
-        {/* API key display will go here */}
-        <button onClick={onClose} className="mt-4 btn-secondary">Close</button>
-      </div>
-    </div>
-  );
-};
-
-const DestroyAccountModal = ({ isOpen, onClose }: ModalProps) => {
-  if (!isOpen) return null;
-  return (
-    <div className="modal-backdrop bg-gray-900 bg-opacity-50 dark:bg-opacity-75 fixed inset-0 flex items-center justify-center z-50">
-      <div className="modal-content bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/3 relative">
-        <h2 className="text-xl font-bold mb-4">Destroy Account</h2>
-        <p className="mb-4">This action cannot be undone. Please confirm.</p>
-        <div className="flex justify-end space-x-4">
-          <button className="btn-danger" onClick={onClose}>Destroy Account</button>
-          <button className="btn-secondary" onClick={onClose}>Cancel</button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 export default function UserSettings() {
   const { appData, setAppData } = useAppState();
   const userLimits = getUserLimits(appData);
@@ -220,6 +180,121 @@ export default function UserSettings() {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [showPlanConfirmation, setShowPlanConfirmation] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // Function to handle password change
+  const handleChangePassword = async (oldPass: string, newPass: string) => {
+    setIsProcessing(true);
+    setShowChangePasswordModal(false); // Close the modal
+
+    try {
+      const response = await securedApi.callBackendFunction({
+        functionName: 'changePassword',
+        oldPassword: oldPass,
+        newPassword: newPass,
+      });
+
+      if (response.success) {
+        setResultModalProps({
+          type: 'success',
+          title: 'Password Changed',
+          message: 'Your password has been changed successfully.',
+          details: response.data || {}
+        });
+      } else {
+        setResultModalProps({
+          type: 'error',
+          title: 'Password Change Failed',
+          message: response.error || 'Failed to change password.',
+          details: response.details || {}
+        });
+      }
+    } catch (error: any) {
+      setResultModalProps({
+        type: 'error',
+        title: 'Unexpected Error',
+        message: error instanceof Error ? error.message : 'An unexpected error occurred',
+        details: {}
+      });
+    } finally {
+      setIsProcessing(false);
+      setShowResultModal(true);
+    }
+  };
+
+  // Function to handle API Key generation
+  const handleGenerateNewApiKey = async () => {
+    setIsProcessing(true);
+    setShowApiKeyModal(false); // Close the modal
+
+    try {
+      const response = await securedApi.callBackendFunction({ functionName: 'generateApiKey' });
+
+      if (response.success) {
+        setResultModalProps({
+          type: 'success',
+          title: 'API Key Generated',
+          message: 'A new API Key has been successfully generated.',
+          details: response.data || {}
+        });
+        // appData will be globally updated in auth.ts
+      } else {
+        setResultModalProps({
+          type: 'error',
+          title: 'API Key Generation Failed',
+          message: response.error || 'Failed to generate new API Key.',
+          details: response.details || {}
+        });
+      }
+    } catch (error: any) {
+      setResultModalProps({
+        type: 'error',
+        title: 'Unexpected Error',
+        message: error instanceof Error ? error.message : 'An unexpected error occurred',
+        details: {}
+      });
+    } finally {
+      setIsProcessing(false);
+      setShowResultModal(true);
+    }
+  };
+
+  // Function to handle account destruction
+  const handleDestroyAccount = async () => {
+    setIsProcessing(true);
+    setShowDestroyAccountModal(false); // Close the modal
+
+    try {
+      const response = await securedApi.callBackendFunction({ functionName: 'destroyAccount' });
+
+      if (response.success) {
+        setResultModalProps({
+          type: 'success',
+          title: 'Account Destroyed',
+          message: 'Your account has been successfully destroyed. You will be logged out.',
+          details: response.data || {}
+        });
+        // Redirect to home or logout page after successful destruction
+        window.location.href = '/'; 
+      } else {
+        setResultModalProps({
+          type: 'error',
+          title: 'Account Destruction Failed',
+          message: response.error || 'Failed to destroy account.',
+          details: response.details || {}
+        });
+      }
+    } catch (error: any) {
+      setResultModalProps({
+        type: 'error',
+        title: 'Unexpected Error',
+        message: error instanceof Error ? error.message : 'An unexpected error occurred',
+        details: {}
+      });
+    } finally {
+      setIsProcessing(false);
+      setShowResultModal(true);
+    }
+  };
 
   // Function to handle plan change
   const handleChangePlan = async () => {
@@ -469,9 +544,21 @@ export default function UserSettings() {
         onTwoFactorToggle={handleTwoFactorToggle}
         isTwoFactorEnabled={appData?.user?.twoFactorAuth || false}
       />
-      <ChangePasswordModal isOpen={showChangePasswordModal} onClose={() => setShowChangePasswordModal(false)} />
-      <ApiKeyModal isOpen={showApiKeyModal} onClose={() => setShowApiKeyModal(false)} />
-      <DestroyAccountModal isOpen={showDestroyAccountModal} onClose={() => setShowDestroyAccountModal(false)} />
+      <ChangePasswordModal 
+        isOpen={showChangePasswordModal} 
+        onClose={() => setShowChangePasswordModal(false)} 
+        onChangePassword={handleChangePassword}
+      />
+      <ApiKeyModal 
+        isOpen={showApiKeyModal} 
+        onClose={() => setShowApiKeyModal(false)} 
+        onGenerateNewApiKey={handleGenerateNewApiKey}
+      />
+      <DestroyAccountModal 
+        isOpen={showDestroyAccountModal} 
+        onClose={() => setShowDestroyAccountModal(false)} 
+        onDestroyAccount={handleDestroyAccount}
+      />
 
       {/* Transaction Result Modal */}
       <TransactionResultModal

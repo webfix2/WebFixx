@@ -190,6 +190,8 @@ export default function Wallet() {
         amount: drinkAmount,
       });
 
+      console.log('buyUsAdrink API response:', response); // Add this line for debugging
+
       if (response.success) {
         setDrinkAmount('5'); // Reset to minimum
         
@@ -472,10 +474,10 @@ export default function Wallet() {
           </div>
         </>
       ) : (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-none p-6 w-full text-center flex flex-col items-center justify-center min-h-[300px]">
-          <FontAwesomeIcon icon={faHistory} className="w-16 h-16 text-gray-400 mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">No Transaction History</h2>
-          <p className="text-gray-600 dark:text-gray-300 mb-6">
+        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-64px)] text-center">
+          <FontAwesomeIcon icon={faHistory} className="w-20 h-20 text-blue-500 mb-6" />
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">No Transaction History</h2>
+          <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-md">
             It looks like you haven't made any transactions yet. Add funds to get started!
           </p>
           <button

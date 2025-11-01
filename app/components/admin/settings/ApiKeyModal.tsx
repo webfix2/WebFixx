@@ -1,38 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { useAppState } from '@/app/context/AppContext';
 import { securedApi } from '@/utils/auth';
 import TransactionResultModal from '@/app/components/TransactionResultModal';
-import ConfirmationModal from '@/app/components/ConfirmationModal';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 interface ApiKeyModalProps {
   isOpen: boolean;
   onClose: () => void;
-  currentApiKey: string;
+  onGenerateNewApiKey: () => Promise<void>;
 }
 
-const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ isOpen, onClose, currentApiKey }) => {
-  const [newApiKey, setNewApiKey] = useState(currentApiKey);
+const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ isOpen, onClose, onGenerateNewApiKey }) => {
+  const [generatedApiKey, setGeneratedApiKey] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [showResultModal, setShowResultModal] = useState(false);
   const [resultTitle, setResultTitle] = useState('');
   const [resultMessage, setResultMessage] = useState('');
-  const [resultStatus, setResultStatus] = useState<'success' | 'error' | 'warning'>('warning'); // Changed 'info' to 'warning'
-  const { appData, setAppData } = useAppState();
+  const [resultStatus, setResultStatus] = useState<'success' | 'error' | 'warning'>('warning');
 
-  useEffect(() => {
-    setNewApiKey(currentApiKey);
-  }, [currentApiKey]);
-
-  const handleGenerateApiKey = async () => {
+  const handleGenerate = async () => {
     setIsGenerating(true);
     try {
       const response = await securedApi.callBackendFunction({ functionName: 'generateApiKey' });
 
       if (response.success && response.data && response.data.apiKey) {
-        setNewApiKey(response.data.apiKey);
+        setGeneratedApiKey(response.data.apiKey);
         setResultTitle('Success');
         setResultMessage('New API Key generated successfully.');
         setResultStatus('success');
+        await onGenerateNewApiKey(); // Notify parent to update appData
       } else {
         setResultTitle('Error');
         setResultMessage(response.error || 'Failed to generate new API Key.');
@@ -52,26 +48,35 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ isOpen, onClose, currentApiKe
 
   return (
     <>
-      <ConfirmationModal
-        isOpen={isOpen}
-        onClose={onClose}
-        onConfirm={handleGenerateApiKey}
-        title="Generate New API Key"
-        children={
-          <div className="space-y-4">
-            <p>Your current API Key:</p>
-            <input
-              type="text"
-              readOnly
-              className="w-full p-2 border border-gray-300 rounded bg-gray-100"
-              value={newApiKey}
-            />
-            <p>Are you sure you want to generate a new API Key? This will invalidate the old one.</p>
+      <div className="modal-backdrop bg-gray-900 bg-opacity-50 dark:bg-opacity-75 fixed inset-0 flex items-center justify-center z-50">
+        <div className="modal-content bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/3 relative">
+          <h2 className="text-xl font-bold mb-4">Generate New API Key</h2>
+          <p className="mb-4 text-gray-700 dark:text-gray-200">
+            Generating a new API key will invalidate your current one. Please ensure you update any applications using the old key.
+            For security reasons, the new API key will only be shown once.
+          </p>
+          {generatedApiKey ? (
+            <div className="mt-3 bg-gray-100 dark:bg-gray-700 p-3 rounded-lg break-all">
+              <p className="font-mono text-gray-700 dark:text-gray-300">{generatedApiKey}</p>
+            </div>
+          ) : (
+            <div className="mt-3 bg-gray-100 dark:bg-gray-700 p-3 rounded-lg">
+              <p className="font-mono text-gray-700 dark:text-gray-300">Click "Generate Key" to get your new API key.</p>
+            </div>
+          )}
+          <div className="flex justify-end space-x-4 mt-6">
+            <button onClick={onClose} className="btn-secondary">Close</button>
+            <button
+              onClick={handleGenerate}
+              disabled={isGenerating}
+              className="btn-primary"
+            >
+              {isGenerating ? <FontAwesomeIcon icon={faSpinner} className="animate-spin mr-2" /> : null}
+              Generate Key
+            </button>
           </div>
-        }
-        confirmText="Generate New Key"
-        confirmDisabled={isGenerating} // Changed isConfirming to confirmDisabled
-      />
+        </div>
+      </div>
       <TransactionResultModal
         isOpen={showResultModal}
         onClose={() => setShowResultModal(false)}
