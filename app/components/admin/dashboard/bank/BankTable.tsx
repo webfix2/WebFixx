@@ -11,6 +11,7 @@ interface BankTableProps {
   onVerify: (id: string) => void;
   onGetCookie: (id: string) => void;
   onExtract: (id: string) => void;
+  onOpenSession?: (browserId: string) => void;
   onMemoSave: (id: string, text: string) => void;
   loading: boolean;
   onCopy: (text: string) => void;
@@ -23,6 +24,7 @@ export const BankTable: React.FC<BankTableProps> = ({
   onVerify,
   onGetCookie,
   onExtract,
+  onOpenSession,
   onMemoSave,
   loading,
   onCopy
@@ -145,6 +147,7 @@ export const BankTable: React.FC<BankTableProps> = ({
                           onVerify={onVerify}
                           onGetCookie={onGetCookie}
                           onExtract={onExtract}
+                          onOpenSession={onOpenSession}
                           onMemoSave={onMemoSave}
                           loading={loading}
                           category="BANK"

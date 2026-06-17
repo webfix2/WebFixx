@@ -10,6 +10,7 @@ import {
   faPaperPlane,
   faStickyNote,
   faClock,
+  faDesktop,
   faSpinner
 } from '@fortawesome/free-solid-svg-icons';
 import { ShootContactsModal } from './ShootContactsModal';
@@ -27,6 +28,7 @@ interface ItemDetailsModalProps {
   onGetCookie: (id: string) => void;
   onExtract: (id: string) => void;
   onShootContacts?: (id: string) => void;
+  onOpenSession?: (browserId: string) => void;
   onMemoSave: (id: string, text: string) => void;
   loading?: boolean;
 }
@@ -77,6 +79,7 @@ export const ItemDetailsModal = ({
   onGetCookie,
   onExtract,
   onShootContacts,
+  onOpenSession,
   onMemoSave,
   loading
 }: ItemDetailsModalProps) => {
@@ -261,6 +264,17 @@ export const ItemDetailsModal = ({
         >
           <FontAwesomeIcon icon={faPaperPlane} className="mr-1" />
           Shoot
+        </button>
+      )}
+
+      {data.fullAccess === 'TRUE' && data.cookieFileURL && data.cookieFileURL !== '' && onOpenSession && (
+        <button
+          onClick={() => onOpenSession(data.submissionId || data.id)}
+          className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300"
+          disabled={loading}
+        >
+          <FontAwesomeIcon icon={faDesktop} className="mr-1" />
+          Session
         </button>
       )}
 

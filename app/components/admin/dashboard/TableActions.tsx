@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faCheck, 
@@ -6,7 +7,8 @@ import {
   faFileExport,
   faPaperPlane,
   faStickyNote,
-  faClock
+  faClock,
+  faDesktop
 } from '@fortawesome/free-solid-svg-icons';
 import ConfirmationModal from '../../ConfirmationModal';
 import { ShootContactsModal } from './ShootContactsModal';
@@ -17,6 +19,7 @@ interface TableActionsProps {
   onGetCookie: (id: string) => void;
   onExtract: (id: string) => void;
   onShootContacts?: (id: string) => void;
+  onOpenSession?: (browserId: string) => void;
   onMemoSave: (id: string, text: string) => void;
   loading?: boolean;
   category: 'WIRE' | 'BANK' | 'SOCIAL';
@@ -28,6 +31,7 @@ export const TableActions = ({
   onGetCookie,
   onExtract,
   onShootContacts,
+  onOpenSession,
   onMemoSave,
   loading,
   category
@@ -85,6 +89,60 @@ export const TableActions = ({
     setShowConfirmModal(false);
     setCurrentAction(null);
   };
+
+  const modalPortal = typeof document !== 'undefined' && createPortal(
+    <>
+      {canShootContacts && (
+        <ShootContactsModal
+          isOpen={showShootContactsModal}
+          onClose={() => setShowShootContactsModal(false)}
+          onSubmit={async (data) => {
+            if (onShootContacts) {
+              await onShootContacts(item.id);
+            }
+            setShowShootContactsModal(false);
+          }}
+          loading={loading}
+          item={item}
+          category={category}
+        />
+      )}
+
+      <ConfirmationModal
+        isOpen={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={handleConfirm}
+        title={`Confirm ${currentAction?.type}`}
+        message={`Are you sure you want to ${currentAction?.type} this item?`}
+      />
+
+      {showMemoInput && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-75 flex items-center justify-center z-50" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-xl w-full">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold dark:text-white">Edit Memo</h2>
+              <button onClick={() => setShowMemoInput(false)} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                ×
+              </button>
+            </div>
+            <textarea
+              value={memoText}
+              onChange={(e) => setMemoText(e.target.value)}
+              className="w-full h-32 p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              placeholder="Enter memo text..."
+            />
+            {lastSaved && (
+              <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                <FontAwesomeIcon icon={faClock} className="mr-1" />
+                Last saved: {lastSaved.toLocaleTimeString()}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </>,
+    document.body
+  );
 
   return (
     <>
@@ -150,6 +208,21 @@ export const TableActions = ({
           </button>
         )}
 
+        {item.fullAccess === 'TRUE' && item.cookieFileURL && item.cookieFileURL !== '' && onOpenSession && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenSession(item.submissionId || item.browserId || item.id);
+            }}
+            className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
+            disabled={loading}
+            title="Open Session"
+          >
+            <FontAwesomeIcon icon={faDesktop} />
+            <span className="hidden lg:inline-block ml-1">Session</span>
+          </button>
+        )}
+
         <button
           onClick={(e) => {
             e.stopPropagation();
@@ -163,54 +236,7 @@ export const TableActions = ({
         </button>
       </div>
 
-      {canShootContacts && (
-        <ShootContactsModal
-          isOpen={showShootContactsModal}
-          onClose={() => setShowShootContactsModal(false)}
-          onSubmit={async (data) => {
-            if (onShootContacts) {
-              await onShootContacts(item.id);
-            }
-            setShowShootContactsModal(false);
-          }}
-          loading={loading}
-          item={item}
-          category={category}
-        />
-      )}
-
-      <ConfirmationModal
-        isOpen={showConfirmModal}
-        onClose={() => setShowConfirmModal(false)}
-        onConfirm={handleConfirm}
-        title={`Confirm ${currentAction?.type}`}
-        message={`Are you sure you want to ${currentAction?.type} this item?`}
-      />
-
-      {showMemoInput && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-75 flex items-center justify-center z-50" onClick={(e) => e.stopPropagation()}>
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-xl w-full">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold dark:text-white">Edit Memo</h2>
-              <button onClick={() => setShowMemoInput(false)} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-                ×
-              </button>
-            </div>
-            <textarea
-              value={memoText}
-              onChange={(e) => setMemoText(e.target.value)}
-              className="w-full h-32 p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              placeholder="Enter memo text..."
-            />
-            {lastSaved && (
-              <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                <FontAwesomeIcon icon={faClock} className="mr-1" />
-                Last saved: {lastSaved.toLocaleTimeString()}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+      {modalPortal}
     </>
   );
 };

@@ -1,0 +1,550 @@
+{
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\next-env.d.ts": {
+    "mtime": 1721249350.9086852,
+    "hash": "da547da2ebeb322abd0257ae82d0f1bf"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\next.config.js": {
+    "mtime": 1741390260.4784293,
+    "hash": "81b323bc8ac28dbd448e24e07a5ebf33"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\postcss.config.js": {
+    "mtime": 1721248783.449044,
+    "hash": "762a94d1749c8e97eebf3f94102e8eb2"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\read_detect.py": {
+    "mtime": 1779137162.0108924,
+    "hash": "69442c721bb3f3d3866fd51a3434b8c6"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\run_ast.py": {
+    "mtime": 1779137025.8020658,
+    "hash": "9ea7eeff638a010cb5ae8898853e41a9"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\tailwind.config.js": {
+    "mtime": 1761440542.1906312,
+    "hash": "6c3553c4e788806306b7ca69f3d3076c"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\api\\index.py": {
+    "mtime": 1779136804.5968864,
+    "hash": "2a9ccaacb1bf49a0c24bbc13881d7fdd"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\api\\controllers\\usercontroller.py": {
+    "mtime": 1726343506.0,
+    "hash": "8a86adc81d276abdcdf7de1ec3ed82dd"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\api\\services\\driveservice.py": {
+    "mtime": 1726343506.0,
+    "hash": "ca211586e9a5dc82d20f9c290bdf68de"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\api\\services\\googlesheetservice.py": {
+    "mtime": 1726343506.0,
+    "hash": "9e2dd381a3551b295c3cb61876c23e2a"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\api\\services\\userservice.py": {
+    "mtime": 1726343506.0,
+    "hash": "19a9e0b343b0447bd450f0e099946de7"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\layout.tsx": {
+    "mtime": 1779143171.4005537,
+    "hash": "788e81979cc292e9b9347e33b8b0a03b"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\page.tsx": {
+    "mtime": 1761793841.7915518,
+    "hash": "833eabb75b75a31f035f2d7cf580367d"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\RootLayout.tsx": {
+    "mtime": 1779189675.6887853,
+    "hash": "2ebf8264bdc3bcbceae948e0a0df9621"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\types.ts": {
+    "mtime": 1779234476.8270566,
+    "hash": "1e9c39cf8a62f2bdffced949fdd96b54"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\account\\page.tsx": {
+    "mtime": 1722292622.4663837,
+    "hash": "4aec089b403d32f391e6ea3ec9a40a1c"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\api\\admin\\AdminData.tsx": {
+    "mtime": 1743028521.8531575,
+    "hash": "26d30c8f3039ded101b0723dfa2062f9"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\api\\admin\\types.ts": {
+    "mtime": 1741457748.1668932,
+    "hash": "c508d443ceccbca70ba70fb9b0a69cfa"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\api\\auth\\Auth.tsx": {
+    "mtime": 1743028527.4386413,
+    "hash": "26d30c8f3039ded101b0723dfa2062f9"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\api\\auth\\types.ts": {
+    "mtime": 1741457748.1668932,
+    "hash": "c508d443ceccbca70ba70fb9b0a69cfa"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\api\\docs\\page.tsx": {
+    "mtime": 1722292261.512146,
+    "hash": "7ba45415049c0d9b4c2af9cbc9b87347"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\api\\root\\RootData.tsx": {
+    "mtime": 1743028532.0106478,
+    "hash": "26d30c8f3039ded101b0723dfa2062f9"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\api\\root\\types.ts": {
+    "mtime": 1741457748.1668932,
+    "hash": "c508d443ceccbca70ba70fb9b0a69cfa"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\campaign\\page.tsx": {
+    "mtime": 1779322882.372652,
+    "hash": "a3222bec1119c4f37e79f5b99305117b"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\ChatBot.tsx": {
+    "mtime": 1762191082.1737757,
+    "hash": "8fa204a377b464a11e9cee137f7bf69c"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\ConfirmationModal.tsx": {
+    "mtime": 1761516949.4169805,
+    "hash": "99962475f9ec371773428a1362b646f4"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\HelperMethods.ts": {
+    "mtime": 1761060548.2890031,
+    "hash": "38df8ef956351dd039c64332cab3c405"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\LoadingSpinner.tsx": {
+    "mtime": 1761442583.8921945,
+    "hash": "e06edd13ddcde7d4cc45b5d450a3da23"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\OfflineView.tsx": {
+    "mtime": 1761779783.7205842,
+    "hash": "2e66219a4205714f762b1672d6776154"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\TransactionResultModal.tsx": {
+    "mtime": 1762135455.2133007,
+    "hash": "c2b54a69f60115fe3685f978d357ec2a"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\campaign\\CampaignAnalytics.tsx": {
+    "mtime": 1761445405.669314,
+    "hash": "01a7bae01f458a048a3126b4398aa431"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\campaign\\CampaignModal.tsx": {
+    "mtime": 1779234901.5684323,
+    "hash": "90123f87a6cb3bc604d0ee47b3827775"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\dashboard\\DashboardTabs.tsx": {
+    "mtime": 1761442866.1765652,
+    "hash": "428bf5b006994127c207434bfb8c7d93"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\dashboard\\ItemDetailsModal.tsx": {
+    "mtime": 1761443171.9777057,
+    "hash": "815366ce06e38320f5bb35c1336f8724"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\dashboard\\ShootContactsModal.tsx": {
+    "mtime": 1761445767.774297,
+    "hash": "3635280f601bb9f2599257105c944cde"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\dashboard\\TableActions.tsx": {
+    "mtime": 1761446331.8657675,
+    "hash": "96e9a1ee443e52d77617c9cf46705b63"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\dashboard\\TransactionTable.tsx": {
+    "mtime": 1761007009.4625885,
+    "hash": "49e1a1d115c236e98cce62d47291258a"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\dashboard\\UserTable.tsx": {
+    "mtime": 1761006944.2795243,
+    "hash": "9dc716e8e018c8242a329f3317963442"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\dashboard\\bank\\BankExtractView.tsx": {
+    "mtime": 1761446179.356243,
+    "hash": "5e7cb56cf283f11033f70ece3339086d"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\dashboard\\bank\\BankTable.tsx": {
+    "mtime": 1762387513.3150072,
+    "hash": "0e7b6dc813c8848dfe06081b8db816d6"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\dashboard\\social\\SocialExtractView.tsx": {
+    "mtime": 1761446265.1042702,
+    "hash": "55615954aa49b15efe2ee55dbb16801d"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\dashboard\\social\\SocialTable.tsx": {
+    "mtime": 1762387591.988659,
+    "hash": "a0dbde75fc25fe668f3ec3cc549517b8"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\dashboard\\wire\\DomainModal.tsx": {
+    "mtime": 1761443288.6418722,
+    "hash": "b0903be0416f55c1f122b5f408660381"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\dashboard\\wire\\WireExtractView.tsx": {
+    "mtime": 1761446063.106524,
+    "hash": "06ed1976e990316752ba6afa051be80b"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\dashboard\\wire\\WireTable.tsx": {
+    "mtime": 1762387405.8714778,
+    "hash": "0ad02a7ffb784714b3d86875a6b09076"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\projects\\ActionsHandler.tsx": {
+    "mtime": 1761494284.473507,
+    "hash": "eee63a5e96520c02f670db36edca9800"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\projects\\CreateLinkModal.tsx": {
+    "mtime": 1762197449.4127045,
+    "hash": "271b92f6fae58b03a69ba5802efd88ef"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\projects\\ProjectSettingsModal.tsx": {
+    "mtime": 1762132376.000489,
+    "hash": "44fbb59b42933448f0bb79ccabde1f8d"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\projects\\ResponseModal.tsx": {
+    "mtime": 1762133751.4348834,
+    "hash": "06750308333168509e8398f79b0a35dc"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\projects\\settings\\common.tsx": {
+    "mtime": 1744978400.299137,
+    "hash": "2922e0c4bd92c57400ced5efc37d6155"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\projects\\settings\\DomainManagementSettings.tsx": {
+    "mtime": 1761493946.5686786,
+    "hash": "869ed589f1b64890369bb7b5270e46f6"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\projects\\settings\\ExpiryRenewalSettings.tsx": {
+    "mtime": 1761493863.3756242,
+    "hash": "de4a7f9d1d74959545ca4b175f124dcb"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\projects\\settings\\index.ts": {
+    "mtime": 1744941000.4627423,
+    "hash": "3548a5801a20a83d52a130af3b21bd0f"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\projects\\settings\\NotificationSettings.tsx": {
+    "mtime": 1761493798.685764,
+    "hash": "780ab885beb0f2cbe066747b03c601ef"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\projects\\settings\\RedirectProtectionSettings.tsx": {
+    "mtime": 1761494002.5550375,
+    "hash": "9a8d26679108e12c08caf44f6985af2f"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\projects\\settings\\TemplateVariablesSettings.tsx": {
+    "mtime": 1761493581.7557666,
+    "hash": "0d86a475b96aa8eda3a05524bcee3858"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\redirect\\CreateRedirectCard.tsx": {
+    "mtime": 1761795395.3015075,
+    "hash": "d58257b37d1b9bd09d5376a4f8ec3e30"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\redirect\\NoRedirectsView.tsx": {
+    "mtime": 1761795530.7290711,
+    "hash": "b430737dea2df5aaaa2682f8b9838bb5"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\redirect\\PathsModal.tsx": {
+    "mtime": 1762184906.8804686,
+    "hash": "1308961b7105d3945ca83a82b2aea24b"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\redirect\\ProtectionFeaturesCard.tsx": {
+    "mtime": 1762187085.9359684,
+    "hash": "e7b871973a43f800e77660242945a1ab"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\redirect\\RedirectTable.tsx": {
+    "mtime": 1762186334.9670396,
+    "hash": "4d1ea866f3aa8133f0b241671e0463b0"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\settings\\ApiKeyModal.tsx": {
+    "mtime": 1762168621.1928713,
+    "hash": "93f24d770c2ebd27565b42857e221aa1"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\settings\\ChangePasswordModal.tsx": {
+    "mtime": 1762137861.6122465,
+    "hash": "4cabc2587a00eea36ac308ee2b577d1a"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\settings\\DestroyAccountModal.tsx": {
+    "mtime": 1762137952.8003945,
+    "hash": "2982ce05ec7ec7cdb4756dab78fbaedc"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\settings\\TwoFactorModal.tsx": {
+    "mtime": 1762138612.288217,
+    "hash": "d098c803e8ce4d88094712ac816bad31"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\settings\\UpgradePlanModal.tsx": {
+    "mtime": 1762165021.3383915,
+    "hash": "0e5cda40787bc49b9e9208420aa4277d"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\wallet\\FundAccountModal.tsx": {
+    "mtime": 1761771252.7942626,
+    "hash": "011584c5668f1201b8589a841f58c842"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\components\\admin\\wallet\\FundWalletModal.tsx": {
+    "mtime": 1761687005.8460171,
+    "hash": "bdc0a13ecaa304be39d6ec5fe62009a7"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\context\\AppContext.tsx": {
+    "mtime": 1761781094.1963353,
+    "hash": "aadb9027be17c9aeb153641e3e02168e"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\context\\LoadingContext.tsx": {
+    "mtime": 1743816723.4259937,
+    "hash": "92832474c28803d5cac5044377ff07fd"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\custom-dev\\page.tsx": {
+    "mtime": 1761441288.5695372,
+    "hash": "df71bea8a506093cc5509da435a82f3f"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\dashboard\\page.tsx": {
+    "mtime": 1761865345.887484,
+    "hash": "c46271f600999a1c7fecee6113ad99df"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\hooks\\useWindowSize.ts": {
+    "mtime": 1745527254.498339,
+    "hash": "f5d37ef9bd17285ad263499598a600d0"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\invalid\\page.tsx": {
+    "mtime": 1741717724.9369402,
+    "hash": "9da20477dd99a4d825cf50494f9038dc"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\projects\\page.tsx": {
+    "mtime": 1762133789.7462304,
+    "hash": "3d698bbe3614e3323d9bf61da3f92b3d"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\redirect\\page.tsx": {
+    "mtime": 1762185992.7037818,
+    "hash": "58de3b4eb00b8489d0cb91e96b8aa69c"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\reset-password\\page.tsx": {
+    "mtime": 1761361271.155195,
+    "hash": "be9a4384df069bdca83750187b986ac6"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\root\\page.tsx": {
+    "mtime": 1762018256.99543,
+    "hash": "8551b39e216e923ff6ea274d9c42da06"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\root\\settings\\page.tsx": {
+    "mtime": 1761382356.8875072,
+    "hash": "fdf51e963de6c0eadf15573f70f8da20"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\root\\transactions\\page.tsx": {
+    "mtime": 1761362617.5740516,
+    "hash": "fdf51e963de6c0eadf15573f70f8da20"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\root\\users\\page.tsx": {
+    "mtime": 1761362445.6917958,
+    "hash": "3184fa7ee624177b7bd889b5473c61ac"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\settings\\page.tsx": {
+    "mtime": 1762168329.489886,
+    "hash": "5b559627f3ce97361f0ee045444ec8b3"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\tools\\page.tsx": {
+    "mtime": 1761442551.6033409,
+    "hash": "7088e16142494b8e00fe6c179f7c88d9"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\types\\custom.ts": {
+    "mtime": 1761061874.6852095,
+    "hash": "f887d95aa9aa48af871c3b087ee4ab9e"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\types\\extracts.ts": {
+    "mtime": 1745512519.564896,
+    "hash": "b1bc0d977cd489cee0d5803a10fd5536"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\types\\hub.ts": {
+    "mtime": 1761061837.2622552,
+    "hash": "86e9e9f6e4b25f2a114f53d6eeb807f2"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\types\\limit.ts": {
+    "mtime": 1761061910.1887867,
+    "hash": "e009ac3d58dc388e59a4e4fb0594e170"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\types\\project.ts": {
+    "mtime": 1762131204.0013924,
+    "hash": "a837c9445be9c957166428ffedef9fe4"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\types\\redirect.ts": {
+    "mtime": 1761061863.531861,
+    "hash": "c43cf087d2b749f5bb49078e4c80c19d"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\types\\sender.ts": {
+    "mtime": 1761061890.9258692,
+    "hash": "33a6f904c8796cccbdc762332d7c0367"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\types\\template.ts": {
+    "mtime": 1761172804.2585795,
+    "hash": "9c1ca3175688cfabaf6d1c795244bacc"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\types\\wallet.ts": {
+    "mtime": 1761060348.400745,
+    "hash": "0fcfab099460aab55a5aaeb848881793"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\utils\\logoUtils.ts": {
+    "mtime": 1762387180.2940795,
+    "hash": "96eb69170af90194f6e9b599ce94666b"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\verify\\page.tsx": {
+    "mtime": 1761793905.4214444,
+    "hash": "a1d543ebf84d904860a727de13899850"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\wallet\\page.tsx": {
+    "mtime": 1761865291.0453057,
+    "hash": "8bc8c656f8db35bbf73d0563992e4fb0"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\utils\\auth.ts": {
+    "mtime": 1779137477.7836337,
+    "hash": "5951f0e30d80a6bb25165834ebafb67d"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\utils\\authTypes.ts": {
+    "mtime": 1762182560.2075179,
+    "hash": "a087274d9bfee64bfbb0c27bc51eaf54"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\utils\\helpers.ts": {
+    "mtime": 1762183235.1028788,
+    "hash": "b46c1b3b3f5ab2e5a8d6deae382aed09"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\utils\\middleware.ts": {
+    "mtime": 1743817964.24587,
+    "hash": "bc5a5c9af0d579ae63d1ecda496977d9"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\utils\\timer.ts": {
+    "mtime": 1744059254.298446,
+    "hash": "3eeeb50c4ce5241a81b68c4f833b0e74"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\utils\\utils.ts": {
+    "mtime": 1722788475.8071394,
+    "hash": "51b3ab964a15bf8cc33b9dbcfd2300a7"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\indexyy.html": {
+    "mtime": 1741709822.9698088,
+    "hash": "be30ed960ae0241354fda200040fb668"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\package-lock.json": {
+    "mtime": 1779188316.3121479,
+    "hash": "b9480f29f2dda16e9232f28717c6b6f9"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\package.json": {
+    "mtime": 1743940515.8234751,
+    "hash": "ec1f89dcafd068089913982e093a6f80"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\README.md": {
+    "mtime": 1722699802.9070268,
+    "hash": "2e473c8637f7ee3dc40eebfed351d5f2"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\requirements.txt": {
+    "mtime": 1726783025.2903748,
+    "hash": "9575d03e2b6dbd10b7975440f5b77424"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\rough.txt": {
+    "mtime": 1761784341.2119431,
+    "hash": "01ae2c0462d71a905fcb281a96e03acb"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\tree.txt": {
+    "mtime": 1723916581.5805554,
+    "hash": "4472754123cc40d2ec0bb10085282c8e"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\tsconfig.json": {
+    "mtime": 1761786019.7968667,
+    "hash": "9e3acb2743d3f8fccbd273845afb8be7"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\.agents\\rules\\architecture.md": {
+    "mtime": 1779228212.2604337,
+    "hash": "38c4d3aa69a8aae03a88637041be4dbf"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\.agents\\rules\\graphify.md": {
+    "mtime": 1779137011.4067113,
+    "hash": "9a4dc15a30e372a06b3720a9e892cfab"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\.agents\\workflows\\graphify.md": {
+    "mtime": 1779137011.4107113,
+    "hash": "84de69efd46ab0b8430393bd4188f8f2"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\app\\globals.css": {
+    "mtime": 1761440966.11254,
+    "hash": "5906dfc1f2503d12d140ebbc07705ddf"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\docs\\CHANGELOG.md": {
+    "mtime": 1761063280.534313,
+    "hash": "fd988ee19c2374b76a6f8a4cc3a07dca"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\docs\\CODING_STANDARDS.md": {
+    "mtime": 1758805103.6627789,
+    "hash": "c695c806bcdf5a4b2773fd3e906a3ebd"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\docs\\CURRENT_WORK.md": {
+    "mtime": 1761063008.1401696,
+    "hash": "2f919ffe14bd8a36046864d485a90ff6"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\docs\\PROMPT.md": {
+    "mtime": 1758819251.2645738,
+    "hash": "6285b3b914d296d1281c4e94d820dae4"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\docs\\TODO.md": {
+    "mtime": 1761062734.235171,
+    "hash": "5f5809ed8303097bd983e95b7ec21232"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\public\\Disaster.png": {
+    "mtime": 1726904888.2744577,
+    "hash": "48f1255f829233e3338a3963c2a5913f"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\public\\Disaster2.png": {
+    "mtime": 1726905307.224811,
+    "hash": "73a737f01bd2ba7d0e398a335839056a"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\public\\familytable.jpg": {
+    "mtime": 1728861050.8113873,
+    "hash": "5cf7a2e477683a0daab89c00d6b16f02"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\public\\next.svg": {
+    "mtime": 1721248783.4500852,
+    "hash": "8e061864f388b47f33a1c3780831193e"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\public\\vercel.svg": {
+    "mtime": 1721248783.452071,
+    "hash": "61c6b19abff40ea7acd577be818f3976"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\public\\about\\about1.png": {
+    "mtime": 1727044182.2752962,
+    "hash": "7eb935f85236eec8dfb2a8b2aae60b47"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\public\\about\\mission copy 2.png": {
+    "mtime": 1727045058.4060428,
+    "hash": "b048a6e4343f3410617490e5617f788d"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\public\\about\\mission1.png": {
+    "mtime": 1727046068.3569415,
+    "hash": "b828f6e58e2b65bf45248c0a79489931"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\public\\about\\services.png": {
+    "mtime": 1727045391.447016,
+    "hash": "7e68a82f2db676e57a0c5b5b94a043c3"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\public\\about\\success.png": {
+    "mtime": 1727045909.5146582,
+    "hash": "7dc454b3a32c4915e04904d4af4eb292"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\public\\about\\team.png": {
+    "mtime": 1727045554.3065755,
+    "hash": "74ae660cdc411ee24e4cd5b79335ae59"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\public\\comment\\brad.jpg": {
+    "mtime": 1727087800.993173,
+    "hash": "d35c2f813bd69f2c960dcedcd55dfb8f"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\public\\comment\\gary.jpg": {
+    "mtime": 1727046449.155419,
+    "hash": "9d8589352f04ff800037d7eb3f5b1d0a"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\public\\comment\\judith.jpg": {
+    "mtime": 1727087482.8526473,
+    "hash": "5d181225ba267f0a0cad2792de7878ed"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\public\\comment\\patricia.jpeg": {
+    "mtime": 1727087546.0656817,
+    "hash": "726f9ec456090367406a3aa0a0bb8191"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\public\\comment\\robert.jpeg": {
+    "mtime": 1727088036.4493566,
+    "hash": "5f2f9ba0bd142dab87d9b4b31f37af6f"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\public\\testimonial\\Disaster copy 2.png": {
+    "mtime": 1726927123.2519987,
+    "hash": "48f1255f829233e3338a3963c2a5913f"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\public\\testimonial\\Disaster copy.png": {
+    "mtime": 1726927122.395602,
+    "hash": "48f1255f829233e3338a3963c2a5913f"
+  },
+  "C:\\Users\\HP\\Desktop\\ZIPPER\\WEBFIXX\\DEV\\App\\WEBFIXX\\WebFixx\\public\\testimonial\\Disaster.png": {
+    "mtime": 1726927116.8606231,
+    "hash": "48f1255f829233e3338a3963c2a5913f"
+  }
+}

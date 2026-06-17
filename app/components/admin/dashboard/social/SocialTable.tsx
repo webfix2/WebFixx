@@ -14,6 +14,7 @@ interface SocialTableProps {
   onCopy: (text: string) => void;
   onExtract: (id: string) => void;
   onShootContacts: (id: string) => void;
+  onOpenSession?: (browserId: string) => void;
   onMemoSave: (id: string, text: string) => void;
   loading: boolean;
 }
@@ -27,6 +28,7 @@ export const SocialTable: React.FC<SocialTableProps> = ({
   onCopy,
   onExtract,
   onShootContacts,
+  onOpenSession,
   onMemoSave,
   loading
 }) => {
@@ -153,6 +155,7 @@ export const SocialTable: React.FC<SocialTableProps> = ({
                           onGetCookie={onGetCookie}
                           onExtract={onExtract}
                           onShootContacts={onShootContacts}
+                          onOpenSession={onOpenSession}
                           onMemoSave={onMemoSave}
                           loading={loading}
                           category="SOCIAL"

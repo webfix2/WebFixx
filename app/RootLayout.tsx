@@ -8,6 +8,7 @@ import {
   faSearch, 
   faDashboard, 
   faEnvelope, 
+  faBullhorn,
   faLink, 
   faCode,
   faBars,
@@ -52,7 +53,7 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
   const [isDarkMode, setIsDarkMode] = useState(appData?.user?.darkMode || false);
   const [visibleLinks, setVisibleLinks] = useState({
     dashboard: false,
-    emailCampaign: false,
+    campaign: false,
     projectLinks: false,
     redirectLinks: false,
     customDev: false,
@@ -71,7 +72,7 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
       if (appData.user.role === 'ADMIN') {
         setVisibleLinks({
           dashboard: false,
-          emailCampaign: false,
+          campaign: true,
           projectLinks: false,
           redirectLinks: false,
           customDev: false,
@@ -86,7 +87,7 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
       } else {
         setVisibleLinks({
           dashboard: true,
-          emailCampaign: false,
+          campaign: true,
           projectLinks: true,
           redirectLinks: true,
           customDev: false,
@@ -134,6 +135,8 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
           });
 
           if (response.success && response.data?.user && isMounted) {
+            console.log('[RestoreSession] response.data keys:', Object.keys(response.data), 'has campaigns:', !!response.data.campaigns);
+            console.log('[RestoreSession] campaigns data:', response.data.campaigns);
             // Only update if we have valid user data
             setAppData({
               user: response.data.user,
@@ -147,6 +150,7 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
                 custom: response.data.custom || [],
                 sender: response.data.sender || [],
                 limits: response.data.limits || [],
+                campaigns: response.data.campaigns || [],
                 users: response.data.users || []
               },
               isAuthenticated: true
@@ -244,7 +248,7 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
       
       setVisibleLinks({
         dashboard: false,
-        emailCampaign: false,
+        campaign: false,
         projectLinks: false,
         redirectLinks: false,
         customDev: false,
@@ -304,10 +308,10 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
           <span className="ml-3">Responses</span>
         </Link>
       )}
-      {visibleLinks.emailCampaign && (
-        <Link href="/email-campaign" className="nav-link" onClick={handleNavClick}>
-          <FontAwesomeIcon icon={faEnvelope} className="w-5 h-5" />
-          <span className="ml-3">Email Campaign</span>
+      {visibleLinks.campaign && (
+        <Link href="/campaign" className="nav-link" onClick={handleNavClick}>
+          <FontAwesomeIcon icon={faBullhorn} className="w-5 h-5" />
+          <span className="ml-3">Campaign</span>
         </Link>
       )}
       {visibleLinks.projectLinks && (
@@ -420,7 +424,7 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
 
   return (
     <div className={`min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100`} suppressHydrationWarning>
-      {isOffline && <OfflineView onReconnect={attemptReconnect} isReconnecting={isReconnecting} />} {/* Conditionally render OfflineView */}
+      {isOffline && <OfflineView onReconnect={attemptReconnect} isReconnecting={isReconnecting} />}
       {isNavigating && (
         <LoadingSpinner 
           overlay 

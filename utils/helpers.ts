@@ -87,6 +87,7 @@ export interface UserLimits {
   extractionLimit: number;
   shootContactsLimit: number;
   interactionLimit: number;
+  campaignFileSize: number;
 }
 
 export const getUserLimits = (appData: any): UserLimits | null => {
@@ -131,7 +132,8 @@ export const getUserLimits = (appData: any): UserLimits | null => {
       getCookieLimit: Number(getColumnValue('getCookieLimit')) || 0,
       extractionLimit: Number(getColumnValue('extractionLimit')) || 0,
       shootContactsLimit: Number(getColumnValue('shootContactsLimit')) || 0,
-      interactionLimit: Number(getColumnValue('interactionLimit')) || 0
+      interactionLimit: Number(getColumnValue('interactionLimit')) || 0,
+      campaignFileSize: Number(getColumnValue('campaignFileSize')) || 100
     };
   } catch (error) {
     console.error('Error getting user limits:', error);

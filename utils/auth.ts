@@ -9,7 +9,15 @@ import type { Sender } from '../app/types/sender'; // Add this import
 import type { Limit } from '../app/types/limit'; // Add this import
 import type { Campaign } from '../app/types'; // Add this import
 
+declare var process: {
+  env: {
+    API_BASE_URL?: string;
+    [key: string]: string | undefined;
+  };
+};
+
 const API_BASE_URL = process.env.API_BASE_URL || 'https://web-fixx-hoo.vercel.app/api';
+
 
 export interface IpData {
   ipAddress: string;
@@ -493,6 +501,11 @@ export const authApi = {
 
 export const securedApi = {
   callBackendFunction: async (data: SecuredApiRequest): Promise<SecuredApiResponse> => {
+    if (typeof window !== 'undefined' && !navigator.onLine) {
+      alert("This action requires internet connectivity. Please connect and try again.");
+      throw new Error("Offline write actions blocked");
+    }
+
     const token = document.cookie.match('(^|;)\\s*loggedInAdmin\\s*=\\s*([^;]+)')?.pop();
     
     if (!token) {

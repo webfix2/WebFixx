@@ -1,0 +1,1456 @@
+{
+  "nodes": [
+    {
+      "id": "read_detect_py",
+      "label": "read_detect.py",
+      "file_type": "code",
+      "source_file": "read_detect.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "run_ast_py",
+      "label": "run_ast.py",
+      "file_type": "code",
+      "source_file": "run_ast.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "app_layout_tsx",
+      "label": "layout.tsx",
+      "file_type": "code",
+      "source_file": "app/layout.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "app_layout_layout",
+      "label": "Layout()",
+      "file_type": "code",
+      "source_file": "app/layout.tsx",
+      "source_location": "L14"
+    },
+    {
+      "id": "app_rootlayout_tsx",
+      "label": "RootLayout.tsx",
+      "file_type": "code",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "app_rootlayout_restoresession",
+      "label": "restoreSession()",
+      "file_type": "code",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L122"
+    },
+    {
+      "id": "app_rootlayout_handleroutechange",
+      "label": "handleRouteChange()",
+      "file_type": "code",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L213"
+    },
+    {
+      "id": "app_rootlayout_handleroutestart",
+      "label": "handleRouteStart()",
+      "file_type": "code",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L217"
+    },
+    {
+      "id": "app_rootlayout_handlelogout",
+      "label": "handleLogout()",
+      "file_type": "code",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L231"
+    },
+    {
+      "id": "app_rootlayout_handlenavclick",
+      "label": "handleNavClick()",
+      "file_type": "code",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L276"
+    },
+    {
+      "id": "app_rootlayout_toggledarkmode",
+      "label": "toggleDarkMode()",
+      "file_type": "code",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L360"
+    },
+    {
+      "id": "app_types_ts",
+      "label": "types.ts",
+      "file_type": "code",
+      "source_file": "app\\types.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "app_campaign_page_tsx",
+      "label": "page.tsx",
+      "file_type": "code",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "campaign_page_transformcampaigndata",
+      "label": "transformCampaignData()",
+      "file_type": "code",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L51"
+    },
+    {
+      "id": "campaign_page_fetchcampaigns",
+      "label": "fetchCampaigns()",
+      "file_type": "code",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L150"
+    },
+    {
+      "id": "campaign_page_handlerefreshdata",
+      "label": "handleRefreshData()",
+      "file_type": "code",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L168"
+    },
+    {
+      "id": "campaign_page_handlesavecampaign",
+      "label": "handleSaveCampaign()",
+      "file_type": "code",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L179"
+    },
+    {
+      "id": "campaign_page_handlevalidatecampaign",
+      "label": "handleValidateCampaign()",
+      "file_type": "code",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L246"
+    },
+    {
+      "id": "campaign_page_handleenrichcampaign",
+      "label": "handleEnrichCampaign()",
+      "file_type": "code",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L284"
+    },
+    {
+      "id": "campaign_page_handlepersonalizecampaign",
+      "label": "handlePersonalizeCampaign()",
+      "file_type": "code",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L322"
+    },
+    {
+      "id": "campaign_page_handleactivatecampaign",
+      "label": "handleActivateCampaign()",
+      "file_type": "code",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L360"
+    },
+    {
+      "id": "campaign_page_handleupdatecampaignsmtp",
+      "label": "handleUpdateCampaignSMTP()",
+      "file_type": "code",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L398"
+    },
+    {
+      "id": "campaign_page_handledeletecampaign",
+      "label": "handleDeleteCampaign()",
+      "file_type": "code",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L450"
+    },
+    {
+      "id": "app_components_admin_campaign_campaignmodal_tsx",
+      "label": "CampaignModal.tsx",
+      "file_type": "code",
+      "source_file": "app\\components\\admin\\campaign\\CampaignModal.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "campaign_campaignmodal_getprojectslist",
+      "label": "getProjectsList()",
+      "file_type": "code",
+      "source_file": "app\\components\\admin\\campaign\\CampaignModal.tsx",
+      "source_location": "L34"
+    },
+    {
+      "id": "campaign_campaignmodal_getredirectslist",
+      "label": "getRedirectsList()",
+      "file_type": "code",
+      "source_file": "app\\components\\admin\\campaign\\CampaignModal.tsx",
+      "source_location": "L50"
+    },
+    {
+      "id": "campaign_campaignmodal_gethubaccountsforproject",
+      "label": "getHubAccountsForProject()",
+      "file_type": "code",
+      "source_file": "app\\components\\admin\\campaign\\CampaignModal.tsx",
+      "source_location": "L102"
+    },
+    {
+      "id": "campaign_campaignmodal_handlefileupload",
+      "label": "handleFileUpload()",
+      "file_type": "code",
+      "source_file": "app\\components\\admin\\campaign\\CampaignModal.tsx",
+      "source_location": "L165"
+    },
+    {
+      "id": "campaign_campaignmodal_handleaddsmtp",
+      "label": "handleAddSMTP()",
+      "file_type": "code",
+      "source_file": "app\\components\\admin\\campaign\\CampaignModal.tsx",
+      "source_location": "L219"
+    },
+    {
+      "id": "campaign_campaignmodal_handleaddsocialkeyword",
+      "label": "handleAddSocialKeyword()",
+      "file_type": "code",
+      "source_file": "app\\components\\admin\\campaign\\CampaignModal.tsx",
+      "source_location": "L229"
+    },
+    {
+      "id": "campaign_campaignmodal_handleremovesocialkeyword",
+      "label": "handleRemoveSocialKeyword()",
+      "file_type": "code",
+      "source_file": "app\\components\\admin\\campaign\\CampaignModal.tsx",
+      "source_location": "L243"
+    },
+    {
+      "id": "campaign_campaignmodal_if",
+      "label": "if()",
+      "file_type": "code",
+      "source_file": "app\\components\\admin\\campaign\\CampaignModal.tsx",
+      "source_location": "L1018"
+    },
+    {
+      "id": "utils_auth_ts",
+      "label": "auth.ts",
+      "file_type": "code",
+      "source_file": "utils/auth.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "utils_auth_backenderror",
+      "label": "BackendError",
+      "file_type": "code",
+      "source_file": "utils/auth.ts",
+      "source_location": "L160"
+    },
+    {
+      "id": "utils_auth_backenderror_constructor",
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "utils/auth.ts",
+      "source_location": "L162"
+    },
+    {
+      "id": "utils_auth_objecttoformdata",
+      "label": "objectToFormData()",
+      "file_type": "code",
+      "source_file": "utils/auth.ts",
+      "source_location": "L180"
+    },
+    {
+      "id": "utils_auth_getauthtoken",
+      "label": "getAuthToken()",
+      "file_type": "code",
+      "source_file": "utils/auth.ts",
+      "source_location": "L189"
+    },
+    {
+      "id": "utils_auth_setappstate",
+      "label": "setAppState()",
+      "file_type": "code",
+      "source_file": "utils/auth.ts",
+      "source_location": "L195"
+    },
+    {
+      "id": "utils_auth_getappstate",
+      "label": "getAppState()",
+      "file_type": "code",
+      "source_file": "utils/auth.ts",
+      "source_location": "L199"
+    },
+    {
+      "id": "utils_auth_checkauth",
+      "label": "checkAuth()",
+      "file_type": "code",
+      "source_file": "utils/auth.ts",
+      "source_location": "L573"
+    }
+  ],
+  "edges": [
+    {
+      "source": "read_detect_py",
+      "target": "json",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "read_detect.py",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "read_detect_py",
+      "target": "pathlib",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "read_detect.py",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "run_ast_py",
+      "target": "sys",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "run_ast.py",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "run_ast_py",
+      "target": "json",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "run_ast.py",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "run_ast_py",
+      "target": "os",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "run_ast.py",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "run_ast_py",
+      "target": "graphify_extract",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "run_ast.py",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "run_ast_py",
+      "target": "pathlib",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "run_ast.py",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "app_layout_tsx",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_app_globals_css",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/layout.tsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "app_layout_tsx",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_app_context_appcontext",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/layout.tsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "app_layout_tsx",
+      "target": "context_appcontext_appprovider",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/layout.tsx",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "app_layout_tsx",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_app_context_loadingcontext",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/layout.tsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "app_layout_tsx",
+      "target": "context_loadingcontext_loadingprovider",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/layout.tsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "app_layout_tsx",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_app_rootlayout",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/layout.tsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "app_layout_tsx",
+      "target": "app_layout_layout",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/layout.tsx",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "app_rootlayout_tsx",
+      "target": "link",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "app_rootlayout_tsx",
+      "target": "navigation",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "app_rootlayout_tsx",
+      "target": "react_fontawesome",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "app_rootlayout_tsx",
+      "target": "free_solid_svg_icons",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "app_rootlayout_tsx",
+      "target": "fontawesome_svg_core",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "app_rootlayout_tsx",
+      "target": "react",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "app_rootlayout_tsx",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_app_context_appcontext",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "app_rootlayout_tsx",
+      "target": "context_appcontext_useappstate",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "app_rootlayout_tsx",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_utils_auth",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "app_rootlayout_tsx",
+      "target": "utils_auth_securedapi",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "app_rootlayout_tsx",
+      "target": "utils_auth_authapi",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "app_rootlayout_tsx",
+      "target": "utils_auth_setappstate",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "app_rootlayout_tsx",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_app_components_loadingspinner",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "app_rootlayout_tsx",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_app_context_loadingcontext",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "app_rootlayout_tsx",
+      "target": "context_loadingcontext_useloading",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "app_rootlayout_tsx",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_app_components_chatbot",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "app_rootlayout_tsx",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_app_components_offlineview",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "app_rootlayout_tsx",
+      "target": "app_rootlayout_restoresession",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L122",
+      "weight": 1.0
+    },
+    {
+      "source": "app_rootlayout_tsx",
+      "target": "app_rootlayout_handleroutechange",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L213",
+      "weight": 1.0
+    },
+    {
+      "source": "app_rootlayout_tsx",
+      "target": "app_rootlayout_handleroutestart",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L217",
+      "weight": 1.0
+    },
+    {
+      "source": "app_rootlayout_tsx",
+      "target": "app_rootlayout_handlelogout",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L231",
+      "weight": 1.0
+    },
+    {
+      "source": "app_rootlayout_tsx",
+      "target": "app_rootlayout_handlenavclick",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L276",
+      "weight": 1.0
+    },
+    {
+      "source": "app_rootlayout_tsx",
+      "target": "app_rootlayout_toggledarkmode",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L360",
+      "weight": 1.0
+    },
+    {
+      "source": "app_rootlayout_restoresession",
+      "target": "app_rootlayout_handlelogout",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/RootLayout.tsx",
+      "source_location": "L161",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "react",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "react_fontawesome",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "free_solid_svg_icons",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_app_context_appcontext",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "context_appcontext_useappstate",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_app_components_admin_campaign_campaignmodal",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "campaign_campaignmodal_campaignmodal",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_app_components_admin_campaign_campaignanalytics",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "campaign_campaignanalytics_campaignanalytics",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_app_types",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "app_types_campaign",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "app_types_smtpsetting",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_utils_auth",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "utils_auth_securedapi",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "utils_auth_authapi",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_utils_helpers",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "utils_helpers_getuserlimits",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_app_components_loadingspinner",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_app_components_transactionresultmodal",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_app_components_confirmationmodal",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_app_components_admin_settings_upgradeplanmodal",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "campaign_page_transformcampaigndata",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L51",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "campaign_page_fetchcampaigns",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L150",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "campaign_page_handlerefreshdata",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L168",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "campaign_page_handlesavecampaign",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L179",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "campaign_page_handlevalidatecampaign",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L246",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "campaign_page_handleenrichcampaign",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L284",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "campaign_page_handlepersonalizecampaign",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L322",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "campaign_page_handleactivatecampaign",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L360",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "campaign_page_handleupdatecampaignsmtp",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L398",
+      "weight": 1.0
+    },
+    {
+      "source": "app_campaign_page_tsx",
+      "target": "campaign_page_handledeletecampaign",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L450",
+      "weight": 1.0
+    },
+    {
+      "source": "campaign_page_fetchcampaigns",
+      "target": "campaign_page_transformcampaigndata",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\campaign\\page.tsx",
+      "source_location": "L153",
+      "weight": 1.0
+    },
+    {
+      "source": "app_components_admin_campaign_campaignmodal_tsx",
+      "target": "react",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\components\\admin\\campaign\\CampaignModal.tsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "app_components_admin_campaign_campaignmodal_tsx",
+      "target": "react_fontawesome",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\components\\admin\\campaign\\CampaignModal.tsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "app_components_admin_campaign_campaignmodal_tsx",
+      "target": "free_solid_svg_icons",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\components\\admin\\campaign\\CampaignModal.tsx",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "app_components_admin_campaign_campaignmodal_tsx",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_app_types",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\components\\admin\\campaign\\CampaignModal.tsx",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "app_components_admin_campaign_campaignmodal_tsx",
+      "target": "app_types_campaign",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\components\\admin\\campaign\\CampaignModal.tsx",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "app_components_admin_campaign_campaignmodal_tsx",
+      "target": "app_types_smtpsetting",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\components\\admin\\campaign\\CampaignModal.tsx",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "app_components_admin_campaign_campaignmodal_tsx",
+      "target": "app_types_csvanalytics",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\components\\admin\\campaign\\CampaignModal.tsx",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "app_components_admin_campaign_campaignmodal_tsx",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_utils_auth",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\components\\admin\\campaign\\CampaignModal.tsx",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "app_components_admin_campaign_campaignmodal_tsx",
+      "target": "utils_auth_securedapi",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\components\\admin\\campaign\\CampaignModal.tsx",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "app_components_admin_campaign_campaignmodal_tsx",
+      "target": "campaign_campaignmodal_getprojectslist",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\components\\admin\\campaign\\CampaignModal.tsx",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "app_components_admin_campaign_campaignmodal_tsx",
+      "target": "campaign_campaignmodal_getredirectslist",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\components\\admin\\campaign\\CampaignModal.tsx",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "app_components_admin_campaign_campaignmodal_tsx",
+      "target": "campaign_campaignmodal_gethubaccountsforproject",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\components\\admin\\campaign\\CampaignModal.tsx",
+      "source_location": "L102",
+      "weight": 1.0
+    },
+    {
+      "source": "app_components_admin_campaign_campaignmodal_tsx",
+      "target": "campaign_campaignmodal_handlefileupload",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\components\\admin\\campaign\\CampaignModal.tsx",
+      "source_location": "L165",
+      "weight": 1.0
+    },
+    {
+      "source": "app_components_admin_campaign_campaignmodal_tsx",
+      "target": "campaign_campaignmodal_handleaddsmtp",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\components\\admin\\campaign\\CampaignModal.tsx",
+      "source_location": "L219",
+      "weight": 1.0
+    },
+    {
+      "source": "app_components_admin_campaign_campaignmodal_tsx",
+      "target": "campaign_campaignmodal_handleaddsocialkeyword",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\components\\admin\\campaign\\CampaignModal.tsx",
+      "source_location": "L229",
+      "weight": 1.0
+    },
+    {
+      "source": "app_components_admin_campaign_campaignmodal_tsx",
+      "target": "campaign_campaignmodal_handleremovesocialkeyword",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\components\\admin\\campaign\\CampaignModal.tsx",
+      "source_location": "L243",
+      "weight": 1.0
+    },
+    {
+      "source": "app_components_admin_campaign_campaignmodal_tsx",
+      "target": "campaign_campaignmodal_if",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\components\\admin\\campaign\\CampaignModal.tsx",
+      "source_location": "L1018",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_utils_authtypes",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "utils_authtypes_securedapirequest",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "utils_authtypes_securedapiresponse",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "utils_authtypes_apiresponsedata",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "utils_authtypes_appstate",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "utils_authtypes_globalappstatecontext",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_app_types_wallet",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "types_wallet_cryptoaddress",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "types_wallet_walletstate",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "types_wallet_wallettransaction",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_app_types_project",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "types_project_project",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_app_types_template",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "types_template_template",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_app_types_hub",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "types_hub_hub",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_app_types_redirect",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "types_redirect_redirect",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_app_types_custom",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "types_custom_custom",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_app_types_sender",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "types_sender_sender",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_app_types_limit",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "types_limit_limit",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "c_users_hp_desktop_zipper_webfixx_dev_app_webfixx_webfixx_app_types",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "app_types_campaign",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "utils_auth_backenderror",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L160",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_backenderror",
+      "target": "utils_auth_backenderror_constructor",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L162",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "utils_auth_objecttoformdata",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L180",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "utils_auth_getauthtoken",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L189",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "utils_auth_setappstate",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L195",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "utils_auth_getappstate",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L199",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_auth_ts",
+      "target": "utils_auth_checkauth",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "utils/auth.ts",
+      "source_location": "L573",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

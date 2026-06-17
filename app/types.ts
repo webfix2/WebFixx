@@ -31,6 +31,8 @@ export interface SMTPSetting {
   port: number;
   username: string;
   password: string;
+  appPassword?: string;
+  oAuth2RefreshToken?: string;
   from_email: string;
   status?: 'active' | 'inactive';
 }
@@ -41,14 +43,42 @@ export type SMTPConfig = SMTPSetting;
 export interface Campaign {
   id: string; // Made required
   name: string;
+  channel: 'email' | 'social'; // Classifier for Campaign Type
   type: 'general' | 'email_logs' | 'bank_logs';
-  subject: string;
+  subject?: string;
+  body?: string; // Added for editor content
+  projectId?: string; // Added for project association
+  accounts?: string[]; // Selected active Hub Account IDs (WIRE or SOCIAL)
   smtpSettings: SMTPSetting[];
   fileUrl: string; // Made required
   summary?: string;
   template?: string;
+  templateId?: string; // Selected template from templates sheet
+  templateContent?: string; // Custom HTML/text template content
+  
+  // Email-specific settings
+  deliveryMethod?: 'smtp' | 'wire' | 'mixed'; // Rotation mode
+  
+  // Staged Preparation Workflow
+  validationStaged?: boolean;
+  validationStatus?: 'idle' | 'processing' | 'completed' | 'failed';
+  enrichmentStaged?: boolean;
+  enrichmentStatus?: 'idle' | 'processing' | 'completed' | 'failed';
+  aiPersonalizationStaged?: boolean; // AI personalization toggle
+  aiPersonalizationPrompt?: string; // Prompt for dynamic row generation
+  personalizationStatus?: 'idle' | 'processing' | 'completed' | 'failed';
+  
+  linkType?: 'project' | 'redirect'; // Tracking link source
+  linkId?: string; // Identifier of linked project/redirect
+  
+  // Social-specific settings
+  socialInteractionTypes?: Array<'inbox' | 'search' | 'other'>; // Serverless hooks
+  socialStrategyPrompt?: string; // Outreach prompt for AI replies/posts
+  socialKeywords?: string[]; // Targeting search queries
+  shouldSendMessage?: boolean; // Send DM to all social profiles in CSV
+
   created_at: string; // Added
-  status: 'draft' | 'scheduled' | 'running' | 'completed'; // Made required
+  status: 'draft' | 'scheduled' | 'running' | 'completed' | 'paused' | 'Limit Reached'; // Made required
   analytics?: {
       totalRows: number;
       sent: number;

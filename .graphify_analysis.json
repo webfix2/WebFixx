@@ -1,0 +1,704 @@
+{
+  "communities": {
+    "0": [
+      "app_components_admin_projects_projectsettingsmodal_tsx",
+      "app_components_admin_projects_settings_domainmanagementsettings_tsx",
+      "app_components_admin_projects_settings_expiryrenewalsettings_tsx",
+      "app_components_admin_projects_settings_notificationsettings_tsx",
+      "app_components_admin_projects_settings_redirectprotectionsettings_tsx",
+      "app_components_admin_projects_settings_templatevariablessettings_tsx",
+      "app_components_offlineview_tsx",
+      "app_root_page_tsx",
+      "app_wallet_page_tsx",
+      "context_appcontext_useappstate",
+      "projects_projectsettingsmodal_handlecopypageurl",
+      "projects_projectsettingsmodal_handlesave",
+      "projects_projectsettingsmodal_handletestpage",
+      "projects_projectsettingsmodal_handletogglenotifyvisits",
+      "projects_projectsettingsmodal_rendersettingssection",
+      "root_page_admindashboard",
+      "settings_domainmanagementsettings_gettemplateindex",
+      "settings_domainmanagementsettings_handleacquiredomain",
+      "settings_expiryrenewalsettings_gettemplateindex",
+      "settings_expiryrenewalsettings_handlerenewproject",
+      "settings_notificationsettings_handlesave",
+      "settings_redirectprotectionsettings_getid",
+      "settings_redirectprotectionsettings_getlink",
+      "settings_redirectprotectionsettings_handleselect",
+      "settings_templatevariablessettings_handlesave",
+      "settings_templatevariablessettings_safeparsejson",
+      "wallet_page_confirmbuydrink",
+      "wallet_page_gotonextpage",
+      "wallet_page_gotopage",
+      "wallet_page_gotopreviouspage",
+      "wallet_page_handlebuydrink",
+      "wallet_page_maptransactionarraytoobject"
+    ],
+    "1": [
+      "app_components_admin_dashboard_bank_banktable_tsx",
+      "app_components_admin_dashboard_social_socialtable_tsx",
+      "app_components_admin_dashboard_wire_wiretable_tsx",
+      "app_hooks_usewindowsize_ts",
+      "app_utils_logoutils_ts",
+      "bank_banktable_formattimestamp",
+      "bank_banktable_getbankdata",
+      "bank_banktable_getcolumns",
+      "bank_banktable_getrowbackgroundcolor",
+      "bank_banktable_handlecopy",
+      "hooks_usewindowsize_usewindowsize",
+      "social_socialtable_async",
+      "social_socialtable_formattimestamp",
+      "social_socialtable_getcolumns",
+      "social_socialtable_getrowbackgroundcolor",
+      "social_socialtable_getsocialdata",
+      "social_socialtable_handlecopy",
+      "utils_logoutils_getlogourl",
+      "wire_wiretable_formatdevicedata",
+      "wire_wiretable_formatipdata",
+      "wire_wiretable_getcolumns",
+      "wire_wiretable_getrowbackgroundcolor",
+      "wire_wiretable_handlecopy",
+      "wire_wiretable_handledomainclick"
+    ],
+    "2": [
+      "app_components_admin_settings_upgradeplanmodal_tsx",
+      "app_email_campaign_page_tsx",
+      "app_redirect_page_tsx",
+      "app_settings_page_tsx",
+      "email_campaign_page_fetchcampaigns",
+      "email_campaign_page_handledeletecampaign",
+      "email_campaign_page_handlerefreshdata",
+      "email_campaign_page_handlesavecampaign",
+      "email_campaign_page_handleupdatecampaignsmtp",
+      "email_campaign_page_transformcampaigndata",
+      "redirect_page_calculatetimeremaining",
+      "redirect_page_confirmcreateredirect",
+      "redirect_page_executerenewredirect",
+      "redirect_page_gettemplateindex",
+      "redirect_page_gotonextpage",
+      "redirect_page_gotopage",
+      "redirect_page_gotopreviouspage",
+      "redirect_page_handlecreateredirect",
+      "redirect_page_handleopenpathsmodal",
+      "redirect_page_handlerenewredirect",
+      "redirect_page_transformredirectdata",
+      "settings_page_usersettings",
+      "settings_upgradeplanmodal_getplanindex",
+      "utils_helpers_getuserlimits"
+    ],
+    "3": [
+      "app_context_appcontext_tsx",
+      "app_context_loadingcontext_tsx",
+      "app_layout_layout",
+      "app_layout_tsx",
+      "app_rootlayout_handlelogout",
+      "app_rootlayout_handlenavclick",
+      "app_rootlayout_handleroutechange",
+      "app_rootlayout_handleroutestart",
+      "app_rootlayout_restoresession",
+      "app_rootlayout_toggledarkmode",
+      "app_rootlayout_tsx",
+      "context_appcontext_appprovider",
+      "context_loadingcontext_loadingprovider",
+      "context_loadingcontext_useloading",
+      "utils_auth_backenderror",
+      "utils_auth_backenderror_constructor",
+      "utils_auth_checkauth",
+      "utils_auth_getappstate",
+      "utils_auth_getauthtoken",
+      "utils_auth_objecttoformdata",
+      "utils_auth_setappstate",
+      "utils_auth_ts"
+    ],
+    "4": [
+      "api_services_userservice_py",
+      "basemodel",
+      "services_userservice_userloginrequest",
+      "services_userservice_userregisterrequest",
+      "services_userservice_userservice",
+      "services_userservice_userservice_confirm_user",
+      "services_userservice_userservice_delete_user",
+      "services_userservice_userservice_get_user_by_email",
+      "services_userservice_userservice_get_user_by_id",
+      "services_userservice_userservice_list_users",
+      "services_userservice_userservice_login_user",
+      "services_userservice_userservice_register_user",
+      "services_userservice_userservice_update_user",
+      "services_userservice_userservice_verify_account",
+      "services_userservice_verifyaccountrequest"
+    ],
+    "5": [
+      "app_components_admin_dashboard_bank_bankextractview_tsx",
+      "app_components_admin_dashboard_itemdetailsmodal_tsx",
+      "app_components_admin_dashboard_social_socialextractview_tsx",
+      "app_components_admin_dashboard_wire_wireextractview_tsx",
+      "dashboard_itemdetailsmodal_async",
+      "dashboard_itemdetailsmodal_handleaction",
+      "dashboard_itemdetailsmodal_handleconfirm",
+      "dashboard_itemdetailsmodal_handlememoclick",
+      "dashboard_itemdetailsmodal_renderextractcontent",
+      "dashboard_itemdetailsmodal_renderextractsection",
+      "dashboard_itemdetailsmodal_useextractdata",
+      "utils_helpers_cleanjsonstring",
+      "utils_helpers_parsejsonwithcomments",
+      "utils_helpers_safeparsejson",
+      "utils_helpers_ts"
+    ],
+    "6": [
+      "api_services_googlesheetservice_py",
+      "services_googlesheetservice_googlesheetservice",
+      "services_googlesheetservice_googlesheetservice_authenticate",
+      "services_googlesheetservice_googlesheetservice_build_service",
+      "services_googlesheetservice_googlesheetservice_get_all_sheets",
+      "services_googlesheetservice_googlesheetservice_get_cell_value_by_search",
+      "services_googlesheetservice_googlesheetservice_get_sheet_by_name",
+      "services_googlesheetservice_googlesheetservice_get_sheet_range",
+      "services_googlesheetservice_googlesheetservice_get_sheet_rows_by_search",
+      "services_googlesheetservice_googlesheetservice_init",
+      "services_googlesheetservice_googlesheetservice_set_multiple_cell_data",
+      "services_googlesheetservice_googlesheetservice_set_new_row",
+      "services_googlesheetservice_run_tests"
+    ],
+    "7": [
+      "app_components_admin_projects_createlinkmodal_tsx",
+      "projects_createlinkmodal_getfirsturl",
+      "projects_createlinkmodal_gettemplateindex",
+      "projects_createlinkmodal_handlesubmit",
+      "projects_createlinkmodal_handletelegramverification",
+      "projects_createlinkmodal_handletemplateselection",
+      "projects_createlinkmodal_handletemplatevariablechange",
+      "projects_createlinkmodal_isvalidurl",
+      "projects_createlinkmodal_nextstage",
+      "projects_createlinkmodal_prevstage",
+      "projects_createlinkmodal_rendertemplatepreview",
+      "projects_createlinkmodal_rendertemplatevariables",
+      "projects_createlinkmodal_resetform"
+    ],
+    "8": [
+      "app_components_admin_dashboard_dashboardtabs_tsx",
+      "app_dashboard_page_tsx",
+      "dashboard_dashboardtabs_dashboardtabs",
+      "dashboard_page_handlecopy",
+      "dashboard_page_handleextract",
+      "dashboard_page_handlegetcookie",
+      "dashboard_page_handlememosave",
+      "dashboard_page_handlerefreshdata",
+      "dashboard_page_handlerowclick",
+      "dashboard_page_handleshootcontacts",
+      "dashboard_page_handleverify",
+      "dashboard_page_rendertable"
+    ],
+    "9": [
+      "app_campaign_page_tsx",
+      "campaign_page_fetchcampaigns",
+      "campaign_page_handleactivatecampaign",
+      "campaign_page_handledeletecampaign",
+      "campaign_page_handleenrichcampaign",
+      "campaign_page_handlepersonalizecampaign",
+      "campaign_page_handlerefreshdata",
+      "campaign_page_handlesavecampaign",
+      "campaign_page_handleupdatecampaignsmtp",
+      "campaign_page_handlevalidatecampaign",
+      "campaign_page_transformcampaigndata"
+    ],
+    "10": [
+      "api_controllers_usercontroller_py",
+      "controllers_usercontroller_confirm_user",
+      "controllers_usercontroller_delete_user",
+      "controllers_usercontroller_get_user_by_email",
+      "controllers_usercontroller_get_user_by_id",
+      "controllers_usercontroller_list_users",
+      "controllers_usercontroller_login_user",
+      "controllers_usercontroller_register_user",
+      "controllers_usercontroller_update_user",
+      "controllers_usercontroller_verify_account"
+    ],
+    "11": [
+      "app_components_admin_wallet_fundwalletmodal_tsx",
+      "app_types_wallet_ts",
+      "types_wallet_converttopaymentresponse",
+      "wallet_fundwalletmodal_copytoclipboard",
+      "wallet_fundwalletmodal_formattime",
+      "wallet_fundwalletmodal_getcryptoamount",
+      "wallet_fundwalletmodal_getpaymentwarning",
+      "wallet_fundwalletmodal_getwalleturi",
+      "wallet_fundwalletmodal_handlepaymentpromptresponse",
+      "wallet_fundwalletmodal_handleproceed"
+    ],
+    "12": [
+      "app_components_admin_campaign_campaignmodal_tsx",
+      "campaign_campaignmodal_gethubaccountsforproject",
+      "campaign_campaignmodal_getprojectslist",
+      "campaign_campaignmodal_getredirectslist",
+      "campaign_campaignmodal_handleaddsmtp",
+      "campaign_campaignmodal_handleaddsocialkeyword",
+      "campaign_campaignmodal_handlefileupload",
+      "campaign_campaignmodal_handleremovesocialkeyword",
+      "campaign_campaignmodal_if"
+    ],
+    "13": [
+      "app_components_admin_redirect_pathsmodal_tsx",
+      "redirect_pathsmodal_generatefullpathurl",
+      "redirect_pathsmodal_handleaddredirectpath",
+      "redirect_pathsmodal_handleclickoutside",
+      "redirect_pathsmodal_handleeditpath",
+      "redirect_pathsmodal_handlesaveeditedpath",
+      "redirect_pathsmodal_handleupgradeplanconfirm",
+      "redirect_pathsmodal_isvalidurl",
+      "utils_helpers_isredirectconnectedtoproject"
+    ],
+    "14": [
+      "admin_admindata_fetchadmindata",
+      "admin_admindata_fetchalltickets",
+      "admin_admindata_fetchallusers",
+      "admin_admindata_fetchticketdata",
+      "admin_admindata_fetchuserdata",
+      "admin_admindata_fetchwithretry",
+      "admin_admindata_refreshdata",
+      "app_api_admin_admindata_tsx"
+    ],
+    "15": [
+      "app_components_admin_dashboard_shootcontactsmodal_tsx",
+      "dashboard_shootcontactsmodal_getsendstatuscolor",
+      "dashboard_shootcontactsmodal_handleback",
+      "dashboard_shootcontactsmodal_handlenext",
+      "dashboard_shootcontactsmodal_handlesubmit",
+      "dashboard_shootcontactsmodal_rendersetupflow",
+      "dashboard_shootcontactsmodal_safeparsejson"
+    ],
+    "16": [
+      "app_components_admin_projects_actionshandler_tsx",
+      "projects_actionshandler_getrenewalprice",
+      "projects_actionshandler_gettemplateindex",
+      "projects_actionshandler_handledeleteproject",
+      "projects_actionshandler_handleopenlink",
+      "projects_actionshandler_handlerenewproject",
+      "projects_actionshandler_onsettings"
+    ],
+    "17": [
+      "api_services_driveservice_py",
+      "services_driveservice_googledriveservice",
+      "services_driveservice_googledriveservice_authenticate",
+      "services_driveservice_googledriveservice_create_subfolder",
+      "services_driveservice_googledriveservice_init",
+      "services_driveservice_googledriveservice_upload_file"
+    ],
+    "18": [
+      "app_page_checkauth",
+      "app_page_getdeviceinfo",
+      "app_page_getgeoinfo",
+      "app_page_handleredirect",
+      "app_page_handlesubmit",
+      "app_page_tsx"
+    ],
+    "19": [
+      "app_components_admin_projects_responsemodal_tsx",
+      "projects_responsemodal_copytoclipboard",
+      "projects_responsemodal_handlecopypageurl",
+      "projects_responsemodal_handlerefreshdata",
+      "projects_responsemodal_handletestpage",
+      "projects_responsemodal_renderjsonvalue"
+    ],
+    "20": [
+      "app_projects_page_tsx",
+      "projects_page_calculatetimeremaining",
+      "projects_page_fetchprojects",
+      "projects_page_handlecreatelink",
+      "projects_page_handlerefreshdata",
+      "projects_page_paginate"
+    ],
+    "21": [
+      "app_reset_password_page_tsx",
+      "reset_password_page_handlecodesubmit",
+      "reset_password_page_handleemailsubmit",
+      "reset_password_page_handlepasswordsubmit",
+      "reset_password_page_updatestate",
+      "reset_password_page_validatepassword"
+    ],
+    "22": [
+      "app_verify_page_tsx",
+      "verify_page_formattime",
+      "verify_page_handlelogout",
+      "verify_page_handleresendemail",
+      "verify_page_handlesubmit",
+      "verify_page_initializeresendtimer"
+    ],
+    "23": [
+      "app_root_users_page_tsx",
+      "users_page_handlecheck",
+      "users_page_handlecopy",
+      "users_page_handledelete"
+    ],
+    "24": [
+      "app_components_admin_campaign_campaignanalytics_tsx",
+      "campaign_campaignanalytics_downloadcsv",
+      "campaign_campaignanalytics_handleaddupdatesmtp"
+    ],
+    "25": [
+      "app_components_admin_dashboard_tableactions_tsx",
+      "dashboard_tableactions_handleaction",
+      "dashboard_tableactions_handleconfirm"
+    ],
+    "26": [
+      "app_components_admin_redirect_protectionfeaturescard_tsx",
+      "redirect_protectionfeaturescard_checkismobile",
+      "redirect_protectionfeaturescard_togglecollapse"
+    ],
+    "27": [
+      "account_page_account",
+      "app_account_page_tsx"
+    ],
+    "28": [
+      "app_api_docs_page_tsx",
+      "docs_page_docs"
+    ],
+    "29": [
+      "app_components_confirmationmodal_tsx",
+      "components_confirmationmodal_confirmationmodal"
+    ],
+    "30": [
+      "app_components_helpermethods_ts",
+      "components_helpermethods_getrowsbycolumn"
+    ],
+    "31": [
+      "app_components_admin_settings_apikeymodal_tsx",
+      "settings_apikeymodal_handlegenerate"
+    ],
+    "32": [
+      "app_components_admin_settings_destroyaccountmodal_tsx",
+      "settings_destroyaccountmodal_destroyaccountmodal"
+    ],
+    "33": [
+      "app_custom_dev_page_tsx",
+      "custom_dev_page_customdevelopment"
+    ],
+    "34": [
+      "app_invalid_page_tsx",
+      "invalid_page_invalidpage"
+    ],
+    "35": [
+      "app_root_settings_page_tsx",
+      "settings_page_initializewallet"
+    ],
+    "36": [
+      "app_root_transactions_page_tsx",
+      "transactions_page_initializewallet"
+    ],
+    "37": [
+      "app_tools_page_tsx",
+      "tools_page_handlefileupload"
+    ],
+    "38": [
+      "utils_middleware_middleware",
+      "utils_middleware_ts"
+    ],
+    "39": [
+      "next_env_d_ts"
+    ],
+    "40": [
+      "next_config_js"
+    ],
+    "41": [
+      "postcss_config_js"
+    ],
+    "42": [
+      "run_ast_py"
+    ],
+    "43": [
+      "tailwind_config_js"
+    ],
+    "44": [
+      "api_index_py"
+    ],
+    "45": [
+      "app_types_ts"
+    ],
+    "46": [
+      "app_api_admin_types_ts"
+    ],
+    "47": [
+      "app_components_chatbot_tsx"
+    ],
+    "48": [
+      "app_components_loadingspinner_tsx"
+    ],
+    "49": [
+      "app_components_transactionresultmodal_tsx"
+    ],
+    "50": [
+      "app_components_admin_dashboard_transactiontable_tsx"
+    ],
+    "51": [
+      "app_components_admin_dashboard_usertable_tsx"
+    ],
+    "52": [
+      "app_components_admin_dashboard_wire_domainmodal_tsx"
+    ],
+    "53": [
+      "app_components_admin_projects_settings_common_tsx"
+    ],
+    "54": [
+      "app_components_admin_projects_settings_index_ts"
+    ],
+    "55": [
+      "app_components_admin_redirect_createredirectcard_tsx"
+    ],
+    "56": [
+      "app_components_admin_redirect_noredirectsview_tsx"
+    ],
+    "57": [
+      "app_components_admin_redirect_redirecttable_tsx"
+    ],
+    "58": [
+      "app_components_admin_settings_twofactormodal_tsx"
+    ],
+    "59": [
+      "app_components_admin_wallet_fundaccountmodal_tsx"
+    ],
+    "60": [
+      "app_types_custom_ts"
+    ],
+    "61": [
+      "app_types_extracts_ts"
+    ],
+    "62": [
+      "app_types_hub_ts"
+    ],
+    "63": [
+      "app_types_limit_ts"
+    ],
+    "64": [
+      "app_types_project_ts"
+    ],
+    "65": [
+      "app_types_redirect_ts"
+    ],
+    "66": [
+      "app_types_sender_ts"
+    ],
+    "67": [
+      "app_types_template_ts"
+    ],
+    "68": [
+      "utils_authtypes_ts"
+    ],
+    "69": [
+      "utils_timer_ts"
+    ],
+    "70": [
+      "utils_utils_ts"
+    ],
+    "71": [
+      "read_detect_py"
+    ]
+  },
+  "cohesion": {
+    "0": 0.06,
+    "1": 0.09,
+    "2": 0.09,
+    "3": 0.1,
+    "4": 0.15,
+    "5": 0.16,
+    "6": 0.23,
+    "7": 0.22,
+    "8": 0.17,
+    "9": 0.2,
+    "10": 0.2,
+    "11": 0.22,
+    "12": 0.22,
+    "13": 0.28,
+    "14": 0.43,
+    "15": 0.29,
+    "16": 0.33,
+    "17": 0.4,
+    "18": 0.4,
+    "19": 0.33,
+    "20": 0.33,
+    "21": 0.6,
+    "22": 0.33,
+    "23": 0.5,
+    "24": 0.67,
+    "25": 0.67,
+    "26": 0.67,
+    "27": 1.0,
+    "28": 1.0,
+    "29": 1.0,
+    "30": 1.0,
+    "31": 1.0,
+    "32": 1.0,
+    "33": 1.0,
+    "34": 1.0,
+    "35": 1.0,
+    "36": 1.0,
+    "37": 1.0,
+    "38": 1.0,
+    "39": 1.0,
+    "40": 1.0,
+    "41": 1.0,
+    "42": 1.0,
+    "43": 1.0,
+    "44": 1.0,
+    "45": 1.0,
+    "46": 1.0,
+    "47": 1.0,
+    "48": 1.0,
+    "49": 1.0,
+    "50": 1.0,
+    "51": 1.0,
+    "52": 1.0,
+    "53": 1.0,
+    "54": 1.0,
+    "55": 1.0,
+    "56": 1.0,
+    "57": 1.0,
+    "58": 1.0,
+    "59": 1.0,
+    "60": 1.0,
+    "61": 1.0,
+    "62": 1.0,
+    "63": 1.0,
+    "64": 1.0,
+    "65": 1.0,
+    "66": 1.0,
+    "67": 1.0,
+    "68": 1.0,
+    "69": 1.0,
+    "70": 1.0,
+    "71": 1.0
+  },
+  "gods": [
+    {
+      "id": "context_appcontext_useappstate",
+      "label": "useAppState()",
+      "degree": 25
+    },
+    {
+      "id": "services_googlesheetservice_googlesheetservice",
+      "label": "GoogleSheetService",
+      "degree": 11
+    },
+    {
+      "id": "services_userservice_userservice",
+      "label": "UserService",
+      "degree": 10
+    },
+    {
+      "id": "app_api_admin_admindata_tsx",
+      "label": "AdminData.tsx",
+      "degree": 7
+    },
+    {
+      "id": "utils_helpers_getuserlimits",
+      "label": "getUserLimits()",
+      "degree": 7
+    },
+    {
+      "id": "admin_admindata_fetchwithretry",
+      "label": "fetchWithRetry()",
+      "degree": 6
+    },
+    {
+      "id": "utils_helpers_parsejsonwithcomments",
+      "label": "parseJSONWithComments()",
+      "degree": 6
+    },
+    {
+      "id": "services_driveservice_googledriveservice",
+      "label": "GoogleDriveService",
+      "degree": 5
+    },
+    {
+      "id": "hooks_usewindowsize_usewindowsize",
+      "label": "useWindowSize()",
+      "degree": 4
+    },
+    {
+      "id": "reset_password_page_updatestate",
+      "label": "updateState()",
+      "degree": 4
+    }
+  ],
+  "surprises": [
+    {
+      "source": "UserSettings()",
+      "target": "getUserLimits()",
+      "source_files": [
+        "app/settings/page.tsx",
+        "utils/helpers.ts"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    },
+    {
+      "source": "useAppState()",
+      "target": "AdminDashboard()",
+      "source_files": [
+        "app/context/AppContext.tsx",
+        "app/root/page.tsx"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; peripheral node `AdminDashboard()` unexpectedly reaches hub `useAppState()`"
+    },
+    {
+      "source": "useAppState()",
+      "target": "UserSettings()",
+      "source_files": [
+        "app/context/AppContext.tsx",
+        "app/settings/page.tsx"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; bridges separate communities"
+    },
+    {
+      "source": "handleProceed()",
+      "target": "convertToPaymentResponse()",
+      "source_files": [
+        "app/components/admin/wallet/FundWalletModal.tsx",
+        "app/types/wallet.ts"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `useAppState()` connect `Community 0` to `Community 2`, `Community 3`, `Community 7`, `Community 8`, `Community 11`, `Community 16`, `Community 18`, `Community 19`, `Community 20`, `Community 21`, `Community 22`?",
+      "why": "High betweenness centrality (0.223) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `getUserLimits()` connect `Community 2` to `Community 5`, `Community 13`?",
+      "why": "High betweenness centrality (0.067) - this node is a cross-community bridge."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 2 inferred relationships involving `useAppState()` (e.g. with `AdminDashboard()` and `UserSettings()`) actually correct?",
+      "why": "`useAppState()` has 2 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 0` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.06 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 1` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.09 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 2` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.09 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 3` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.1 - nodes in this community are weakly interconnected."
+    }
+  ]
+}
