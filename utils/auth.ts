@@ -180,7 +180,13 @@ export interface UpdatePasswordData {
 function objectToFormData(obj: Record<string, any>): string {
   const formData = new URLSearchParams();
   Object.entries(obj).forEach(([key, value]) => {
-    formData.append(key, value.toString());
+    if (value === null || value === undefined) {
+      formData.append(key, '');
+    } else if (typeof value === 'object') {
+      formData.append(key, JSON.stringify(value));
+    } else {
+      formData.append(key, String(value));
+    }
   });
   return formData.toString();
 }

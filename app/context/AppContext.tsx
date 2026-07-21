@@ -33,7 +33,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // Update localStorage when state changes
   useEffect(() => {
     if (appData) {
-      localStorage.setItem('appState', JSON.stringify(appData));
+      try {
+        localStorage.setItem('appState', JSON.stringify(appData));
+      } catch {
+        // Storage quota exceeded or corrupt — silently ignore
+      }
     }
   }, [appData]);
 

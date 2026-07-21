@@ -40,8 +40,12 @@ export default function Home() {
       if (appData?.user?.darkMode !== undefined) {
         return appData.user.darkMode;
       }
-      const localPreference = localStorage.getItem('darkModePreference');
-      return localPreference ? JSON.parse(localPreference) : false;
+      try {
+        const localPreference = localStorage.getItem('darkModePreference');
+        return localPreference ? JSON.parse(localPreference) : false;
+      } catch {
+        return false;
+      }
     }
     return false;
   });

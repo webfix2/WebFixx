@@ -52,6 +52,12 @@ self.addEventListener('fetch', (event) => {
 
   if (!url.protocol.startsWith('http')) return;
 
+  // Skip caching for non-GET requests (POST, PUT, DELETE, etc.)
+  if (request.method !== 'GET') {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
   // Cache API requests with networkFirst strategy
   if (url.pathname.includes('/api/')) {
     event.respondWith(networkFirstWithCache(request, API_CACHE));
