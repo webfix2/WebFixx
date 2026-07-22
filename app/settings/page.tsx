@@ -308,7 +308,7 @@ export default function UserSettings() {
   const isTwoFactorEnabled = !!appData?.user?.twoFactorAuth;
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
+    <div className="p-4 sm:p-6 max-w-6xl mx-auto">
       {/* Upgrade Plan Card */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-none p-6 h-full mb-8">
         <div className="flex items-center justify-between mb-4">

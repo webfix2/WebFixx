@@ -486,7 +486,7 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
       )}
 
       {/* Main Content */}
-      <main className={`${shouldShowSidebar ? 'lg:ml-64' : ''} ${shouldShowSidebar ? 'mt-16 lg:mt-0' : ''} min-h-screen p-4`}>
+      <main className={`${shouldShowSidebar ? 'lg:ml-64' : ''} ${shouldShowSidebar ? 'mt-16 lg:mt-0' : ''} min-h-screen px-2 py-4 sm:p-4`}>
         {children}
       </main>
 

@@ -615,7 +615,7 @@ export default function Campaign() {
   };
 
   return (
-    <div className="p-6 dark:bg-gray-900 dark:text-gray-100 min-h-screen">
+    <div className="p-4 sm:p-6 dark:bg-gray-900 dark:text-gray-100 min-h-screen">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center space-x-4">
@@ -634,10 +634,10 @@ export default function Campaign() {
             setEditingCampaign(null);
             setShowCampaignModal(true);
           }}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center transition-colors"
+          className="px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center transition-colors"
         >
-          <FontAwesomeIcon icon={faPlus} className="w-4 h-4 mr-2" />
-          New Campaign
+          <FontAwesomeIcon icon={faPlus} className="w-4 h-4 sm:mr-2" />
+          <span className="hidden sm:inline">New Campaign</span>
         </button>
       </div>
 
