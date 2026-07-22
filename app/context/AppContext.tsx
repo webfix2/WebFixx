@@ -70,6 +70,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const checkPendingTransactions = async () => {
       // Only check if online
       if (!isOffline && appData?.data?.transactions?.data) {
+        // Stop if token is gone — user was logged out
+        const token = document.cookie.match('(^|;)\\s*loggedInAdmin\\s*=\\s*([^;]+)')?.pop();
+        if (!token) return;
+
         const transactionsObj = appData.data.transactions;
         const headers = transactionsObj.headers;
         const data = transactionsObj.data;

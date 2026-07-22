@@ -409,6 +409,19 @@ export const authApi = {
       });
 
       if (!response.ok) {
+        // Check for auth errors before throwing
+        try {
+          const errorData = await response.json();
+          if (errorData.error && 
+              (errorData.error.includes('token') || errorData.error.includes('auth') || 
+               errorData.error.includes('expired') || errorData.error.includes('invalid'))) {
+            const appState = getAppState();
+            if (appState?.clearAppData) {
+              appState.clearAppData();
+              window.location.href = '/';
+            }
+          }
+        } catch {}
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
@@ -421,6 +434,17 @@ export const authApi = {
 
       try {
         const result = JSON.parse(text);
+
+        // Check for auth errors in successful response
+        if (result.error && 
+            (result.error.includes('token') || result.error.includes('auth') || 
+             result.error.includes('expired') || result.error.includes('invalid'))) {
+          const appState = getAppState();
+          if (appState?.clearAppData) {
+            appState.clearAppData();
+            window.location.href = '/';
+          }
+        }
         
         // Update the app state with the new data if setAppDataFunc is provided
         if (result && result.success && setAppDataFunc && typeof setAppDataFunc === 'function') {
@@ -568,6 +592,16 @@ export const securedApi = {
 
       return result;
     } catch (error) {
+      // Check for auth errors → trigger immediate logout
+      if (error instanceof BackendError && 
+          (error.message.includes('token') || error.message.includes('auth') || 
+           error.message.includes('expired') || error.message.includes('invalid'))) {
+        const appState = getAppState();
+        if (appState?.clearAppData) {
+          appState.clearAppData();
+          window.location.href = '/';
+        }
+      }
       // Check for network errors (e.g., 'Failed to fetch')
       if (error instanceof TypeError && error.message === 'Failed to fetch') {
         const appState = getAppState();

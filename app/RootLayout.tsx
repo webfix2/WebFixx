@@ -24,7 +24,7 @@ import {
   faTimes,
 } from '@fortawesome/free-solid-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useAppState } from './context/AppContext';
 import { securedApi, authApi, setAppState as setAuthAppState } from '../utils/auth';
 import LoadingSpinner from './components/LoadingSpinner';
@@ -115,6 +115,37 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
     }
   }, [appData?.user?.darkMode]);
 
+  const handleLogout = useCallback(async () => {
+    setIsLoggingOut(true);
+    try {
+      const token = document.cookie.match('(^|;)\\s*loggedInAdmin\\s*=\\s*([^;]+)')?.pop();
+      if (token) {
+        await authApi.logout(token);
+      }
+    } catch (error) {
+      console.error('Logout failed:', error);
+    } finally {
+      clearAppData();
+      document.cookie = 'loggedInAdmin=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      document.cookie = 'verifyStatus=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      setVisibleLinks({
+        dashboard: false,
+        campaign: false,
+        projectLinks: false,
+        redirectLinks: false,
+        customDev: false,
+        tools: false,
+        wallet: false,
+        settings: false,
+        rootDashboard: false,
+        users: false,
+        transactions: false,
+        rootSettings: false
+      });
+      window.location.href = '/';
+    }
+  }, [clearAppData]);
+
   useEffect(() => {
     let isMounted = true;
     let intervalId: NodeJS.Timeout;
@@ -182,8 +213,8 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
     // Initial session restore
     restoreSession();
 
-    // Set up interval for periodic validation (1 hour)
-    intervalId = setInterval(restoreSession, 60 * 60 * 1000);
+    // Set up interval for periodic validation (15 minutes)
+    intervalId = setInterval(restoreSession, 15 * 60 * 1000);
 
     return () => {
       isMounted = false;
@@ -191,7 +222,7 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
         clearInterval(intervalId);
       }
     };
-  }, []);
+  }, [handleLogout]);
 
   // Automatic reconnection attempt when offline
   useEffect(() => {
@@ -230,40 +261,6 @@ export default function RootLayout({ children, inter }: RootLayoutProps) {
       // Cleanup
     };
   }, [pathname, setIsNavigating]);
-
-  const handleLogout = async () => {
-    setIsLoggingOut(true); // Set logging out state to true
-    try {
-      const token = document.cookie.match('(^|;)\\s*loggedInAdmin\\s*=\\s*([^;]+)')?.pop();
-      if (token) {
-        await authApi.logout(token);
-      }
-    } catch (error) {
-      console.error('Logout failed:', error);
-    } finally {
-      clearAppData();
-      // Clear cookies
-      document.cookie = 'loggedInAdmin=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-      document.cookie = 'verifyStatus=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-      
-      setVisibleLinks({
-        dashboard: false,
-        campaign: false,
-        projectLinks: false,
-        redirectLinks: false,
-        customDev: false,
-        tools: false,
-        wallet: false,
-        settings: false,
-        rootDashboard: false,
-        users: false,
-        transactions: false,
-        rootSettings: false
-      });
-      
-      window.location.href = '/';
-    }
-  };
 
   const shouldShowSidebar = !isLoggingOut && // Hide sidebar if logging out
                            pathname !== '/' && 
