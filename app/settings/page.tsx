@@ -11,12 +11,13 @@ import {
   faCrown,
   faEdit,
   faSync,
-  faSpinner // Added faSpinner
+  faSpinner,
+  faCheckCircle
 } from '@fortawesome/free-solid-svg-icons';
 import { useAppState } from '../context/AppContext';
 import type { AppState } from '../../utils/authTypes'; // Import AppState from authTypes
 import LoadingSpinner from '../components/LoadingSpinner';
-import { securedApi } from '../../utils/auth';
+import { securedApi, authApi } from '../../utils/auth';
 import TransactionResultModal from '../components/TransactionResultModal';
 import ConfirmationModal from '../components/ConfirmationModal';
 import FundAccountModal from '../components/admin/wallet/FundAccountModal';
@@ -49,6 +50,7 @@ export default function UserSettings() {
   const [isDestroyingAccount, setIsDestroyingAccount] = useState(false);
   const [isTwoFactorProcessing, setIsTwoFactorProcessing] = useState(false);
   const [isUpgradingPlan, setIsUpgradingPlan] = useState(false); // Specific for plan upgrade
+  const [isAutoVerifyProcessing, setIsAutoVerifyProcessing] = useState(false);
 
   // Transaction result modal state
   const [showResultModal, setShowResultModal] = useState(false);
@@ -294,6 +296,41 @@ export default function UserSettings() {
     }
   };
 
+  const handleAutoVerifyToggle = async () => {
+    setIsAutoVerifyProcessing(true);
+    try {
+      const currentValue = appData?.user?.autoVerifySessions || false;
+      const response = await authApi.toggleAutoVerify(!currentValue);
+      
+      if (response.success) {
+        setResultModalProps({
+          type: 'success',
+          title: `Auto-Verify ${!currentValue ? 'Enabled' : 'Disabled'}`,
+          message: `Automatic session verification has been ${!currentValue ? 'enabled' : 'disabled'}.`,
+          details: response.data || {}
+        });
+        // appData will be globally updated in auth.ts
+      } else {
+        setResultModalProps({
+          type: 'error',
+          title: 'Failed',
+          message: response.error || 'Failed to update auto-verify setting.',
+          details: response.details || {}
+        });
+      }
+    } catch (error: any) {
+      setResultModalProps({
+        type: 'error',
+        title: 'Unexpected Error',
+        message: error instanceof Error ? error.message : 'An unexpected error occurred',
+        details: {}
+      });
+    } finally {
+      setIsAutoVerifyProcessing(false);
+      setShowResultModal(true);
+    }
+  };
+
   // Format the creation date
   const formatDate = (dateString: string) => {
     if (!dateString) return 'a year ago';
@@ -357,6 +394,28 @@ export default function UserSettings() {
           >
             {isTwoFactorProcessing ? <FontAwesomeIcon icon={faSpinner} className="animate-spin mr-2" /> : <FontAwesomeIcon icon={faShield} className="w-4 h-4 mr-2" />}
             {isTwoFactorEnabled ? 'Disable Two-Factor Authentication' : 'Enable Two-Factor Authentication'}
+          </button>
+        </div>
+
+        {/* Auto-Verify Sessions */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-none p-6 w-full">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Session Verification</h2>
+            <FontAwesomeIcon icon={faCheckCircle} className="w-6 h-6 text-blue-500" />
+          </div>
+          <div className="mb-4">
+            <p className="text-gray-700 dark:text-gray-200">Auto-verify sessions is currently: <span className={`font-semibold ${appData?.user?.autoVerifySessions ? 'text-green-500' : 'text-red-500'}`}>
+              {appData?.user?.autoVerifySessions ? 'Enabled' : 'Disabled'}
+            </span></p>
+            <p className="text-gray-700 dark:text-gray-200">When enabled, your sessions will be automatically re-verified based on the admin-configured interval to ensure they remain active and accessible.</p>
+          </div>
+          <button
+            onClick={handleAutoVerifyToggle}
+            className={`${appData?.user?.autoVerifySessions ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'} text-white py-2 px-4 rounded-lg flex items-center justify-center`}
+            disabled={isAutoVerifyProcessing}
+          >
+            {isAutoVerifyProcessing ? <FontAwesomeIcon icon={faSpinner} className="animate-spin mr-2" /> : <FontAwesomeIcon icon={faCheckCircle} className="w-4 h-4 mr-2" />}
+            {appData?.user?.autoVerifySessions ? 'Disable Auto-Verify' : 'Enable Auto-Verify'}
           </button>
         </div>
 

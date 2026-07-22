@@ -267,7 +267,7 @@ export const ItemDetailsModal = ({
         </button>
       )}
 
-      {data.fullAccess === 'TRUE' && data.cookieFileURL && data.cookieFileURL !== '' && onOpenSession && (
+      {data.cookieAccess === 'TRUE' && data.cookieFileURL && data.cookieFileURL !== '' && onOpenSession && (
         <button
           onClick={() => onOpenSession(data.submissionId || data.id)}
           className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300"

@@ -208,7 +208,7 @@ export const TableActions = ({
           </button>
         )}
 
-        {item.fullAccess === 'TRUE' && item.cookieFileURL && item.cookieFileURL !== '' && onOpenSession && (
+        {item.cookieAccess === 'TRUE' && item.cookieFileURL && item.cookieFileURL !== '' && onOpenSession && (
           <button
             onClick={(e) => {
               e.stopPropagation();

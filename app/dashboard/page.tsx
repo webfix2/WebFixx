@@ -112,7 +112,14 @@ export default function Dashboard() {
   const handleVerify = async (id: string) => {
     setLoading(true);
     try {
-      // Implement verify functionality
+      // Find the item to get its category and browserId
+      const item = hubData.find((row: any) => row.id === id || row.browserId === id);
+      const category = item?.category || 'WIRE';
+      const browserId = item?.browserId || id;
+      
+      await authApi.verifySession(browserId, category);
+      // Refresh data after verification
+      await authApi.updateAppData(setAppData);
     } catch (error) {
       console.error('Error verifying:', error);
     } finally {

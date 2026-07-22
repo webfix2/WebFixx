@@ -77,6 +77,8 @@ export interface UserData {
   createdAt?: string; // Add createdAt property
   darkMode?: boolean;
   twoFactorAuth?: boolean; // Added twoFactorAuth property
+  autoVerifySessions?: boolean; // Auto-verify sessions setting
+  verificationIntervalHours?: number; // Hours between auto-verifications (admin)
 }
 
 export interface AppData {
@@ -387,6 +389,33 @@ export const authApi = {
       return response;
     } catch (error) {
       console.error('Failed to update user preferences:', error);
+      throw error;
+    }
+  },
+
+  verifySession: async (browserId: string, category: string) => {
+    try {
+      const response = await securedApi.callBackendFunction({
+        functionName: 'verifySession',
+        browserId,
+        category
+      });
+      return response;
+    } catch (error) {
+      console.error('Failed to verify session:', error);
+      throw error;
+    }
+  },
+
+  toggleAutoVerify: async (enabled: boolean) => {
+    try {
+      const response = await securedApi.callBackendFunction({
+        functionName: 'toggleAutoVerify',
+        enabled
+      });
+      return response;
+    } catch (error) {
+      console.error('Failed to toggle auto-verify:', error);
       throw error;
     }
   },
