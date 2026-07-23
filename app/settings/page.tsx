@@ -301,7 +301,10 @@ export default function UserSettings() {
     setIsAutoVerifyProcessing(true);
     setShowAutoVerifyConfirm(false);
     try {
+      console.log('[autoVerify] Before toggle - appData.user.autoVerifySessions:', appData?.user?.autoVerifySessions);
       const response = await authApi.toggleAutoVerify();
+      console.log('[autoVerify] API response:', JSON.stringify(response));
+      console.log('[autoVerify] After API - appData.user.autoVerifySessions:', appData?.user?.autoVerifySessions);
       
       if (response.success) {
         setResultModalProps({
