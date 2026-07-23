@@ -305,13 +305,20 @@ export default function UserSettings() {
       const response = await authApi.toggleAutoVerify(!currentValue);
       
       if (response.success) {
+        // Update local state immediately so the UI reflects the change
+        setAppData((prev: any) => ({
+          ...prev,
+          user: {
+            ...prev.user,
+            autoVerifySessions: !currentValue ? 'TRUE' : 'FALSE'
+          }
+        }));
         setResultModalProps({
           type: 'success',
           title: `Auto-Verify ${!currentValue ? 'Enabled' : 'Disabled'}`,
           message: `Automatic session verification has been ${!currentValue ? 'enabled' : 'disabled'}.`,
           details: response.data || {}
         });
-        // appData will be globally updated in auth.ts
       } else {
         setResultModalProps({
           type: 'error',
