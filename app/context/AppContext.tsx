@@ -43,7 +43,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   // Function to handle setting app data, ensuring isOffline is managed
   const handleSetAppData = useCallback((data: AppState) => {
-    console.log('[AppContext] handleSetAppData called - user.autoVerifySessions:', data?.user?.autoVerifySessions);
     setAppData(prev => ({ ...data, isOffline: prev?.isOffline || false })); // Preserve isOffline status
   }, []);
 

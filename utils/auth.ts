@@ -593,7 +593,6 @@ export const securedApi = {
 
       // If the backend call was successful, trigger a full app data refresh
       if (result && result.success) {
-        console.log('[callBackendFunction] result.user:', result.user?.autoVerifySessions, result.user);
         const appState = getAppState();
         if (appState && appState.setAppData) {
           const updatedAppState = {

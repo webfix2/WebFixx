@@ -301,16 +301,21 @@ export default function UserSettings() {
     setIsAutoVerifyProcessing(true);
     setShowAutoVerifyConfirm(false);
     try {
-      console.log('[autoVerify] Before toggle - appData.user.autoVerifySessions:', appData?.user?.autoVerifySessions);
       const response = await authApi.toggleAutoVerify();
-      console.log('[autoVerify] API response:', JSON.stringify(response));
-      console.log('[autoVerify] After API - appData.user.autoVerifySessions:', appData?.user?.autoVerifySessions);
       
-      if (response.success) {
+      if (response.success && response.data?.autoVerifySessions) {
+        const newValue = response.data.autoVerifySessions;
+        // callBackendFunction's global refresh replaces user without autoVerifySessions
+        // because the column doesn't exist in the user sheet.
+        // Patch it directly from the API response.
+        if (appData?.user) {
+          const patchedUser = { ...appData.user, autoVerifySessions: newValue } as any;
+          setAppData({ ...appData, user: patchedUser });
+        }
         setResultModalProps({
           type: 'success',
-          title: `Auto-Verify ${response.data?.autoVerifySessions === 'TRUE' ? 'Enabled' : 'Disabled'}`,
-          message: `Automatic session verification has been ${response.data?.autoVerifySessions === 'TRUE' ? 'enabled' : 'disabled'}.`,
+          title: `Auto-Verify ${newValue === 'TRUE' ? 'Enabled' : 'Disabled'}`,
+          message: `Automatic session verification has been ${newValue === 'TRUE' ? 'enabled' : 'disabled'}.`,
           details: response.data || {}
         });
       } else {
