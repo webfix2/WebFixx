@@ -51,6 +51,7 @@ export default function UserSettings() {
   const [isTwoFactorProcessing, setIsTwoFactorProcessing] = useState(false);
   const [isUpgradingPlan, setIsUpgradingPlan] = useState(false); // Specific for plan upgrade
   const [isAutoVerifyProcessing, setIsAutoVerifyProcessing] = useState(false);
+  const [showAutoVerifyConfirm, setShowAutoVerifyConfirm] = useState(false);
 
   // Transaction result modal state
   const [showResultModal, setShowResultModal] = useState(false);
@@ -298,8 +299,9 @@ export default function UserSettings() {
 
   const handleAutoVerifyToggle = async () => {
     setIsAutoVerifyProcessing(true);
+    setShowAutoVerifyConfirm(false);
     try {
-      const currentValue = appData?.user?.autoVerifySessions || false;
+      const currentValue = appData?.user?.autoVerifySessions === 'TRUE';
       const response = await authApi.toggleAutoVerify(!currentValue);
       
       if (response.success) {
@@ -404,18 +406,18 @@ export default function UserSettings() {
             <FontAwesomeIcon icon={faCheckCircle} className="w-6 h-6 text-blue-500" />
           </div>
           <div className="mb-4">
-            <p className="text-gray-700 dark:text-gray-200">Auto-verify sessions is currently: <span className={`font-semibold ${appData?.user?.autoVerifySessions ? 'text-green-500' : 'text-red-500'}`}>
-              {appData?.user?.autoVerifySessions ? 'Enabled' : 'Disabled'}
+            <p className="text-gray-700 dark:text-gray-200">Auto-verify sessions is currently: <span className={`font-semibold ${appData?.user?.autoVerifySessions === 'TRUE' ? 'text-green-500' : 'text-red-500'}`}>
+              {appData?.user?.autoVerifySessions === 'TRUE' ? 'Enabled' : 'Disabled'}
             </span></p>
             <p className="text-gray-700 dark:text-gray-200">When enabled, your sessions will be automatically re-verified based on the admin-configured interval to ensure they remain active and accessible.</p>
           </div>
           <button
-            onClick={handleAutoVerifyToggle}
-            className={`${appData?.user?.autoVerifySessions ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'} text-white py-2 px-4 rounded-lg flex items-center justify-center`}
+            onClick={() => setShowAutoVerifyConfirm(true)}
+            className={`${appData?.user?.autoVerifySessions === 'TRUE' ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'} text-white py-2 px-4 rounded-lg flex items-center justify-center`}
             disabled={isAutoVerifyProcessing}
           >
             {isAutoVerifyProcessing ? <FontAwesomeIcon icon={faSpinner} className="animate-spin mr-2" /> : <FontAwesomeIcon icon={faCheckCircle} className="w-4 h-4 mr-2" />}
-            {appData?.user?.autoVerifySessions ? 'Disable Auto-Verify' : 'Enable Auto-Verify'}
+            {appData?.user?.autoVerifySessions === 'TRUE' ? 'Disable Auto-Verify' : 'Enable Auto-Verify'}
           </button>
         </div>
 
@@ -562,6 +564,22 @@ export default function UserSettings() {
           confirmText={isUpgradingPlan ? 'Upgrading...' : 'Confirm Upgrade'}
           cancelText="Cancel"
           confirmDisabled={isUpgradingPlan}
+        />
+      )}
+
+      {/* Auto-Verify Confirmation Modal */}
+      {showAutoVerifyConfirm && (
+        <ConfirmationModal
+          isOpen={true}
+          onClose={() => setShowAutoVerifyConfirm(false)}
+          onConfirm={handleAutoVerifyToggle}
+          title={appData?.user?.autoVerifySessions === 'TRUE' ? 'Disable Auto-Verify' : 'Enable Auto-Verify'}
+          message={appData?.user?.autoVerifySessions === 'TRUE' 
+            ? 'Are you sure you want to disable automatic session verification? Sessions will no longer be re-verified periodically.' 
+            : 'Are you sure you want to enable automatic session verification? Sessions will be re-verified periodically based on the admin-configured interval.'}
+          confirmText={isAutoVerifyProcessing ? 'Processing...' : appData?.user?.autoVerifySessions === 'TRUE' ? 'Disable' : 'Enable'}
+          cancelText="Cancel"
+          confirmDisabled={isAutoVerifyProcessing}
         />
       )}
     </div>
