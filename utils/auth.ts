@@ -77,7 +77,7 @@ export interface UserData {
   createdAt?: string; // Add createdAt property
   darkMode?: boolean;
   twoFactorAuth?: boolean; // Added twoFactorAuth property
-  autoVerifySessions?: boolean; // Auto-verify sessions setting
+  autoVerifySessions?: string; // Auto-verify sessions setting ("TRUE"/"FALSE")
   verificationIntervalHours?: number; // Hours between auto-verifications (admin)
 }
 
