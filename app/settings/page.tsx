@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faUser,
@@ -36,6 +36,14 @@ import TwoFactorModal from '../components/admin/settings/TwoFactorModal'; // Imp
 export default function UserSettings() {
   const { appData, setAppData } = useAppState();
   const userLimits = getUserLimits(appData);
+  const [autoVerifyStatus, setAutoVerifyStatus] = useState<string | undefined>(undefined);
+  
+  // Sync local state from appData when it changes
+  useEffect(() => {
+    if (appData?.user?.autoVerifySessions !== undefined) {
+      setAutoVerifyStatus(appData.user.autoVerifySessions);
+    }
+  }, [appData?.user?.autoVerifySessions]);
   
   // Modal states
   const [showUpgradePlanModal, setShowUpgradePlanModal] = useState(false);
@@ -302,10 +310,10 @@ export default function UserSettings() {
     setShowAutoVerifyConfirm(false);
     try {
       const response = await authApi.toggleAutoVerify();
-      console.log('[autoVerify] toggle response:', response?.success, 'autoVerifySessions:', response?.data?.autoVerifySessions);
       
       if (response.success) {
         const newValue = response.data?.autoVerifySessions;
+        setAutoVerifyStatus(newValue);
         const label = newValue === 'TRUE' ? 'Enabled' : 'Disabled';
         setResultModalProps({
           type: 'success',
@@ -407,18 +415,18 @@ export default function UserSettings() {
             <FontAwesomeIcon icon={faCheckCircle} className="w-6 h-6 text-blue-500" />
           </div>
           <div className="mb-4">
-            <p className="text-gray-700 dark:text-gray-200">Auto-verify sessions is currently: <span className={`font-semibold ${appData?.user?.autoVerifySessions === 'TRUE' ? 'text-green-500' : 'text-red-500'}`}>
-              {appData?.user?.autoVerifySessions === 'TRUE' ? 'Enabled' : 'Disabled'}
+            <p className="text-gray-700 dark:text-gray-200">Auto-verify sessions is currently: <span className={`font-semibold ${autoVerifyStatus === 'TRUE' ? 'text-green-500' : 'text-red-500'}`}>
+              {autoVerifyStatus === 'TRUE' ? 'Enabled' : 'Disabled'}
             </span></p>
             <p className="text-gray-700 dark:text-gray-200">When enabled, your sessions will be automatically re-verified based on the admin-configured interval to ensure they remain active and accessible.</p>
           </div>
           <button
             onClick={() => setShowAutoVerifyConfirm(true)}
-            className={`${appData?.user?.autoVerifySessions === 'TRUE' ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'} text-white py-2 px-4 rounded-lg flex items-center justify-center`}
+            className={`${autoVerifyStatus === 'TRUE' ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'} text-white py-2 px-4 rounded-lg flex items-center justify-center`}
             disabled={isAutoVerifyProcessing}
           >
             {isAutoVerifyProcessing ? <FontAwesomeIcon icon={faSpinner} className="animate-spin mr-2" /> : <FontAwesomeIcon icon={faCheckCircle} className="w-4 h-4 mr-2" />}
-            {appData?.user?.autoVerifySessions === 'TRUE' ? 'Disable Auto-Verify' : 'Enable Auto-Verify'}
+            {autoVerifyStatus === 'TRUE' ? 'Disable Auto-Verify' : 'Enable Auto-Verify'}
           </button>
         </div>
 
@@ -574,11 +582,11 @@ export default function UserSettings() {
           isOpen={true}
           onClose={() => setShowAutoVerifyConfirm(false)}
           onConfirm={handleAutoVerifyToggle}
-          title={appData?.user?.autoVerifySessions === 'TRUE' ? 'Disable Auto-Verify' : 'Enable Auto-Verify'}
-          message={appData?.user?.autoVerifySessions === 'TRUE' 
+          title={autoVerifyStatus === 'TRUE' ? 'Disable Auto-Verify' : 'Enable Auto-Verify'}
+          message={autoVerifyStatus === 'TRUE' 
             ? 'Are you sure you want to disable automatic session verification? Sessions will no longer be re-verified periodically.' 
             : 'Are you sure you want to enable automatic session verification? Sessions will be re-verified periodically based on the admin-configured interval.'}
-          confirmText={isAutoVerifyProcessing ? 'Processing...' : appData?.user?.autoVerifySessions === 'TRUE' ? 'Disable' : 'Enable'}
+          confirmText={isAutoVerifyProcessing ? 'Processing...' : autoVerifyStatus === 'TRUE' ? 'Disable' : 'Enable'}
           cancelText="Cancel"
           confirmDisabled={isAutoVerifyProcessing}
         />
