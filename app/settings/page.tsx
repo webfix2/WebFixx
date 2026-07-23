@@ -302,7 +302,7 @@ export default function UserSettings() {
     setShowAutoVerifyConfirm(false);
     try {
       const response = await authApi.toggleAutoVerify();
-      console.log('[autoVerify] toggle response:', response?.success, 'autoVerifySessions:', response?.data?.autoVerifySessions, 'user:', response?.user?.autoVerifySessions);
+      console.log('[autoVerify] toggle response:', response?.success, 'autoVerifySessions:', response?.data?.autoVerifySessions);
       
       if (response.success) {
         const newValue = response.data?.autoVerifySessions;
