@@ -306,13 +306,15 @@ export default function UserSettings() {
       
       if (response.success) {
         // Update local state immediately so the UI reflects the change
-        setAppData((prev: any) => ({
-          ...prev,
-          user: {
-            ...prev.user,
-            autoVerifySessions: !currentValue ? 'TRUE' : 'FALSE'
-          }
-        }));
+        if (appData) {
+          setAppData({
+            ...appData,
+            user: {
+              ...appData.user,
+              autoVerifySessions: !currentValue ? 'TRUE' : 'FALSE'
+            } as any
+          });
+        }
         setResultModalProps({
           type: 'success',
           title: `Auto-Verify ${!currentValue ? 'Enabled' : 'Disabled'}`,
