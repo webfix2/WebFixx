@@ -301,24 +301,13 @@ export default function UserSettings() {
     setIsAutoVerifyProcessing(true);
     setShowAutoVerifyConfirm(false);
     try {
-      const currentValue = appData?.user?.autoVerifySessions === 'TRUE';
-      const response = await authApi.toggleAutoVerify(!currentValue);
+      const response = await authApi.toggleAutoVerify();
       
       if (response.success) {
-        // Update local state immediately so the UI reflects the change
-        if (appData) {
-          setAppData({
-            ...appData,
-            user: {
-              ...appData.user,
-              autoVerifySessions: !currentValue ? 'TRUE' : 'FALSE'
-            } as any
-          });
-        }
         setResultModalProps({
           type: 'success',
-          title: `Auto-Verify ${!currentValue ? 'Enabled' : 'Disabled'}`,
-          message: `Automatic session verification has been ${!currentValue ? 'enabled' : 'disabled'}.`,
+          title: `Auto-Verify ${response.data?.autoVerifySessions === 'TRUE' ? 'Enabled' : 'Disabled'}`,
+          message: `Automatic session verification has been ${response.data?.autoVerifySessions === 'TRUE' ? 'enabled' : 'disabled'}.`,
           details: response.data || {}
         });
       } else {

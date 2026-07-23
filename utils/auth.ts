@@ -407,11 +407,10 @@ export const authApi = {
     }
   },
 
-  toggleAutoVerify: async (enabled: boolean) => {
+  toggleAutoVerify: async () => {
     try {
       const response = await securedApi.callBackendFunction({
-        functionName: 'toggleAutoVerify',
-        enabled
+        functionName: 'toggleAutoVerify'
       });
       return response;
     } catch (error) {
